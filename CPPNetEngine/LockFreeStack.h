@@ -1,13 +1,14 @@
 ﻿#pragma once
+#include "ObjectPool.h"
 
 template <typename T>
 class LockFreeStack final
 {
 public:
 
-	struct alignas(8) Node
+	struct Node
 	{
-		T* pData;
+		T data;
 		Node* pNextNode;
 	};
 
@@ -25,7 +26,8 @@ public:
 	LockFreeStack& operator=(LockFreeStack&&) = delete;
 
 	explicit LockFreeStack(const int32 maxCount)
-		:mMaxCount(maxCount)
+		: mObjectPool(false, 3000)
+		, mMaxCount(maxCount)
 		, mCount(0)
 		, mTopAlineNode16({})
 	{
@@ -39,14 +41,14 @@ public:
 		{
 			Node* pTempNode = pNode->pNextNode;
 			
-			delete pNode;
+			mObjectPool.Free(pNode);
 
 			pNode = pTempNode;
 		}
 	}
 
 	[[nodiscard]]
-	bool TryPush(T* pData)
+	bool TryPush(const T& data)
 	{
 		if (mMaxCount <= mCount.load())
 		{
@@ -54,17 +56,14 @@ public:
 		}
 
 		Node* pExpected{};
-		Node* pDesired{};
+		Node* pDesired = mObjectPool.Alloc();
+		pDesired->data = data;
 
-		// TODO : 메모리풀로 대체 예정
-		pDesired = new Node{};
-		pDesired->pData = pData;
-
-		std::atomic_ref<Node*> topAlign8Node(mTopAlineNode16.pNode);
+		std::atomic_ref<Node*> topNodePtr(mTopAlineNode16.pNode);
 
 		do
 		{
-			pExpected = mTopAlineNode16.pNode;
+			pExpected = topNodePtr.load();
 			
 			pDesired->pNextNode = pExpected;
 
@@ -73,14 +72,15 @@ public:
 				continue;
 			}
 
-		} while (topAlign8Node.compare_exchange_weak(pExpected, pDesired) == false);
+		} while (topNodePtr.compare_exchange_weak(pExpected, pDesired) == false);
 
 		mCount.fetch_add(1);
 
 		return true;
 	}
 
-	bool TryPop(T** outData)
+	[[nodiscard]]
+	bool TryPop(T& outData)
 	{
 		if (mCount.fetch_sub(1) <= 0)
 		{
@@ -95,11 +95,11 @@ public:
 
 		do
 		{
-			expected.pNode = mTopAlineNode16.pNode;
-			expected.count = mTopAlineNode16.count;
+			expected.count = topAlign16Node.load().count;
+			expected.pNode = topAlign16Node.load().pNode;
 
-			desired.pNode = expected.pNode->pNextNode;
 			desired.count = expected.count + 1;
+			desired.pNode = expected.pNode->pNextNode;
 
 			if (expected.pNode != mTopAlineNode16.pNode || expected.count != mTopAlineNode16.count)
 			{
@@ -108,10 +108,9 @@ public:
 
 		} while (topAlign16Node.compare_exchange_weak(expected, desired) == false);
 
-		*outData = expected.pNode->pData;
+		outData = expected.pNode->data;
 
-		// TODO : 메모리풀로 대체 예정
-		delete expected.pNode;
+		mObjectPool.Free(expected.pNode);
 
 		return true;
 	}
@@ -125,6 +124,8 @@ public:
 	{
 		return mMaxCount;
 	}
+
+	ObjectPool<Node> mObjectPool;
 
 private:
 

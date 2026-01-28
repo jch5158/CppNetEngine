@@ -24,7 +24,7 @@
     <ClInclude Include="LockFreeStack.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryPool.h">
+    <ClInclude Include="ObjectPool.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,7 +38,7 @@
     <ClCompile Include="LockFreeStack.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryPool.cpp">
+    <ClCompile Include="ObjectPool.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>

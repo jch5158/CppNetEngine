@@ -1,17 +1,26 @@
 ﻿#pragma once
 
-#include "Types.h"
-
+// ==========================
+// 1. C++ 표준 라이브러리
+// ==========================
+#include <atomic>
+#include <chrono>
 #include <iostream>
-#include <vector>
 #include <list>
-#include <stack>
-#include <queue>
 #include <map>
+#include <queue>
 #include <set>
+#include <stack>
+#include <thread>
 #include <unordered_map>
 #include <unordered_set>
-#include <atomic>
-#include <thread>
+#include <vector>
 
-void HelloWorld();
+// =========================
+// 2. 외부 라이브러리
+// =========================
+#include <mimalloc.h>
+#include <fmt/core.h>
+#include <fmt/xchar.h>
+
+#include "Types.h"
