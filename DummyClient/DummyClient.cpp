@@ -1,11 +1,6 @@
 ﻿#include "pch.h"
-#include <cstdint>
-#include <stack>
-
 #include "LockFreeStack.h"
 #include "ObjectPool.h"
-
-using namespace std::chrono_literals;
 
 struct alignas(16) Node
 {
@@ -79,6 +74,8 @@ int32 main()
                     }
 
                     sum += *pVal;
+
+                    delete pVal;
                 }
                 });
 
@@ -95,6 +92,8 @@ int32 main()
                     }
 
                     sum += *pVal;
+
+                    delete pVal;
                 }
                 });
 
@@ -112,6 +111,8 @@ int32 main()
                     }
 
                     sum += *pVal;
+
+                    delete pVal;
                 }
                 });
 

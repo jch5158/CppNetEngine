@@ -79,8 +79,11 @@ public:
 
 		do
 		{
-			expected.count = topAlignNode16.load().count;
-			expected.pNode = topAlignNode16.load().pNode;
+			expected.count = mTopAlineNode16.count;
+
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+
+			expected.pNode = mTopAlineNode16.pNode;
 			if (expected.pNode == nullptr)
 			{
 				Node* pNode = allocNode(true);
@@ -92,11 +95,6 @@ public:
 
 			desired.count = expected.count + 1;
 			desired.pNode = expected.pNode->pNextNode;
-
-			if (expected.count != mTopAlineNode16.count || expected.pNode != mTopAlineNode16.pNode)
-			{
-				continue;
-			}
 
 		} while (topAlignNode16.compare_exchange_weak(expected, desired) == false);
 
@@ -123,14 +121,11 @@ public:
 
 		do
 		{
-			pExpected = topNodePtr.load();
+			pExpected = mTopAlineNode16.pNode;
+
+			std::atomic_thread_fence(std::memory_order_seq_cst);
 
 			pDesired->pNextNode = pExpected;
-
-			if (pExpected != mTopAlineNode16.pNode)
-			{
-				continue;
-			}
 
 		} while (topNodePtr.compare_exchange_weak(pExpected, pDesired) == false);
 
@@ -156,10 +151,12 @@ private:
 
 	Node* allocNode(const bool bPlacementNew)
 	{
-		Node* pNode = static_cast<Node*>(mi_malloc(sizeof(Node)));
+		Node* pNode = static_cast<Node*>(mi_malloc_aligned(sizeof(Node), alignof(Node)));
 		if (pNode == nullptr)
 		{
 			//TODO : 로그 & 크래시 덤프
+
+			return nullptr;
 		}
 
 		if (bPlacementNew)

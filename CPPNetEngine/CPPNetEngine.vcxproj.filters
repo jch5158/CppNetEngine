@@ -10,6 +10,18 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{cb954553-106b-42ad-b8a0-4a6580b192b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{3c4c591c-85df-442a-8c66-8a0ff2ac51c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{cda91dfd-1d8f-44c1-bd90-81e9cfd8c3e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{4e9ff5d9-32ba-488f-a21a-9a6661eff64b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Container">
+      <UniqueIdentifier>{8efa3a9e-5a7d-456e-930c-6350594e4953}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -21,11 +33,29 @@
     <ClInclude Include="Types.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="LockFreeStack.h">
-      <Filter>Utils</Filter>
+    <ClInclude Include="NetEngineTLS.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="NetEngineGlobal.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="NetEngineMacro.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.h">
+      <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="ObjectPool.h">
-      <Filter>Utils</Filter>
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="LockFreeStack.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="ISingleton.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="TlsObjectPool.h">
+      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -35,11 +65,14 @@
     <ClCompile Include="EnginePCH.cpp">
       <Filter>EnginePCH</Filter>
     </ClCompile>
-    <ClCompile Include="LockFreeStack.cpp">
-      <Filter>Utils</Filter>
+    <ClCompile Include="NetEngineGlobal.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectPool.cpp">
-      <Filter>Utils</Filter>
+    <ClCompile Include="NetEngineTLS.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

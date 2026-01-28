@@ -26,7 +26,7 @@ public:
 	LockFreeStack& operator=(LockFreeStack&&) = delete;
 
 	explicit LockFreeStack(const int32 maxCount)
-		: mObjectPool(false, 3000)
+		: mObjectPool(false, 0)
 		, mMaxCount(maxCount)
 		, mCount(0)
 		, mTopAlineNode16({})
@@ -63,14 +63,11 @@ public:
 
 		do
 		{
-			pExpected = topNodePtr.load();
+			pExpected = topNodePtr;
 			
-			pDesired->pNextNode = pExpected;
+			std::atomic_thread_fence(std::memory_order_seq_cst);
 
-			if (pExpected != mTopAlineNode16.pNode)
-			{
-				continue;
-			}
+			pDesired->pNextNode = pExpected;
 
 		} while (topNodePtr.compare_exchange_weak(pExpected, pDesired) == false);
 
@@ -95,16 +92,14 @@ public:
 
 		do
 		{
-			expected.count = topAlign16Node.load().count;
-			expected.pNode = topAlign16Node.load().pNode;
+			expected.count = mTopAlineNode16.count;
+
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+
+			expected.pNode = mTopAlineNode16.pNode;
 
 			desired.count = expected.count + 1;
 			desired.pNode = expected.pNode->pNextNode;
-
-			if (expected.pNode != mTopAlineNode16.pNode || expected.count != mTopAlineNode16.count)
-			{
-				continue;
-			}
 
 		} while (topAlign16Node.compare_exchange_weak(expected, desired) == false);
 
