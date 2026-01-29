@@ -33,7 +33,7 @@
     <ClInclude Include="Types.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="NetEngineTLS.h">
+    <ClInclude Include="NetEngineTls.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="NetEngineGlobal.h">
@@ -71,7 +71,7 @@
     <ClCompile Include="NetEngineGlobal.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="NetEngineTLS.cpp">
+    <ClCompile Include="NetEngineTls.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="ThreadManager.cpp">
