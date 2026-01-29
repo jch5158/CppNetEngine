@@ -3,6 +3,8 @@
 
 ThreadManager::ThreadManager()
 	: ISingleton<ThreadManager>()
+	  , mLock()
+	  , mThreads()
 {
 	InitTls();
 }

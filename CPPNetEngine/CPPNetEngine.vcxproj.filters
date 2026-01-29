@@ -57,6 +57,9 @@
     <ClInclude Include="TlsObjectPool.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectPoolManager.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -73,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPoolManager.cpp">
+      <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

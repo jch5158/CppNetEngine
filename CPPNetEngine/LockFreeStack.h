@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "ObjectPool.h"
+
+#include "ObjectPoolManager.h"
 
 template <typename T>
 class LockFreeStack final
@@ -11,6 +12,10 @@ public:
 		T data;
 		Node* pNextNode;
 	};
+
+private:
+
+	using NodeObjectPool = ObjectPoolManager<Node, 10>;
 
 	struct alignas(16) AlignNode16
 	{
@@ -26,8 +31,7 @@ public:
 	LockFreeStack& operator=(LockFreeStack&&) = delete;
 
 	explicit LockFreeStack(const int32 maxCount)
-		: mObjectPool(false, 0)
-		, mMaxCount(maxCount)
+		: mMaxCount(maxCount)
 		, mCount(0)
 		, mTopAlineNode16({})
 	{
@@ -41,7 +45,7 @@ public:
 		{
 			Node* pTempNode = pNode->pNextNode;
 			
-			mObjectPool.Free(pNode);
+			NodeObjectPool::GetInstance().Free(pNode);
 
 			pNode = pTempNode;
 		}
@@ -56,7 +60,7 @@ public:
 		}
 
 		Node* pExpected{};
-		Node* pDesired = mObjectPool.Alloc();
+		Node* pDesired = NodeObjectPool::GetInstance().Alloc();
 		pDesired->data = data;
 
 		std::atomic_ref<Node*> topNodePtr(mTopAlineNode16.pNode);
@@ -105,7 +109,7 @@ public:
 
 		outData = expected.pNode->data;
 
-		mObjectPool.Free(expected.pNode);
+		NodeObjectPool::GetInstance().Free(expected.pNode);
 
 		return true;
 	}
@@ -119,8 +123,6 @@ public:
 	{
 		return mMaxCount;
 	}
-
-	ObjectPool<Node> mObjectPool;
 
 private:
 

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <mimalloc.h>
+
 template <typename T>
 class ObjectPool
 {
@@ -132,8 +134,6 @@ public:
 		mAllocCount.fetch_sub(1);
 
 		mPoolingCount.fetch_add(1);
-
-		return;
 	}
 
 	[[nodiscard]]
@@ -142,6 +142,7 @@ public:
 		return mAllocCount.load();
 	}
 
+	[[nodiscard]]
 	int32 PoolingCount() const
 	{
 		return mPoolingCount.load();
@@ -151,7 +152,7 @@ private:
 
 	Node* allocNode(const bool bPlacementNew)
 	{
-		Node* pNode = static_cast<Node*>(mi_malloc_aligned(sizeof(Node), alignof(Node)));
+		Node* pNode = static_cast<Node*>(mi_malloc(sizeof(Node)));
 		if (pNode == nullptr)
 		{
 			//TODO : 로그 & 크래시 덤프

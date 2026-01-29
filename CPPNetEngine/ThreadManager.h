@@ -15,8 +15,14 @@ public:
 	ThreadManager(ThreadManager&&) = delete;
 	ThreadManager& operator=(ThreadManager&&) = delete;
 
+private:
+
+	explicit ThreadManager();
+
+public:
+
 	virtual ~ThreadManager() override;
- 	
+
 	void Launch(const std::function<void()>& callback);
 	void JoinWithClear();
 
@@ -24,8 +30,6 @@ public:
 	static void DestroyTls();
 
 private:
-
-	ThreadManager();
 
 	Mutex mLock;
 	std::vector<std::thread> mThreads;

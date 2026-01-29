@@ -189,6 +189,7 @@
     <ClInclude Include="NetEngineMacro.h" />
     <ClInclude Include="NetEngineTLS.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="ObjectPoolManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="TlsObjectPool.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="EnginePCH.cpp" />
     <ClCompile Include="NetEngineGlobal.cpp" />
     <ClCompile Include="NetEngineTLS.cpp" />
+    <ClCompile Include="ObjectPoolManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
