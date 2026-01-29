@@ -6,4 +6,3 @@ namespace net_engine_global
 
 	extern void CrashIf(const bool bCrash);
 };
-

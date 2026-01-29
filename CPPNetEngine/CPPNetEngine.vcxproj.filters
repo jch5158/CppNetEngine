@@ -4,9 +4,6 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{cc8d4815-8b1f-4834-9acb-2ec0eced18ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EnginePCH">
-      <UniqueIdentifier>{a0925f2d-3277-4dbe-9fe8-3bbc205e03c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utils">
       <UniqueIdentifier>{cb954553-106b-42ad-b8a0-4a6580b192b2}</UniqueIdentifier>
     </Filter>
@@ -22,13 +19,16 @@
     <Filter Include="Container">
       <UniqueIdentifier>{8efa3a9e-5a7d-456e-930c-6350594e4953}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EnginePch">
+      <UniqueIdentifier>{a0925f2d-3277-4dbe-9fe8-3bbc205e03c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="EnginePCH.h">
-      <Filter>EnginePCH</Filter>
+    <ClInclude Include="EnginePch.h">
+      <Filter>EnginePch</Filter>
     </ClInclude>
     <ClInclude Include="Types.h">
       <Filter>Utils</Filter>
@@ -65,8 +65,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="EnginePCH.cpp">
-      <Filter>EnginePCH</Filter>
+    <ClCompile Include="EnginePch.cpp">
+      <Filter>EnginePch</Filter>
     </ClCompile>
     <ClCompile Include="NetEngineGlobal.cpp">
       <Filter>Main</Filter>

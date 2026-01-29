@@ -29,7 +29,7 @@ public:
 
 	explicit ObjectPool(const bool bPlacementNew, const int32 poolingCount)
 		: mbPlacementNew(bPlacementNew)
-		, mTopAlineNode16({})
+		, mTopAlineNode16{}
 		, mAllocCount(0)
 		, mPoolingCount(poolingCount)
 	{

@@ -20,7 +20,7 @@ private:
 		Chunk()
 			:mAllocCount(0)
 			, mFreeCount(0)
-			, mChunkDataArray({})
+			, mChunkDataArray{}
 		{
 			for (int32 i = 0; i < CHUNK_SIZE; ++i)
 			{

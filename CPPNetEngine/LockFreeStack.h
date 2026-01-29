@@ -33,7 +33,7 @@ public:
 	explicit LockFreeStack(const int32 maxCount)
 		: mMaxCount(maxCount)
 		, mCount(0)
-		, mTopAlineNode16({})
+		, mTopAlineNode16{}
 	{
 	}
 
