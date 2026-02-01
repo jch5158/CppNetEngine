@@ -1,7 +1,8 @@
 {
   "dependencies": [
+    "crashpad",
     "fmt",
     "mimalloc",
-    "crashpad"
+    "spdlog"
   ]
 }

@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "LockFreeQueue.h"
 
 class Player
 {
@@ -27,11 +28,13 @@ private:
     int32 mNum;
 };
 
+using LockFreeQueueTest = LockFreeQueue<Player*, 10>;
+using ObjectPoolMonitor = ObjectPoolManager<LockFreeQueueTest::Node, 10>;
 
 int32 main()
 {
     constexpr int32 TEST_COUNT = 10000;
-    LockFreeStack<Player*> playerStack(TEST_COUNT);
+    LockFreeQueueTest playerStack(TEST_COUNT);
 
     //생산자 스레드
     std::thread producer1([&]()->void {
@@ -39,10 +42,9 @@ int32 main()
         while (true)
         {
             auto* p = new Player();
-            while (!playerStack.TryPush(p))
+            while (!playerStack.TryEnqueue(p))
             {
             }
-
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
@@ -55,7 +57,7 @@ int32 main()
         while (true)
         {
             auto* p = new Player();
-            while (!playerStack.TryPush(p))
+            while (!playerStack.TryEnqueue(p))
             {
             }
 
@@ -67,11 +69,10 @@ int32 main()
     //std::thread producer3([&]()->void {
 
 
-
     //    while (true)
     //    {
     //        auto* p = new Player();
-    //        while (!playerStack.TryPush(p))
+    //        while (!playerStack.TryEnqueue(p))
     //        {
     //        }
 
@@ -82,22 +83,21 @@ int32 main()
 
     // 소비자 스레드
     std::thread consumer1([&]()->void {
-
         while (true)
         {
             Player* p = nullptr;
 
-            while (!playerStack.TryPop(p))
+            while (!playerStack.TryDequeue(p))
             {
             }
 
             net_engine_global::CrashIf(p->GetNum() != 1);
 
-            delete p;
+        	delete p;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        });
+    });
 
     std::thread consumer2([&]()->void {
 
@@ -105,7 +105,7 @@ int32 main()
         {
             Player* p = nullptr;
 
-            while (!playerStack.TryPop(p))
+            while (!playerStack.TryDequeue(p))
             {
             }
 
@@ -124,7 +124,7 @@ int32 main()
         {
             Player* p = nullptr;
 
-            while (!playerStack.TryPop(p))
+            while (!playerStack.TryDequeue(p))
             {
             }
 
@@ -139,7 +139,7 @@ int32 main()
 
     while (true)
     {
-        fmt::print(L"alloc : {}, pooling : {}\n", ObjectPoolManager<LockFreeStack<Player*>::Node, 10>::GetInstance().AllocCount(), ObjectPoolManager<LockFreeStack<Player*>::Node, 10>::GetInstance().PoolingCount());
+        fmt::print(L"alloc : {}, pooling : {}\n", ObjectPoolMonitor::GetInstance().AllocCount(), ObjectPoolMonitor::GetInstance().PoolingCount());
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

@@ -2,7 +2,7 @@
 
 namespace net_engine_global
 {
-	extern void Crash();
+	void Crash();
 
-	extern void CrashIf(const bool bCrash);
+	void CrashIf(const bool bCrash);
 };

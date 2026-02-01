@@ -197,6 +197,7 @@
   <ItemGroup>
     <ClInclude Include="EnginePch.h" />
     <ClInclude Include="ISingleton.h" />
+    <ClInclude Include="LockFreeQueue.h" />
     <ClInclude Include="LockFreeStack.h" />
     <ClInclude Include="NetEngineGlobal.h" />
     <ClInclude Include="NetEngineMacro.h" />
@@ -212,7 +213,6 @@
     <ClCompile Include="EnginePch.cpp" />
     <ClCompile Include="NetEngineGlobal.cpp" />
     <ClCompile Include="NetEngineTls.cpp" />
-    <ClCompile Include="ObjectPoolManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

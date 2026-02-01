@@ -1,8 +1,9 @@
 ﻿#pragma once
+
 #include "ISingleton.h"
 #include "TlsObjectPool.h"
 
-template<typename T, uint32 CHUNK_SIZE>
+template<typename T, int32 CHUNK_SIZE>
 class ObjectPoolManager final : public ISingleton<ObjectPoolManager<T, CHUNK_SIZE>>
 {
 public:
@@ -16,7 +17,9 @@ public:
 
 private:
 
-	ObjectPoolManager() = default;
+	ObjectPoolManager()
+		:mTlsObjectPool()
+	{}
 
 public:
 
@@ -37,7 +40,9 @@ public:
 	[[nodiscard]]
 	T* Alloc()
 	{
-		return mTlsObjectPool.Alloc();
+		T* pData = mTlsObjectPool.Alloc();
+
+		return pData;
 	}
 
 	void Free(T* pData)

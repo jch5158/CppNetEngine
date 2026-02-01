@@ -12,6 +12,7 @@
 #include <thread>
 #include <atomic>
 
+#include <mimalloc.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/xchar.h>
@@ -20,7 +21,3 @@
 #include "NetEngineMacro.h"
 #include "NetEngineTls.h"
 #include "NetEngineGlobal.h"
-#include "ObjectPool.h"
-#include "TlsObjectPool.h"
-#include "ObjectPoolManager.h"
-#include "LockFreeStack.h"

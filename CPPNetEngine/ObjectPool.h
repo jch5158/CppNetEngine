@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include <mimalloc.h>
+#include "pch.h"
 
 template <typename T>
-class ObjectPool
+class ObjectPool final
 {
 private:
 	static constexpr int64 CHECKSUM_CODE = 0x0011223344556677;
@@ -15,7 +15,7 @@ private:
 		Node* pNextNode;
 	};
 
-	struct alignas(16) AlignNode16
+	struct AlignNode16
 	{
 		Node* pNode;
 		int64 count;
@@ -65,7 +65,7 @@ public:
 
 		if (mAllocCount.load() != 0 || mPoolingCount.load() != 0)
 		{
-			// TODO : 메모리 누수 로그
+			net_engine_global::Crash();
 		}
 	}
 
@@ -73,7 +73,18 @@ public:
 	T* Alloc()
 	{
 		mAllocCount.fetch_add(1);
-		
+
+		if (mPoolingCount.fetch_sub(1) <= 0)
+		{
+			mPoolingCount.fetch_add(1);
+
+			Node* pNode = allocNode(true);
+			pNode->checksum = CHECKSUM_CODE;
+			pNode->pNextNode = nullptr;
+
+			return &pNode->data;
+		}
+
 		AlignNode16 expected{};
 		AlignNode16 desired{};
 
@@ -82,19 +93,9 @@ public:
 		do
 		{
 			expected.count = mTopAlineNode16.count;
-
 			std::atomic_thread_fence(std::memory_order_seq_cst);
-
 			expected.pNode = mTopAlineNode16.pNode;
-			if (expected.pNode == nullptr)
-			{
-				Node* pNode = allocNode(true);
-				pNode->checksum = CHECKSUM_CODE;
-				pNode->pNextNode = nullptr;
-
-				return &pNode->data;
-			}
-
+			
 			desired.count = expected.count + 1;
 			desired.pNode = expected.pNode->pNextNode;
 
@@ -105,8 +106,6 @@ public:
 			new(&expected.pNode->data)T();
 		}
 
-		mPoolingCount.fetch_sub(1);
-
 		return &expected.pNode->data;
 	}
 
@@ -116,7 +115,12 @@ public:
 		Node* pDesired = reinterpret_cast<Node*>(pData);
 		if (pDesired->checksum != CHECKSUM_CODE)
 		{
-			//TODO : 로그 & 크래쉬 덤프
+			net_engine_global::Crash();
+		}
+
+		if (mbPlacementNew)
+		{
+			pDesired->data.~T();
 		}
 
 		std::atomic_ref<Node*> topNodePtr(mTopAlineNode16.pNode);
@@ -124,9 +128,6 @@ public:
 		do
 		{
 			pExpected = mTopAlineNode16.pNode;
-
-			std::atomic_thread_fence(std::memory_order_seq_cst);
-
 			pDesired->pNextNode = pExpected;
 
 		} while (topNodePtr.compare_exchange_weak(pExpected, pDesired) == false);
@@ -155,9 +156,7 @@ private:
 		Node* pNode = static_cast<Node*>(mi_malloc(sizeof(Node)));
 		if (pNode == nullptr)
 		{
-			//TODO : 로그 & 크래시 덤프
-
-			return nullptr;
+			net_engine_global::Crash();
 		}
 
 		if (bPlacementNew)
@@ -170,9 +169,9 @@ private:
 
 	const bool mbPlacementNew;
 
-	AlignNode16 mTopAlineNode16;
+	alignas(std::hardware_constructive_interference_size) AlignNode16 mTopAlineNode16;
 
-	std::atomic<int32> mAllocCount;
+	alignas(std::hardware_constructive_interference_size) std::atomic<int32> mAllocCount;
 
-	std::atomic<int32> mPoolingCount;
+	alignas(std::hardware_constructive_interference_size) std::atomic<int32> mPoolingCount;
 };

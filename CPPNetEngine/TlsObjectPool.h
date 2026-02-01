@@ -1,14 +1,16 @@
 ﻿#pragma once
+
+#include "pch.h"
 #include "ObjectPool.h"
 
-template <typename T, uint32 CHUNK_SIZE>
-class TlsObjectPool
+template <typename T, int32 CHUNK_SIZE>
+class TlsObjectPool final
 {
 private:
 
 	struct ChunkData;
 
-	class Chunk
+	class Chunk final
 	{
 	public:
 
@@ -28,7 +30,10 @@ private:
 			}
 		}
 		
-		~Chunk() = default;
+		~Chunk()
+		{
+			ChunkReset();
+		};
 
 		T* GetData()
 		{
@@ -40,25 +45,18 @@ private:
 			return &mChunkDataArray[mAllocCount++].data;
 		}
 
-		bool FreeAndResetIfAllFreed()
+		void Free()
 		{
-			if (mFreeCount.fetch_add(1) == CHUNK_SIZE - 1)
-			{
-				chunkReset();
-
-				return true;
-			}
-
-			return false;
+			mFreeCount.fetch_add(1);
 		}
 
-	private:
-
-		void chunkReset()
+		void ChunkReset()
 		{
 			mAllocCount = 0;
 			mFreeCount.store(0);
 		}
+
+	private:
 
 		int32 mAllocCount;
 		std::atomic<int32> mFreeCount;
@@ -88,31 +86,26 @@ public:
 	[[nodiscard]]
 	T* Alloc()
 	{
-		if (mpTlsChunk == nullptr)
+		if (mpTlsChunk != nullptr)
 		{
-			mpTlsChunk = mObjectPool.Alloc();
-			return mpTlsChunk->GetData();
+			if (T* pData = mpTlsChunk->GetData())
+			{
+				return pData;
+			}
+
+			mObjectPool.Free(mpTlsChunk);
 		}
 
-		T* pData = mpTlsChunk->GetData();
-		if (pData == nullptr)
-		{
-			mpTlsChunk = mObjectPool.Alloc();
-			return mpTlsChunk->GetData();
-		}
-
-		return pData;
+		mpTlsChunk = mObjectPool.Alloc();
+		mpTlsChunk->ChunkReset();
+		return mpTlsChunk->GetData();
 	}
 
 	void Free(T* pData)
 	{
 		Chunk* pChunk = (reinterpret_cast<ChunkData*>(pData))->pChunk;
 
-		if (pChunk->FreeAndResetIfAllFreed())
-		{
-			mObjectPool.Free(pChunk);
-			mpTlsChunk = mObjectPool.Alloc();
-		}
+		pChunk->Free();
 	}
 
 	[[nodiscard]]
@@ -129,10 +122,7 @@ public:
 
 private:
 
-	static thread_local Chunk* mpTlsChunk;
+	inline static thread_local Chunk* mpTlsChunk = nullptr;
 
 	ObjectPool<Chunk> mObjectPool;
 };
-
-template <typename T, uint32 CHUNK_SIZE>
-thread_local TlsObjectPool<T, CHUNK_SIZE>::Chunk* TlsObjectPool<T, CHUNK_SIZE>::mpTlsChunk = nullptr;

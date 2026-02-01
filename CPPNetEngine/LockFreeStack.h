@@ -1,8 +1,9 @@
 ﻿#pragma once
 
+#include "pch.h"
 #include "ObjectPoolManager.h"
 
-template <typename T>
+template <typename T, int32 CHUNK_SIZE = 500>
 class LockFreeStack final
 {
 public:
@@ -15,9 +16,9 @@ public:
 
 private:
 
-	using NodeObjectPool = ObjectPoolManager<Node, 10>;
+	using NodeObjectPool = ObjectPoolManager<Node, CHUNK_SIZE>;
 
-	struct alignas(16) AlignNode16
+	struct AlignNode16
 	{
 		Node* pNode;
 		int64 count;
@@ -35,6 +36,7 @@ public:
 		, mCount(0)
 		, mTopAlineNode16{}
 	{
+		NodeObjectPool::GetInstance();
 	}
 
 	~LockFreeStack()
@@ -61,15 +63,14 @@ public:
 
 		Node* pExpected{};
 		Node* pDesired = NodeObjectPool::GetInstance().Alloc();
+
 		pDesired->data = data;
 
 		std::atomic_ref<Node*> topNodePtr(mTopAlineNode16.pNode);
 
 		do
 		{
-			pExpected = topNodePtr;
-			
-			std::atomic_thread_fence(std::memory_order_seq_cst);
+			pExpected = mTopAlineNode16.pNode;
 
 			pDesired->pNextNode = pExpected;
 
@@ -88,7 +89,7 @@ public:
 			mCount.fetch_add(1);
 			return false;
 		}
-
+		
 		AlignNode16 expected{};
 		AlignNode16 desired{};
 
@@ -97,9 +98,7 @@ public:
 		do
 		{
 			expected.count = mTopAlineNode16.count;
-
 			std::atomic_thread_fence(std::memory_order_seq_cst);
-
 			expected.pNode = mTopAlineNode16.pNode;
 
 			desired.count = expected.count + 1;
@@ -128,7 +127,7 @@ private:
 
 	const int32 mMaxCount;
 
-	std::atomic<int32> mCount;
+	alignas(std::hardware_destructive_interference_size) std::atomic<int32> mCount;
 
-	AlignNode16 mTopAlineNode16;
+	alignas(std::hardware_destructive_interference_size) AlignNode16 mTopAlineNode16;
 };

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "pch.h"
+
 // ReSharper disable CppClangTidyClangDiagnosticPadded
 template <typename T>
 class ISingleton
