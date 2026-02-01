@@ -51,7 +51,7 @@ public:
 		{
 			Node* pNextNode = pNode->pNextNode;
 
-			if (mbPlacementNew == false)
+			if (!mbPlacementNew)
 			{
 				pNode->data.~T();
 			}

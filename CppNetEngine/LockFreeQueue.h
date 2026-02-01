@@ -56,18 +56,15 @@ public:
 			return false;
 		}
 
-		Node* pNode = NodeObjectPool::GetInstance().Alloc();
-		pNode->data = data;
-		pNode->pNextNode = nullptr;
-
-		Node* pDesired = pNode;
-		std::atomic_ref<Node*> atomicTailNextNodePtr(mTail.pNode->pNextNode);
+		Node* pDesired = NodeObjectPool::GetInstance().Alloc();
+		pDesired->data = data;
+		pDesired->pNextNode = nullptr;
 
 		while (true)
 		{
 			Node* pExpected = mTail.pNode->pNextNode;
-
-			if (pExpected == nullptr && atomicTailNextNodePtr.compare_exchange_weak(pExpected, pDesired) == true)
+			std::atomic_ref<Node*> atomicTailNextNodePtr(mTail.pNode->pNextNode);
+			if (pExpected == nullptr && (atomicTailNextNodePtr.compare_exchange_weak(pExpected, pDesired) == true))
 			{
 				moveTail();
 				break;
@@ -97,28 +94,28 @@ public:
 
 		do
 		{
-			expected = atomicHead.load();
-			if (expected.pNode == nullptr)
-			{
-				continue;
-			}
-
-			Node* pDequeueNode = expected.pNode->pNextNode;
-			if (pDequeueNode == nullptr)
-			{
-				continue;
-			}
-
-			desired.count = expected.count + 1;
-			desired.pNode = pDequeueNode;
-
-			if (mHead.pNode == mTail.pNode && mTail.pNode->pNextNode != nullptr)
+			if (mHead.pNode == mTail.pNode)
 			{
 				moveTail();
 				continue;
 			}
 
-			outData = pDequeueNode->data;
+			expected.count = mHead.count;
+			std::atomic_thread_fence(std::memory_order_seq_cst);
+			expected.pNode = mHead.pNode;
+			if (expected.pNode == nullptr)
+			{
+				continue;
+			}
+
+			desired.count = expected.count + 1;
+			desired.pNode = expected.pNode->pNextNode;
+			if (desired.pNode == nullptr)
+			{
+				continue;
+			}
+			
+			outData = desired.pNode->data;
 
 		} while (atomicHead.compare_exchange_weak(expected, desired) == false);
 
@@ -144,23 +141,19 @@ private:
 		AlignNode16 expected{};
 		AlignNode16 desired{};
 
-		std::atomic_ref<AlignNode16> atomicTail(mTail);
+		expected.count = mTail.count;
+		std::atomic_thread_fence(std::memory_order_seq_cst);
+		expected.pNode = mTail.pNode;
 
-		do
+		desired.count = expected.count + 1;
+		desired.pNode = expected.pNode->pNextNode;
+		if (desired.pNode == nullptr)
 		{
-			expected.count = mTail.count;
-			std::atomic_thread_fence(std::memory_order_seq_cst);
-			expected.pNode = mTail.pNode;
+			return;
+		}
 
-			Node* pNextNode = expected.pNode->pNextNode;
-			if (pNextNode == nullptr)
-			{
-				return;
-			}
-
-			desired.count = expected.count + 1;
-			desired.pNode = pNextNode;
-		} while (atomicTail.compare_exchange_weak(expected, desired) == false);
+		std::atomic_ref<AlignNode16> atomicTail(mTail);
+		atomicTail.compare_exchange_weak(expected, desired);
 	}
 
 	const int32 mMaxCount;

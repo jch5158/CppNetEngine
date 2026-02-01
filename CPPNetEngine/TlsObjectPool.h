@@ -45,9 +45,19 @@ private:
 			return &mChunkDataArray[mAllocCount++].data;
 		}
 
-		void Free()
+		bool IsDataEmpty() const
 		{
-			mFreeCount.fetch_add(1);
+			return mAllocCount == CHUNK_SIZE;
+		}
+
+		bool FreeWithIsAllFreed()
+		{
+			if (mFreeCount.fetch_add(1) == CHUNK_SIZE - 1)
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		void ChunkReset()
@@ -86,26 +96,29 @@ public:
 	[[nodiscard]]
 	T* Alloc()
 	{
-		if (mpTlsChunk != nullptr)
+		if (mpTlsChunk == nullptr)
 		{
-			if (T* pData = mpTlsChunk->GetData())
-			{
-				return pData;
-			}
-
-			mObjectPool.Free(mpTlsChunk);
+			mpTlsChunk = mObjectPool.Alloc();
 		}
 
-		mpTlsChunk = mObjectPool.Alloc();
-		mpTlsChunk->ChunkReset();
-		return mpTlsChunk->GetData();
+		T* pData = mpTlsChunk->GetData();
+		if (pData != nullptr && mpTlsChunk->IsDataEmpty())
+		{
+			mpTlsChunk = mObjectPool.Alloc();
+		}
+
+		return pData;
 	}
 
 	void Free(T* pData)
 	{
 		Chunk* pChunk = (reinterpret_cast<ChunkData*>(pData))->pChunk;
 
-		pChunk->Free();
+		if (pChunk->FreeWithIsAllFreed())
+		{
+			pChunk->ChunkReset();
+			mObjectPool.Free(pChunk);
+		}
 	}
 
 	[[nodiscard]]

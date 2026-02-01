@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
+#include "ObjectPoolManager.h"
 #include "LockFreeQueue.h"
+#include "LockFreeStack.h"
 
 class Player
 {
@@ -28,112 +30,114 @@ private:
     int32 mNum;
 };
 
-using LockFreeQueueTest = LockFreeQueue<Player*, 10>;
-using ObjectPoolMonitor = ObjectPoolManager<LockFreeQueueTest::Node, 10>;
+using LockFreeQueueTest = LockFreeQueue<Player*, 1>;
+using ObjectPoolMonitor = ObjectPoolManager<LockFreeQueueTest::Node, 1>;
 
 int32 main()
 {
     constexpr int32 TEST_COUNT = 10000;
     LockFreeQueueTest playerStack(TEST_COUNT);
+    ObjectPool<Player> PlayerObjPool(true, 0);
 
     //생산자 스레드
-    std::thread producer1([&]()->void {
+    std::thread producer1(
+        [&]()->void
+        {
+            while (true)
+            {
+                auto* p = PlayerObjPool.Alloc();
+            	while (!playerStack.TryEnqueue(p))
+                {
+                }
 
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        });
+
+    std::thread producer2(
+        [&]()->void
+        {
+            while (true)
+            {
+            	auto* p = PlayerObjPool.Alloc();
+            	while (!playerStack.TryEnqueue(p))
+                {
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        });
+
+    std::thread producer3([&]()->void {
         while (true)
         {
-            auto* p = new Player();
+            auto* p = PlayerObjPool.Alloc();
             while (!playerStack.TryEnqueue(p))
             {
             }
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-
-        });
-
-    std::thread producer2([&]()->void {
-
-
-        while (true)
-        {
-            auto* p = new Player();
-            while (!playerStack.TryEnqueue(p))
-            {
-            }
-
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         });
-
-    //std::thread producer3([&]()->void {
-
-
-    //    while (true)
-    //    {
-    //        auto* p = new Player();
-    //        while (!playerStack.TryEnqueue(p))
-    //        {
-    //        }
-
-
-    //        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    //    }
-    //    });
 
     // 소비자 스레드
-    std::thread consumer1([&]()->void {
-        while (true)
+    std::thread consumer1(
+        [&]()->void
         {
-            Player* p = nullptr;
-
-            while (!playerStack.TryDequeue(p))
+            while (true)
             {
+                Player* p = nullptr;
+
+                while (!playerStack.TryDequeue(p))
+                {
+                }
+
+                net_engine_global::CrashIf(p->GetNum() != 1);
+
+                PlayerObjPool.Free(p);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
+        });
 
-            net_engine_global::CrashIf(p->GetNum() != 1);
-
-        	delete p;
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-    });
-
-    std::thread consumer2([&]()->void {
-
-        while (true)
+    std::thread consumer2(
+        [&]()->void
         {
-            Player* p = nullptr;
-
-            while (!playerStack.TryDequeue(p))
+            while (true)
             {
+                Player* p = nullptr;
+
+                while (!playerStack.TryDequeue(p))
+                {
+                }
+
+                net_engine_global::CrashIf(p->GetNum() != 1);
+
+            	PlayerObjPool.Free(p);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-
-            net_engine_global::CrashIf(p->GetNum() != 1);
-
-            delete p;
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
         });
 
 
-    std::thread consumer3([&]()->void {
-
-        while (true)
+    std::thread consumer3(
+        [&]()->void
         {
-            Player* p = nullptr;
-
-            while (!playerStack.TryDequeue(p))
+            while (true)
             {
+                Player* p = nullptr;
+
+                while (!playerStack.TryDequeue(p))
+                {
+                }
+
+                net_engine_global::CrashIf(p->GetNum() != 1);
+
+            	PlayerObjPool.Free(p);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-
-            net_engine_global::CrashIf(p->GetNum() != 1);
-
-            delete p;
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
         });
 
 

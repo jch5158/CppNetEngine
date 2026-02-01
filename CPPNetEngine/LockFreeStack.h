@@ -71,7 +71,6 @@ public:
 		do
 		{
 			pExpected = mTopAlineNode16.pNode;
-
 			pDesired->pNextNode = pExpected;
 
 		} while (topNodePtr.compare_exchange_weak(pExpected, pDesired) == false);
