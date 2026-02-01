@@ -45,11 +45,11 @@ public:
 
 		while (pNode != nullptr)
 		{
-			Node* pTempNode = pNode->pNextNode;
+			Node* pNextNode = pNode->pNextNode;
 			
 			NodeObjectPool::GetInstance().Free(pNode);
 
-			pNode = pTempNode;
+			pNode = pNextNode;
 		}
 	}
 

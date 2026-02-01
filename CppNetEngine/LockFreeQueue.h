@@ -45,7 +45,14 @@ public:
 
 	~LockFreeQueue()
 	{
-		NodeObjectPool::GetInstance().Free(mHead.pNode);
+		Node* pNode = mHead.pNode;
+
+		while (pNode != nullptr)
+		{
+			Node* pNextNode = pNode->pNextNode;
+			NodeObjectPool::GetInstance().Free(pNode);
+			pNode = pNextNode;
+		}
 	}
 
 	[[nodiscard]]
