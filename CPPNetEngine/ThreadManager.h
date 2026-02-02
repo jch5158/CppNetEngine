@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include <functional>
 #include "ISingleton.h"
+#include <functional>
 
 class ThreadManager final : public ISingleton<ThreadManager>
 {

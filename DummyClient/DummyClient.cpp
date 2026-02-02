@@ -1,4 +1,6 @@
 ﻿#include "pch.h"
+
+#include "CrashHandler.h"
 #include "ObjectPoolManager.h"
 #include "LockFreeQueue.h"
 #include "LockFreeStack.h"
@@ -35,6 +37,8 @@ using ObjectPoolMonitor = ObjectPoolManager<LockFreeQueueTest::Node, 1>;
 
 int32 main()
 {
+    CrashHandler::Install(L"Test", L"1.0.0", L"");
+
     constexpr int32 TEST_COUNT = 10000;
     LockFreeQueueTest playerStack(TEST_COUNT);
     ObjectPool<Player> PlayerObjPool(true, 0);
@@ -146,5 +150,7 @@ int32 main()
         fmt::print(L"alloc : {}, pooling : {}\n", ObjectPoolMonitor::GetInstance().AllocCount(), ObjectPoolMonitor::GetInstance().PoolingCount());
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        CrashHandler::Crash();
     }
 }
