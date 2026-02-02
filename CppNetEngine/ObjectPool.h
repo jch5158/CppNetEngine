@@ -65,7 +65,7 @@ public:
 
 		if (mAllocCount.load() != 0 || mPoolingCount.load() != 0)
 		{
-			net_engine_global::Crash();
+			CrashHandler::Crash();
 		}
 	}
 
@@ -115,7 +115,7 @@ public:
 		Node* pDesired = reinterpret_cast<Node*>(pData);
 		if (pDesired->checksum != CHECKSUM_CODE)
 		{
-			net_engine_global::Crash();
+			CrashHandler::Crash();
 		}
 
 		if (mbPlacementNew)
@@ -156,7 +156,7 @@ private:
 		Node* pNode = static_cast<Node*>(mi_malloc(sizeof(Node)));
 		if (pNode == nullptr)
 		{
-			net_engine_global::Crash();
+			CrashHandler::Crash();
 		}
 
 		if (bPlacementNew)

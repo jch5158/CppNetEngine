@@ -97,7 +97,7 @@ int32 main()
                 {
                 }
 
-                net_engine_global::CrashIf(p->GetNum() != 1);
+                CrashHandler::CrashIf(p->GetNum() != 1);
 
                 PlayerObjPool.Free(p);
 
@@ -116,7 +116,7 @@ int32 main()
                 {
                 }
 
-                net_engine_global::CrashIf(p->GetNum() != 1);
+                CrashHandler::CrashIf(p->GetNum() != 1);
 
             	PlayerObjPool.Free(p);
 
@@ -136,7 +136,7 @@ int32 main()
                 {
                 }
 
-                net_engine_global::CrashIf(p->GetNum() != 1);
+                CrashHandler::CrashIf(p->GetNum() != 1);
 
             	PlayerObjPool.Free(p);
 
