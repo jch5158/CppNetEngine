@@ -19,7 +19,7 @@ private:
 		Chunk(Chunk&&) = delete;
 		Chunk& operator=(Chunk&&) = delete;
 
-		Chunk()
+		explicit Chunk()
 			:mAllocCount(0)
 			, mFreeCount(0)
 			, mChunkDataArray{}
@@ -96,15 +96,15 @@ public:
 	[[nodiscard]]
 	T* Alloc()
 	{
-		if (mpTlsChunk == nullptr)
+		if (spTlsChunk == nullptr)
 		{
-			mpTlsChunk = mObjectPool.Alloc();
+			spTlsChunk = mObjectPool.Alloc();
 		}
 
-		T* pData = mpTlsChunk->GetData();
-		if (pData != nullptr && mpTlsChunk->IsDataEmpty())
+		T* pData = spTlsChunk->GetData();
+		if (pData != nullptr && spTlsChunk->IsDataEmpty())
 		{
-			mpTlsChunk = mObjectPool.Alloc();
+			spTlsChunk = mObjectPool.Alloc();
 		}
 
 		return pData;
@@ -135,7 +135,7 @@ public:
 
 private:
 
-	inline static thread_local Chunk* mpTlsChunk = nullptr;
+	inline static thread_local Chunk* spTlsChunk = nullptr;
 
 	ObjectPool<Chunk> mObjectPool;
 };

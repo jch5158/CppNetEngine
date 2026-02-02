@@ -28,11 +28,11 @@ void ThreadManager::Launch(const std::function<void()>& callback)
 
 void ThreadManager::JoinWithClear()
 {
-	for (auto& t : mThreads)
+	for (auto& thread : mThreads)
 	{
-		if (t.joinable())
+		if (thread.joinable())
 		{
-			t.join();
+			thread.join();
 		}
 	}
 
@@ -41,10 +41,23 @@ void ThreadManager::JoinWithClear()
 
 void ThreadManager::InitTls()
 {
-	static std::atomic<int32> sThreadId = 0;
-	net_engine_tls::gThreadId = ++sThreadId;
+	static std::atomic<uint32> sThreadId = 1;
+	sTlsThreadId = sThreadId.fetch_add(1);
 }
 
 void ThreadManager::DestroyTls()
 {
 }
+
+// ReSharper disable once CppMemberFunctionMayBeStatic
+uint32 ThreadManager::GetThreadId() const
+{
+	if (sTlsThreadId == 0)
+	{
+		InitTls();
+	}
+
+	return sTlsThreadId;
+}
+
+thread_local uint32 ThreadManager::sTlsThreadId = 0;

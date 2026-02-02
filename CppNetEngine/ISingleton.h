@@ -24,5 +24,6 @@ public:
 	}
 
 private:
+
 	explicit ISingleton() = default;
 };

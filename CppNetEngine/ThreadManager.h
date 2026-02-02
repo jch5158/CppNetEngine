@@ -28,9 +28,14 @@ public:
 	static void InitTls();
 	static void DestroyTls();
 
+	[[nodiscard]]
+	uint32 GetThreadId() const;
+
 private:
 
 	Mutex mLock;
 	std::vector<std::thread> mThreads;
+
+	static thread_local uint32 sTlsThreadId;
 };
 
