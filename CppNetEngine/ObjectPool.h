@@ -33,6 +33,8 @@ public:
 		, mAllocCount(0)
 		, mPoolingCount(poolingCount)
 	{
+		static_assert(std::is_class_v<T>, "T is not class type.");
+
 		for (int32 i = 0; i < mPoolingCount.load(); ++i)
 		{
 			Node* pNode = allocNode(!mbPlacementNew);
@@ -63,7 +65,7 @@ public:
 			mPoolingCount.fetch_sub(1);
 		}
 
-		if (mAllocCount.load() != 0 || mPoolingCount.load() != 0)
+		if (mPoolingCount.load() != 0)
 		{
 			CrashHandler::Crash();
 		}
@@ -157,8 +159,9 @@ private:
 		if (pNode == nullptr)
 		{
 			CrashHandler::Crash();
+			return nullptr;
 		}
-
+		
 		if (bPlacementNew)
 		{
 			new(&pNode->data)T();

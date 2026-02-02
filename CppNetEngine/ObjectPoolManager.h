@@ -3,7 +3,7 @@
 #include "ISingleton.h"
 #include "TlsObjectPool.h"
 
-template<typename T, int32 CHUNK_SIZE>
+template <typename T, uint32 CHUNK_SIZE = 500>
 class ObjectPoolManager final : public ISingleton<ObjectPoolManager<T, CHUNK_SIZE>>
 {
 public:
@@ -19,7 +19,9 @@ private:
 
 	ObjectPoolManager()
 		:mTlsObjectPool()
-	{}
+	{
+		static_assert(std::is_class_v<T>, "T is not class type.");
+	}
 
 public:
 

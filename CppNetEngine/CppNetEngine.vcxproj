@@ -200,19 +200,21 @@
     <ClInclude Include="ISingleton.h" />
     <ClInclude Include="LockFreeQueue.h" />
     <ClInclude Include="LockFreeStack.h" />
+    <ClInclude Include="MemoryPool.h" />
+    <ClInclude Include="MemoryPoolManager.h" />
     <ClInclude Include="NetEngineGlobal.h" />
     <ClInclude Include="NetEngineMacro.h" />
     <ClInclude Include="NetEngineTls.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="ObjectPoolManager.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SharedPtrAllocator.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="TlsObjectPool.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CrashHandler.cpp" />
-    <ClCompile Include="EnginePch.cpp" />
     <ClCompile Include="NetEngineGlobal.cpp" />
     <ClCompile Include="NetEngineTls.cpp" />
     <ClCompile Include="pch.cpp">

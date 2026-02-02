@@ -69,13 +69,19 @@
     <ClInclude Include="ISingleton.h">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="SharedPtrAllocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPoolManager.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
-    </ClCompile>
-    <ClCompile Include="EnginePch.cpp">
-      <Filter>EnginePch</Filter>
     </ClCompile>
     <ClCompile Include="NetEngineGlobal.cpp">
       <Filter>Main</Filter>

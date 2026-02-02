@@ -3,8 +3,8 @@
 #include "pch.h"
 #include "ObjectPool.h"
 
-template <typename T, uint32 CHUNK_SIZE = 500>
-class TlsObjectPool final
+template <uint32 ALLOC_SIZE, uint32 CHUNK_SIZE = 500>
+class MemoryPool final
 {
 private:
 
@@ -29,13 +29,10 @@ private:
 				mChunkDataArray[i].pChunk = this;
 			}
 		}
-		
-		~Chunk()
-		{
-			ChunkReset();
-		};
 
-		T* GetData()
+		~Chunk() = default;
+
+		void* GetData()
 		{
 			if (mAllocCount >= CHUNK_SIZE)
 			{
@@ -75,34 +72,33 @@ private:
 
 	struct ChunkData
 	{
-		T data;
+		alignas(ALLOC_SIZE) byte data[ALLOC_SIZE];
 		Chunk* pChunk;
 	};
 
 public:
 
-	TlsObjectPool(const TlsObjectPool&) = delete;
-	TlsObjectPool& operator=(const TlsObjectPool&) = delete;
-	TlsObjectPool(TlsObjectPool&&) = delete;
-	TlsObjectPool& operator=(TlsObjectPool&&) = delete;
+	MemoryPool(const MemoryPool&) = delete;
+	MemoryPool& operator=(const MemoryPool&) = delete;
+	MemoryPool(MemoryPool&&) = delete;
+	MemoryPool& operator=(MemoryPool&&) = delete;
 
-	explicit TlsObjectPool()
-		: mObjectPool(false, 0)
+	explicit MemoryPool()
+		:mObjectPool(false, 0)
 	{
-		static_assert(std::is_class_v<T>, "T is not class type.");
 	}
 
-	~TlsObjectPool() = default;
+	~MemoryPool() = default;
 
 	[[nodiscard]]
-	T* Alloc()
+	void* Alloc()
 	{
 		if (spTlsChunk == nullptr)
 		{
 			spTlsChunk = mObjectPool.Alloc();
 		}
 
-		T* pData = spTlsChunk->GetData();
+		void* pData = spTlsChunk->GetData();
 		if (pData != nullptr && spTlsChunk->IsDataEmpty())
 		{
 			spTlsChunk = mObjectPool.Alloc();
@@ -111,9 +107,9 @@ public:
 		return pData;
 	}
 
-	void Free(T* pData)
+	void Free(void* pData)
 	{
-		Chunk* pChunk = (reinterpret_cast<ChunkData*>(pData))->pChunk;
+		Chunk* pChunk = (static_cast<ChunkData*>(pData))->pChunk;
 
 		if (pChunk->FreeWithIsAllFreed())
 		{
