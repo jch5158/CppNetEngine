@@ -42,12 +42,12 @@ bool CrashHandler::Install(const std::wstring& appName, const std::wstring& appV
     // 2. 메타데이터 변환 (wstring -> string UTF-8)
     std::map<std::string, std::string> annotations;
     annotations["format"] = "minidump";
-    annotations["prod"] = toU8String(appName);    // 한글 이름이 들어올 경우를 대비해 변환
+    annotations["prod"] = toU8String(appName);
     annotations["ver"] = toU8String(appVersion);
 
     // 3. 인자 설정
     std::vector<std::string> arguments;
-    arguments.push_back("--no-rate-limit");
+    arguments.emplace_back("--no-rate-limit");
 
     // 4. URL 변환
     std::string uploadUrl = toU8String(url);
