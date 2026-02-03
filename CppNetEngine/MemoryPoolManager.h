@@ -78,7 +78,7 @@ private:
 	struct TupleBuilder<std::index_sequence<INDEX...>>
 	{
 		// (Is + 1) * 32 => 32, 64, ... 4096 타입 생성
-		using type = std::tuple<MemoryPool<(INDEX + 1)* BUCKET_STRIDE>...>;
+		using type = std::tuple<MemoryPool<(INDEX + 1) * BUCKET_STRIDE>...>;
 	};
 
 	// 최종 Tuple 타입 정의
@@ -91,9 +91,9 @@ private:
 
 		// 실제 수행할 함수 (기존 AllocImpl)
 		template <uint64 INDEX>
-		static void* Do(BucketsTuple& pools)
+		static void* Do(BucketsTuple& buckets)
 		{
-			return std::get<INDEX>(pools).Alloc();
+			return std::get<INDEX>(buckets).Alloc();
 		}
 	};
 
@@ -104,9 +104,9 @@ private:
 
 		// 실제 수행할 함수 (기존 FreeImpl)
 		template <uint64 INDEX>
-		static void Do(BucketsTuple& pools, void* pData) 
+		static void Do(BucketsTuple& buckets, void* pData) 
 		{
-			std::get<INDEX>(pools).Free(pData);
+			std::get<INDEX>(buckets).Free(pData);
 		}
 	};
 

@@ -7,20 +7,18 @@
 #include "MemoryPoolManager.h"
 #include "SharedPtrAllocator.h"
 
-class Player
-{
-public:
-    Player() = default;
-    ~Player() = default;
-};
 
+template <typename... Args>
+void print(Args... tail) 
+{
+    ((std::cout << tail << " "), ...);
+}
 
 int32 main()
 {
-    //CrashHandler::Install(L"Test", L"1.0.0", L"");
+    CrashHandler::Install(L"Test", L"1.0.0", L"");
 
-    std::shared_ptr<Player> ptr = std::allocate_shared<Player>(SharedPtrAllocator<Player>());
-
-    fmt::print(L"Success?\n");
+    // 인자의 개수나 타입이 달라도 다 받아줌
+    print(1, 2.5, "hello", 'A');
 
 }
