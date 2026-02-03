@@ -21,15 +21,15 @@ public:
 	{
 		const uint64 sharedPtrSize = sizeof(T) * size;
 
-        T* p = static_cast<T*>(MemoryPoolManager<>::GetInstance().Alloc(sharedPtrSize));
+        T* ptr = static_cast<T*>(MemoryPoolManager<>::GetInstance().Alloc(sharedPtrSize));
 
-        return p;
+        return ptr;
 	}
 
-	static void deallocate(T* p, const uint64 size)
+	static void deallocate(T* ptr, const uint64 size)
 	{
         const uint64 objSize = sizeof(T) * size;
 
-        MemoryPoolManager<>::GetInstance().Free(p, objSize);
+        MemoryPoolManager<>::GetInstance().Free(ptr, objSize);
 	}
 };
