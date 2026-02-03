@@ -1,11 +1,10 @@
 ﻿// ReSharper disable CppMemberFunctionMayBeConst
 #pragma once
-#include "CrashHandler.h"
 #include "ISingleton.h"
 #include "MemoryPool.h"
 #include <tuple>
 #include <utility> // std::integer_sequence
-#include <array>     // 필수! (이게 없어서 에러 났음)
+#include <array>
 
 template <uint32 CHUNK_SIZE = 500>
 class MemoryPoolManager final : public ISingleton<MemoryPoolManager<CHUNK_SIZE>>
@@ -47,10 +46,8 @@ public:
 
 		const uint64 idx = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
 
-		// 2. 점프 테이블 가져오기 (static이라 비용 0)
 		const auto& table = getTable<AllocActor>(std::make_index_sequence<POOL_COUNT>{});
 
-		// 3. 해당 인덱스의 함수 실행 (pData 획득)
 		return table[idx](mBuckets);
 	}
 
@@ -62,13 +59,10 @@ public:
 			return;
 		}
 
-		// 1. 인덱스 계산 (Alloc과 동일해야 함)
 		const uint64 idx = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
 
-		// 2. 점프 테이블 가져오기
 		const auto& table = getTable<FreeActor>(std::make_index_sequence<POOL_COUNT>{});
 
-		// 3. 해당 인덱스의 함수 실행 (pData 획득)
 		return table[idx](mBuckets, pData);
 	}
 
@@ -96,10 +90,10 @@ private:
 		using FuncType = void* (*)(BucketsTuple&);
 
 		// 실제 수행할 함수 (기존 AllocImpl)
-		template <uint64 Index>
+		template <uint64 INDEX>
 		static void* Do(BucketsTuple& pools)
 		{
-			return std::get<Index>(pools).Alloc();
+			return std::get<INDEX>(pools).Alloc();
 		}
 	};
 
@@ -109,10 +103,10 @@ private:
 		using FuncType = void (*)(BucketsTuple&, void*);
 
 		// 실제 수행할 함수 (기존 FreeImpl)
-		template <uint64 Index>
+		template <uint64 INDEX>
 		static void Do(BucketsTuple& pools, void* pData) 
 		{
-			std::get<Index>(pools).Free(pData);
+			std::get<INDEX>(pools).Free(pData);
 		}
 	};
 
@@ -128,6 +122,5 @@ private:
 		return table;
 	}
 
-	// ★ 128개의 풀이 담긴 멤버 변수
 	BucketsTuple mBuckets;
 };
