@@ -78,7 +78,7 @@ public:
 
 		const auto& table = getTable<FreeActor>(std::make_index_sequence<POOL_COUNT>{});
 
-		return table[index](mBuckets, pData);
+		table[index](mBuckets, pData);
 	}
 
 private:
