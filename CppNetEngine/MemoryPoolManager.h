@@ -16,6 +16,8 @@ private:
 	static constexpr uint32 MIN_ALLOC_SIZE = 32;
 	static constexpr uint32 MAX_ALLOC_SIZE = 4096;
 
+	static constexpr int64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
+
 public:
 
 	friend class ISingleton<MemoryPoolManager<CHUNK_SIZE>>;
@@ -38,7 +40,12 @@ public:
 	{
 		if (size > MAX_ALLOC_SIZE)
 		{
-			void* pData = mi_malloc(size);
+			void* pData = mi_malloc(size + sizeof(uint64));
+
+			*(static_cast<uint64*>(pData)) = CHECKSUM_CODE;
+
+			pData = static_cast<byte*>(pData) + sizeof(uint64);
+
 			return pData;
 		}
 
@@ -51,9 +58,19 @@ public:
 
 	void Free(void* pData, const uint64 size)
 	{
-		if (size > MAX_ALLOC_SIZE) 
+		if (size > MAX_ALLOC_SIZE)
 		{
-			mi_free(pData);
+			pData = static_cast<byte*>(pData) - sizeof(uint64);
+
+			if (*(static_cast<uint64*>(pData)) == CHECKSUM_CODE)
+			{
+				mi_free(pData);
+			}
+			else
+			{
+				CrashHandler::Crash();
+			}
+
 			return;
 		}
 

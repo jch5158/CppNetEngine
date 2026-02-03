@@ -18,6 +18,7 @@ int32 main()
 {
     CrashHandler::Install(L"Test", L"1.0.0", L"");
 
-    // 인자의 개수나 타입이 달라도 다 받아줌
-    print(1, 2.5, "hello", 'A');
+    void * p = MemoryPoolManager<>::GetInstance().Alloc(5000);
+
+	MemoryPoolManager<>::GetInstance().Free(p, 5000);
 }
