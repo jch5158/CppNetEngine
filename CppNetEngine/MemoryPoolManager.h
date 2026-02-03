@@ -3,13 +3,18 @@
 #include "CrashHandler.h"
 #include "ISingleton.h"
 #include "MemoryPool.h"
-
+#include <tuple>
+#include <utility> // std::integer_sequence
+#include <array>     // 필수! (이게 없어서 에러 났음)
 
 template <uint32 CHUNK_SIZE = 500>
 class MemoryPoolManager final : public ISingleton<MemoryPoolManager<CHUNK_SIZE>>
 {
 private:
 
+	static constexpr uint32 BUCKET_STRIDE = 32;
+	static constexpr uint32 POOL_COUNT = 128;
+	static constexpr uint32 MIN_ALLOC_SIZE = 32;
 	static constexpr uint32 MAX_ALLOC_SIZE = 8192;
 
 public:
@@ -36,104 +41,93 @@ public:
 	{
 		if (size > MAX_ALLOC_SIZE)
 		{
-			CrashHandler::Crash();
+			void* pData = mi_malloc(size);
+			return pData;
 		}
 
-		void* pData = nullptr;
+		const uint64 idx = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
 
-		// ReSharper disable once CppTooWideScope
-		const uint64 idx = (size <= 32) ? 0 : std::bit_width(size - 1) - 5;
+		// 2. 점프 테이블 가져오기 (static이라 비용 0)
+		const auto& table = getTable<AllocActor>(std::make_index_sequence<POOL_COUNT>{});
 
-		switch (idx)
-		{
-		case 0:
-			pData = mBuckets32.Alloc();
-			break;
-		case 1:
-			pData = mBuckets64.Alloc();
-			break;
-		case 2:
-			pData = mBuckets128.Alloc();
-			break;
-		case 3:
-			pData = mBuckets256.Alloc();
-			break;
-		case 4:
-			pData = mBuckets512.Alloc();
-			break;
-		case 5:
-			pData = mBuckets1024.Alloc();
-			break;
-		case 6:
-			pData = mBuckets2048.Alloc();
-			break;
-		case 7:
-			pData = mBuckets4096.Alloc();
-			break;
-		case 8:
-			pData = mBuckets8192.Alloc();
-			break;
-		default:
-			CrashHandler::Crash();
-			break;
-		};
-
-		return pData;
+		// 3. 해당 인덱스의 함수 실행 (pData 획득)
+		return table[idx](mBuckets);
 	}
 
 	void Free(void* pData, const uint64 size)
 	{
-		if (size > MAX_ALLOC_SIZE)
+		if (size > MAX_ALLOC_SIZE) 
 		{
-			CrashHandler::Crash();
+			mi_free(pData);
+			return;
 		}
 
-		// ReSharper disable once CppTooWideScope
-		const uint64 idx = (size <= 32) ? 0 : std::bit_width(size - 1) - 5;
+		// 1. 인덱스 계산 (Alloc과 동일해야 함)
+		const uint64 idx = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
 
-		switch (idx)
-		{
-		case 0:
-			mBuckets32.Free(pData);
-			break;
-		case 1:
-			mBuckets64.Free(pData);
-			break;
-		case 2:
-			mBuckets128.Free(pData);
-			break;
-		case 3:
-			mBuckets256.Free(pData);
-			break;
-		case 4:
-			mBuckets512.Free(pData);
-			break;
-		case 5:
-			mBuckets1024.Free(pData);
-			break;
-		case 6:
-			mBuckets2048.Free(pData);
-			break;
-		case 7:
-			mBuckets4096.Free(pData);
-			break;
-		case 8:
-			mBuckets8192.Free(pData);
-			break;
-		default:
-			CrashHandler::Crash();
-			break;
-		};
+		// 2. 점프 테이블 가져오기
+		const auto& table = getTable<FreeActor>(std::make_index_sequence<POOL_COUNT>{});
+
+		// 3. 해당 인덱스의 함수 실행 (pData 획득)
+		return table[idx](mBuckets, pData);
 	}
 
 private:
-	MemoryPool<32> mBuckets32;
-	MemoryPool<64> mBuckets64;
-	MemoryPool<128> mBuckets128;
-	MemoryPool<256> mBuckets256;
-	MemoryPool<512> mBuckets512;
-	MemoryPool<1024> mBuckets1024;
-	MemoryPool<2048> mBuckets2048;
-	MemoryPool<4096> mBuckets4096;
-	MemoryPool<8192> mBuckets8192;
+
+	// ----------------------------------------------------------------------
+	// [Type Helper] 구조체 템플릿을 이용해 Tuple 타입 생성 (에러 해결)
+	// ----------------------------------------------------------------------
+	template <typename SEQUENCE>
+	struct TupleBuilder;
+
+	template <uint64... INDEX>
+	struct TupleBuilder<std::index_sequence<INDEX...>>
+	{
+		// (Is + 1) * 32 => 32, 64, ... 4096 타입 생성
+		using type = std::tuple<MemoryPool<(INDEX + 1)* BUCKET_STRIDE>...>;
+	};
+
+	// 최종 Tuple 타입 정의
+	using BucketsTuple = TupleBuilder<std::make_index_sequence<POOL_COUNT>>::type;
+
+	class AllocActor
+	{
+	public:
+		using FuncType = void* (*)(BucketsTuple&);
+
+		// 실제 수행할 함수 (기존 AllocImpl)
+		template <uint64 Index>
+		static void* Do(BucketsTuple& pools)
+		{
+			return std::get<Index>(pools).Alloc();
+		}
+	};
+
+	class FreeActor
+	{
+	public:
+		using FuncType = void (*)(BucketsTuple&, void*);
+
+		// 실제 수행할 함수 (기존 FreeImpl)
+		template <uint64 Index>
+		static void Do(BucketsTuple& pools, void* pData) 
+		{
+			std::get<Index>(pools).Free(pData);
+		}
+	};
+
+	// --------------------------------------------------------------------------
+	// [통합 테이블 생성기] 어떤 Action이든 처리하는 만능 함수
+	// --------------------------------------------------------------------------
+	template <typename ACTION, uint64... INDEX>
+	static const auto& getTable(std::index_sequence<INDEX...>) 
+	{
+		static const std::array<typename ACTION::FuncType, POOL_COUNT> table
+			= { &ACTION::template Do<INDEX>... }; // ★ 핵심: Action 안에 있는 Do<Is>를 꺼냄
+
+		return table;
+	}
+
+	// ★ 128개의 풀이 담긴 멤버 변수
+	BucketsTuple mBuckets;
 };

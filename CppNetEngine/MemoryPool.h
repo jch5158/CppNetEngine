@@ -72,7 +72,7 @@ private:
 
 	struct ChunkData
 	{
-		alignas(ALLOC_SIZE) byte data[ALLOC_SIZE];
+		alignas(16) byte data[ALLOC_SIZE];
 		Chunk* pChunk;
 	};
 
