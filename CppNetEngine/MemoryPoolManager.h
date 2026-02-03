@@ -14,7 +14,7 @@ private:
 	static constexpr uint32 BUCKET_STRIDE = 32;
 	static constexpr uint32 POOL_COUNT = 128;
 	static constexpr uint32 MIN_ALLOC_SIZE = 32;
-	static constexpr uint32 MAX_ALLOC_SIZE = 8192;
+	static constexpr uint32 MAX_ALLOC_SIZE = 4096;
 
 public:
 
@@ -27,9 +27,7 @@ public:
 
 private:
 
-	explicit MemoryPoolManager()
-	{
-	}
+	explicit MemoryPoolManager() = default;
 
 public:
 
@@ -44,11 +42,11 @@ public:
 			return pData;
 		}
 
-		const uint64 idx = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
+		const uint64 index = getBucketIndex(size);
 
 		const auto& table = getTable<AllocActor>(std::make_index_sequence<POOL_COUNT>{});
 
-		return table[idx](mBuckets);
+		return table[index](mBuckets);
 	}
 
 	void Free(void* pData, const uint64 size)
@@ -59,14 +57,21 @@ public:
 			return;
 		}
 
-		const uint64 idx = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
+		const uint64 index = getBucketIndex(size);
 
 		const auto& table = getTable<FreeActor>(std::make_index_sequence<POOL_COUNT>{});
 
-		return table[idx](mBuckets, pData);
+		return table[index](mBuckets, pData);
 	}
 
 private:
+
+	static uint64 getBucketIndex(const uint64 size)
+	{
+		const uint64 index = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
+
+		return index;
+	}
 
 	// ----------------------------------------------------------------------
 	// [Type Helper] 구조체 템플릿을 이용해 Tuple 타입 생성 (에러 해결)
