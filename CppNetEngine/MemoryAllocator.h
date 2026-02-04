@@ -6,6 +6,7 @@
 #include <utility> // std::integer_sequence
 #include <array>
 
+
 class MemoryAllocator final : public ISingleton<MemoryAllocator>
 {
 private:

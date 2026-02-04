@@ -78,6 +78,9 @@
     <ClInclude Include="MemoryAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="StlAllocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

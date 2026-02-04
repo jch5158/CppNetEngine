@@ -209,6 +209,7 @@
     <ClInclude Include="ObjectPoolManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SharedPtrAllocator.h" />
+    <ClInclude Include="StlAllocator.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="TlsObjectPool.h" />
     <ClInclude Include="Types.h" />

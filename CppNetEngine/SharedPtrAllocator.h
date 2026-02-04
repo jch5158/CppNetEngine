@@ -1,8 +1,6 @@
 ﻿// ReSharper disable CppInconsistentNaming
 #pragma once
-#include "CrashHandler.h"
-#include "MemoryPool.h"
-#include "MemoryPoolManager.h"
+#include "MemoryAllocator.h"
 
 template <typename T>
 class SharedPtrAllocator final
@@ -12,6 +10,7 @@ public:
     using value_type = T;
 
 	explicit SharedPtrAllocator() = default;
+	~SharedPtrAllocator() = default;
     
 	template <typename U>
 	explicit SharedPtrAllocator(const SharedPtrAllocator<U>&) {}
@@ -21,7 +20,7 @@ public:
 	{
 		const uint64 sharedPtrSize = sizeof(T) * size;
 
-        T* ptr = static_cast<T*>(MemoryPoolManager<>::GetInstance().Alloc(sharedPtrSize));
+        T* ptr = static_cast<T*>(MemoryAllocator::GetInstance().Alloc(sharedPtrSize));
 
         return ptr;
 	}
@@ -30,6 +29,6 @@ public:
 	{
         const uint64 objSize = sizeof(T) * size;
 
-        MemoryPoolManager<>::GetInstance().Free(ptr, objSize);
+        MemoryAllocator::GetInstance().Free(ptr, objSize);
 	}
 };

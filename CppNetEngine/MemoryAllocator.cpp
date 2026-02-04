@@ -64,16 +64,7 @@ bool MemoryAllocator::isValidChecksum(void* pData, const uint64 size)
 
 uint64 MemoryAllocator::getBucketIndex(const uint64 size)
 {
-	uint64 index = 0;
-
-	if (size <= MIN_ALLOC_SIZE)
-	{
-		index = 0;
-	}
-	else
-	{
-		index = static_cast<uint64>(std::bit_width(size - 1) - 5);
-	}
+	const uint64 index = (size - 1) >> 5;
 
 	return index;
 }
