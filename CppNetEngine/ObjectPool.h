@@ -1,17 +1,18 @@
 ﻿#pragma once
 
 #include "pch.h"
+#include "CrashHandler.h"
 
 template <typename T>
 class ObjectPool final
 {
 private:
-	static constexpr int64 CHECKSUM_CODE = 0x0011223344556677;
+	static constexpr uint64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
 
 	struct Node
 	{
 		T data;
-		int64 checksum;
+		uint64 checksum;
 		Node* pNextNode;
 	};
 
@@ -22,6 +23,7 @@ private:
 	};
 
 public:
+	
 	ObjectPool(const ObjectPool&) = delete;
 	ObjectPool& operator=(const ObjectPool&) = delete;
 	ObjectPool(ObjectPool&&) = delete;

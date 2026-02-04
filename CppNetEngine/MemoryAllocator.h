@@ -6,89 +6,46 @@
 #include <utility> // std::integer_sequence
 #include <array>
 
-template <uint32 CHUNK_SIZE = 500>
-class MemoryPoolManager final : public ISingleton<MemoryPoolManager<CHUNK_SIZE>>
+class MemoryAllocator final : public ISingleton<MemoryAllocator>
 {
 private:
 
+	static constexpr uint32 CHUNK_SIZE = 500;
 	static constexpr uint32 BUCKET_STRIDE = 32;
 	static constexpr uint32 POOL_COUNT = 128;
 	static constexpr uint32 MIN_ALLOC_SIZE = 32;
 	static constexpr uint32 MAX_ALLOC_SIZE = 4096;
-
-	static constexpr int64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
+	static constexpr uint64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
 
 public:
 
-	friend class ISingleton<MemoryPoolManager<CHUNK_SIZE>>;
+	friend class ISingleton<MemoryAllocator>;
 
-	MemoryPoolManager(const MemoryPoolManager&) = delete;
-	MemoryPoolManager& operator=(const MemoryPoolManager&) = delete;
-	MemoryPoolManager(MemoryPoolManager&&) = delete;
-	MemoryPoolManager& operator=(MemoryPoolManager&&) = delete;
+	MemoryAllocator(const MemoryAllocator&) = delete;
+	MemoryAllocator& operator=(const MemoryAllocator&) = delete;
+	MemoryAllocator(MemoryAllocator&&) = delete;
+	MemoryAllocator& operator=(MemoryAllocator&&) = delete;
 
 private:
 
-	explicit MemoryPoolManager() = default;
+	explicit MemoryAllocator() = default;
 
 public:
 
-	virtual ~MemoryPoolManager() override = default;
+	virtual ~MemoryAllocator() override = default;
 
 	[[nodiscard]]
-	void* Alloc(const uint64 size)
-	{
-		if (size > MAX_ALLOC_SIZE)
-		{
-			void* pData = mi_malloc(size + sizeof(uint64));
+	void* Alloc(const uint64 size);
 
-			*(static_cast<uint64*>(pData)) = CHECKSUM_CODE;
-
-			pData = static_cast<byte*>(pData) + sizeof(uint64);
-
-			return pData;
-		}
-
-		const uint64 index = getBucketIndex(size);
-
-		const auto& table = getTable<AllocActor>(std::make_index_sequence<POOL_COUNT>{});
-
-		return table[index](mBuckets);
-	}
-
-	void Free(void* pData, const uint64 size)
-	{
-		if (size > MAX_ALLOC_SIZE)
-		{
-			pData = static_cast<byte*>(pData) - sizeof(uint64);
-
-			if (*(static_cast<uint64*>(pData)) == CHECKSUM_CODE)
-			{
-				mi_free(pData);
-			}
-			else
-			{
-				CrashHandler::Crash();
-			}
-
-			return;
-		}
-
-		const uint64 index = getBucketIndex(size);
-
-		const auto& table = getTable<FreeActor>(std::make_index_sequence<POOL_COUNT>{});
-
-		table[index](mBuckets, pData);
-	}
+	void Free(void* pData, const uint64 size);
 
 private:
 
-	static uint64 getBucketIndex(const uint64 size)
-	{
-		const uint64 index = (size <= MIN_ALLOC_SIZE) ? 0 : std::bit_width(size - 1) - 5;
+	static void setChecksum(void* pData, const uint64 size);
 
-		return index;
-	}
+	static bool isValidChecksum(void* pData, const uint64 size);
+
+	static uint64 getBucketIndex(const uint64 size);
 
 	// ----------------------------------------------------------------------
 	// [Type Helper] 구조체 템플릿을 이용해 Tuple 타입 생성 (에러 해결)
@@ -144,5 +101,5 @@ private:
 		return table;
 	}
 
-	BucketsTuple mBuckets;
+	BucketsTuple mBuckets;  // NOLINT(clang-diagnostic-padded)
 };

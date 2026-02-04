@@ -201,7 +201,7 @@
     <ClInclude Include="LockFreeQueue.h" />
     <ClInclude Include="LockFreeStack.h" />
     <ClInclude Include="MemoryPool.h" />
-    <ClInclude Include="MemoryPoolManager.h" />
+    <ClInclude Include="MemoryAllocator.h" />
     <ClInclude Include="NetEngineGlobal.h" />
     <ClInclude Include="NetEngineMacro.h" />
     <ClInclude Include="NetEngineTls.h" />
@@ -215,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CrashHandler.cpp" />
+    <ClCompile Include="MemoryAllocator.cpp" />
     <ClCompile Include="NetEngineGlobal.cpp" />
     <ClCompile Include="NetEngineTls.cpp" />
     <ClCompile Include="pch.cpp">

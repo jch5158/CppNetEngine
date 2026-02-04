@@ -87,7 +87,8 @@ public:
 	TlsObjectPool& operator=(TlsObjectPool&&) = delete;
 
 	explicit TlsObjectPool()
-		: mObjectPool(false, 0)
+		: mAllocCount(0)
+		, mObjectPool(false, 0)
 	{
 		static_assert(std::is_class_v<T>, "T is not class type.");
 	}
@@ -97,6 +98,8 @@ public:
 	[[nodiscard]]
 	T* Alloc()
 	{
+		mAllocCount.fetch_add(1);
+
 		if (spTlsChunk == nullptr)
 		{
 			spTlsChunk = mObjectPool.Alloc();
@@ -120,23 +123,28 @@ public:
 			pChunk->ChunkReset();
 			mObjectPool.Free(pChunk);
 		}
+
+		mAllocCount.fetch_sub(1);
+	}
+
+	void AllFree()
+	{
+		spTlsChunk->ChunkReset();
+		mObjectPool.Free(spTlsChunk);
+		spTlsChunk = nullptr;
 	}
 
 	[[nodiscard]]
 	int32 AllocCount() const
 	{
-		return mObjectPool.AllocCount();
-	}
-
-	[[nodiscard]]
-	int32 PoolingCount() const
-	{
-		return mObjectPool.PoolingCount();
+		return mAllocCount.load();
 	}
 
 private:
 
 	inline static thread_local Chunk* spTlsChunk = nullptr;
+
+	std::atomic<int32> mAllocCount;
 
 	ObjectPool<Chunk> mObjectPool;
 };
