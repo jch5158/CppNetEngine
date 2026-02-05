@@ -2,28 +2,6 @@
 
 class ReceiveBuffer
 {
-private:
-
-	class BufferDeleter
-	{
-	public:
-
-		BufferDeleter() = delete;
-		explicit BufferDeleter(const int32 size)
-			:mSize(size)
-		{
-		}
-
-		void operator()(char* pBuffer) const
-		{
-			MemoryAllocator::GetInstance().Free(pBuffer, mSize);
-		}
-
-	public:
-
-		const int32 mSize;
-	};
-
 public:
 
 	constexpr static int32 DEFAULT_BUFFER_SIZE = 8192;
@@ -72,9 +50,29 @@ public:
 
 private:
 
+	class BufferDeleter
+	{
+	public:
+
+		BufferDeleter() = delete;
+		explicit BufferDeleter(const int32 size)
+			:mSize(size)
+		{
+		}
+
+		void operator()(char* pBuffer) const
+		{
+			MemoryAllocator::GetInstance().Free(pBuffer, mSize);
+		}
+
+	private:
+
+		const int32 mSize;
+	};
+
 	int32 mFront;
 	int32 mRear;
 	const int32 mBufferSize;
-	std::unique_ptr<char[], BufferDeleter> mBuffer;
+	std::unique_ptr<char[], BufferDeleter> mBuffer;  // NOLINT(clang-diagnostic-padded)
 };
 
