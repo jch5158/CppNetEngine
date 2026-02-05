@@ -14,7 +14,7 @@ private:
 		{
 		}
 
-		void operator()(byte* pBuffer) const
+		void operator()(char* pBuffer) const
 		{
 			MemoryAllocator::GetInstance().Free(pBuffer, mSize);
 		}
@@ -44,10 +44,10 @@ public:
 	void Clear();
 
 	[[nodiscard]]
-	byte* GetReadBuffer() const;
+	char* GetReadBuffer() const;
 
 	[[nodiscard]]
-	byte* GetWriteBuffer() const;
+	char* GetWriteBuffer() const;
 
 	[[nodiscard]]
 	int32 GetUseSize() const;
@@ -64,20 +64,17 @@ public:
 	[[nodiscard]]
 	bool IsEmpty() const;
 
-	[[nodiscard]]
-	int32 Write(const byte* pData, const int32 size);
+	int32 Write(const char* pData, const int32 size);
 
-	[[nodiscard]]
-	int32 Read(byte* pBuffer, const int32 size);
+	int32 Read(char* pBuffer, const int32 size);
 
-	[[nodiscard]]
-	int32 Peek(byte* pBuffer, const int32 size) const;
+	int32 Peek(char* pBuffer, const int32 size) const;
 
 private:
 
 	int32 mFront;
 	int32 mRear;
 	const int32 mBufferSize;
-	std::unique_ptr<byte[], BufferDeleter> mBuffer;
+	std::unique_ptr<char[], BufferDeleter> mBuffer;
 };
 

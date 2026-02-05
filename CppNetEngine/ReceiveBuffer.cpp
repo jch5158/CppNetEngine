@@ -5,7 +5,7 @@ ReceiveBuffer::ReceiveBuffer()
 	: mFront(0)
 	, mRear(0)
 	, mBufferSize(DEFAULT_BUFFER_SIZE)
-	, mBuffer(static_cast<byte*>(MemoryAllocator::GetInstance().Alloc(DEFAULT_BUFFER_SIZE)), BufferDeleter(DEFAULT_BUFFER_SIZE))
+	, mBuffer(static_cast<char*>(MemoryAllocator::GetInstance().Alloc(DEFAULT_BUFFER_SIZE)), BufferDeleter(DEFAULT_BUFFER_SIZE))
 {
 }
 
@@ -13,7 +13,7 @@ ReceiveBuffer::ReceiveBuffer(const int32 bufferSize)
 	: mFront(0)
 	, mRear(0)
 	, mBufferSize(bufferSize)
-	, mBuffer(static_cast<byte*>(MemoryAllocator::GetInstance().Alloc(bufferSize)), BufferDeleter(bufferSize))
+	, mBuffer(static_cast<char*>(MemoryAllocator::GetInstance().Alloc(bufferSize)), BufferDeleter(bufferSize))
 {
 }
 
@@ -33,27 +33,29 @@ void ReceiveBuffer::Clear()
 	mRear = 0;
 }
 
-byte* ReceiveBuffer::GetReadBuffer() const
+char* ReceiveBuffer::GetReadBuffer() const
 {
 	return &mBuffer[mFront];
 }
 
-byte* ReceiveBuffer::GetWriteBuffer() const
+char* ReceiveBuffer::GetWriteBuffer() const
 {
 	return &mBuffer[mRear];
 }
 
 int32 ReceiveBuffer::GetUseSize() const
 {
+	const int32 front = mFront;
+	const int32 rear = mRear;
 	int32 useSize;
 
-	if (mFront > mRear)
+	if (front > rear)
 	{
-		useSize = mBufferSize - (mFront - mRear);
+		useSize = mBufferSize - (front - rear);
 	}
 	else
 	{
-		useSize = mRear - mFront;
+		useSize = rear - front;
 	}
 
 	return useSize;
@@ -61,15 +63,17 @@ int32 ReceiveBuffer::GetUseSize() const
 
 int32 ReceiveBuffer::GetFreeSize() const
 {
-	int freeSize;
+	const int32 front = mFront;
+	const int32 rear = mRear;
+	int32 freeSize;
 
-	if (mFront > mRear)
+	if (front > rear)
 	{
-		freeSize = mFront - mRear - 1;
+		freeSize = front - rear - 1;
 	}
 	else
 	{
-		freeSize = mBufferSize - (mRear - mFront) - 1;
+		freeSize = mBufferSize - (rear - front) - 1;
 	}
 
 	return freeSize;
@@ -77,15 +81,17 @@ int32 ReceiveBuffer::GetFreeSize() const
 
 int32 ReceiveBuffer::GetDirectWriteSize() const
 {
+	const int32 front = mFront;
+	const int32 rear = mRear;
 	int32 writeSize;
 
-	if (mFront > mRear)
+	if (front > rear)
 	{
-		writeSize = mFront - mRear - 1;
+		writeSize = front - rear - 1;
 	}
 	else
 	{
-		writeSize = mBufferSize - mRear - (mFront == 0 ? 1 : 0);
+		writeSize = mBufferSize - rear - (front == 0 ? 1 : 0);
 	}
 
 	return writeSize;
@@ -93,15 +99,17 @@ int32 ReceiveBuffer::GetDirectWriteSize() const
 
 int32 ReceiveBuffer::GetDirectReadSize() const
 {
+	const int32 front = mFront;
+	const int32 rear = mRear;
 	int32 readSize;
 
-	if (mFront > mRear)
+	if (front > rear)
 	{
-		readSize = mBufferSize - mFront;
+		readSize = mBufferSize - front;
 	}
 	else
 	{
-		readSize = mRear - mFront;
+		readSize = rear - front;
 	}
 
 	return readSize;
@@ -112,7 +120,7 @@ bool ReceiveBuffer::IsEmpty() const
 	return mFront == mRear;
 }
 
-int32 ReceiveBuffer::Write(const byte* pData, const int32 size)
+int32 ReceiveBuffer::Write(const char* pData, const int32 size)
 {
 	const int32 writeSize = std::min(GetFreeSize(), size);
 	if (writeSize == 0)
@@ -138,7 +146,7 @@ int32 ReceiveBuffer::Write(const byte* pData, const int32 size)
 	return writeSize;
 }
 
-int32 ReceiveBuffer::Read(byte* pBuffer, const int32 size)
+int32 ReceiveBuffer::Read(char* pBuffer, const int32 size)
 {
 	const int32 readSize = std::min(GetUseSize(), size);
 	if (readSize == 0)
@@ -164,7 +172,7 @@ int32 ReceiveBuffer::Read(byte* pBuffer, const int32 size)
 	return readSize;
 }
 
-int32 ReceiveBuffer::Peek(byte* pBuffer, const int32 size) const
+int32 ReceiveBuffer::Peek(char* pBuffer, const int32 size) const
 {
 	const int32 readSize = std::min(GetUseSize(), size);
 	if (readSize == 0)
