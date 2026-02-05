@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <thread>
 #include <atomic>
+#include <mutex>
 
 #include <mimalloc.h>
 #include <fmt/core.h>
@@ -21,3 +22,5 @@
 #include "NetEngineMacro.h"
 #include "NetEngineTls.h"
 #include "NetEngineGlobal.h"
+#include "StlAllocator.h"
+#include "SharedPtrAllocator.h"

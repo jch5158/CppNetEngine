@@ -6,8 +6,12 @@ class StlAllocator
 {
 public:
 	using value_type = T;
-
+	
 	explicit StlAllocator() = default;
+	explicit StlAllocator(const StlAllocator&) = default;
+	StlAllocator& operator=(const StlAllocator&) = default;
+	explicit StlAllocator(StlAllocator&&) = default;
+	StlAllocator& operator=(StlAllocator&&) = default;
 	~StlAllocator() = default;
 
 	template <typename U>

@@ -25,6 +25,9 @@
     <Filter Include="Interface">
       <UniqueIdentifier>{e0791a0c-49cb-4011-a2e8-c3975f0a0171}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{f94ca58d-a0f7-429c-9d56-46cf78ae1cec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -81,6 +84,9 @@
     <ClInclude Include="StlAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="ReceiveBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -100,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="MemoryAllocator.cpp">
       <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="ReceiveBuffer.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
