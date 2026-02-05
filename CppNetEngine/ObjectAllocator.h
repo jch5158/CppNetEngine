@@ -4,20 +4,20 @@
 #include "TlsObjectPool.h"
 
 template <typename T, uint32 CHUNK_SIZE = 500>
-class ObjectPoolManager final : public ISingleton<ObjectPoolManager<T, CHUNK_SIZE>>
+class ObjectAllocator final : public ISingleton<ObjectAllocator<T, CHUNK_SIZE>>
 {
 public:
 
-	friend class ISingleton<ObjectPoolManager>;
+	friend class ISingleton<ObjectAllocator>;
 
-	ObjectPoolManager(const ObjectPoolManager&) = delete;
-	ObjectPoolManager& operator=(const ObjectPoolManager&) = delete;
-	ObjectPoolManager(ObjectPoolManager&&) = delete;
-	ObjectPoolManager& operator=(ObjectPoolManager&&) = delete;
+	ObjectAllocator(const ObjectAllocator&) = delete;
+	ObjectAllocator& operator=(const ObjectAllocator&) = delete;
+	ObjectAllocator(ObjectAllocator&&) = delete;
+	ObjectAllocator& operator=(ObjectAllocator&&) = delete;
 
 private:
 
-	ObjectPoolManager()
+	ObjectAllocator()
 		:mTlsObjectPool()
 	{
 		static_assert(std::is_class_v<T>, "T is not class type.");
@@ -25,18 +25,12 @@ private:
 
 public:
 
-	virtual ~ObjectPoolManager() override = default;
+	virtual ~ObjectAllocator() override = default;
 
 	[[nodiscard]]
 	int32 AllocCount() const
 	{
 		return mTlsObjectPool.AllocCount();
-	}
-
-	[[nodiscard]]
-	int32 PoolingCount() const
-	{
-		return mTlsObjectPool.PoolingCount();
 	}
 
 	[[nodiscard]]

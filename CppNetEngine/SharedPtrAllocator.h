@@ -10,6 +10,8 @@ public:
     using value_type = T;
 
 	explicit SharedPtrAllocator() = default;
+	explicit SharedPtrAllocator(const SharedPtrAllocator&) = default;
+	SharedPtrAllocator& operator=(const SharedPtrAllocator&) = default;
 	~SharedPtrAllocator() = default;
     
 	template <typename U>

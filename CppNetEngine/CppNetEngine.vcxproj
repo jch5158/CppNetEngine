@@ -206,7 +206,7 @@
     <ClInclude Include="NetEngineMacro.h" />
     <ClInclude Include="NetEngineTls.h" />
     <ClInclude Include="ObjectPool.h" />
-    <ClInclude Include="ObjectPoolManager.h" />
+    <ClInclude Include="ObjectAllocator.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SharedPtrAllocator.h" />
     <ClInclude Include="StlAllocator.h" />

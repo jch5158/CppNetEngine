@@ -57,7 +57,7 @@
     <ClInclude Include="TlsObjectPool.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectPoolManager.h">
+    <ClInclude Include="ObjectAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="LockFreeQueue.h">

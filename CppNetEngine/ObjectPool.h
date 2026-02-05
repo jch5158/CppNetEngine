@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// ReSharper disable CppClangTidyClangDiagnosticPadded
+#pragma once
 
 #include "pch.h"
 #include "CrashHandler.h"
@@ -32,7 +33,6 @@ public:
 	explicit ObjectPool(const bool bPlacementNew, const int32 poolingCount)
 		: mbPlacementNew(bPlacementNew)
 		, mTopAlineNode16{}
-		, mAllocCount(0)
 		, mPoolingCount(poolingCount)
 	{
 		static_assert(std::is_class_v<T>, "T is not class type.");
@@ -76,8 +76,6 @@ public:
 	[[nodiscard]]
 	T* Alloc()
 	{
-		mAllocCount.fetch_add(1);
-
 		if (mPoolingCount.fetch_sub(1) <= 0)
 		{
 			mPoolingCount.fetch_add(1);
@@ -136,15 +134,7 @@ public:
 
 		} while (topNodePtr.compare_exchange_weak(pExpected, pDesired) == false);
 
-		mAllocCount.fetch_sub(1);
-
 		mPoolingCount.fetch_add(1);
-	}
-
-	[[nodiscard]]
-	int32 AllocCount() const
-	{
-		return mAllocCount.load();
 	}
 
 	[[nodiscard]]
@@ -175,8 +165,6 @@ private:
 	const bool mbPlacementNew;
 
 	alignas(std::hardware_constructive_interference_size) AlignNode16 mTopAlineNode16;
-
-	alignas(std::hardware_constructive_interference_size) std::atomic<int32> mAllocCount;
 
 	alignas(std::hardware_constructive_interference_size) std::atomic<int32> mPoolingCount;
 };

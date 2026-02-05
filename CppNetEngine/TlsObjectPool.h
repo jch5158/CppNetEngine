@@ -33,7 +33,7 @@ private:
 		~Chunk()
 		{
 			ChunkReset();
-		};
+		}
 
 		T* GetData()
 		{

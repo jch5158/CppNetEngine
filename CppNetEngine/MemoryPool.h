@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// ReSharper disable CppClangTidyClangDiagnosticPadded
+#pragma once
 
 #include "pch.h"
 #include "ObjectPool.h"
@@ -24,7 +25,7 @@ private:
 			, mFreeCount(0)
 			, mChunkDataArray{}
 		{
-			for (int32 i = 0; i < CHUNK_SIZE; ++i)
+			for (uint32 i = 0; i < CHUNK_SIZE; ++i)
 			{
 				mChunkDataArray[i].pChunk = this;
 			}
@@ -34,7 +35,7 @@ private:
 
 		void* GetData()
 		{
-			if (mAllocCount >= CHUNK_SIZE)
+			if (static_cast<uint32>(mAllocCount) >= CHUNK_SIZE)
 			{
 				return nullptr;
 			}
