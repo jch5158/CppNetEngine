@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "pch.h"
-#include "ObjectPoolManager.h"
+#include "ObjectAllocator.h"
 
 template <typename T, int32 CHUNK_SIZE = 500>
 class LockFreeQueue final
@@ -16,7 +16,7 @@ public:
 
 private:
 
-	using NodeObjectPool = ObjectPoolManager<Node, CHUNK_SIZE>;
+	using NodeObjectAllocator = ObjectAllocator<Node, CHUNK_SIZE>;
 
 	struct AlignNode16
 	{
@@ -37,7 +37,7 @@ public:
 		, mHead{}
 		, mTail{}
 	{
-		Node* pDummyNode = NodeObjectPool::GetInstance().Alloc();
+		Node* pDummyNode = NodeObjectAllocator::GetInstance().Alloc();
 		pDummyNode->pNextNode = nullptr;
 		mHead.pNode = pDummyNode;
 		mTail.pNode = pDummyNode;
@@ -50,7 +50,7 @@ public:
 		while (pNode != nullptr)
 		{
 			Node* pNextNode = pNode->pNextNode;
-			NodeObjectPool::GetInstance().Free(pNode);
+			NodeObjectAllocator::GetInstance().Free(pNode);
 			pNode = pNextNode;
 		}
 	}
@@ -63,7 +63,7 @@ public:
 			return false;
 		}
 
-		Node* pDesired = NodeObjectPool::GetInstance().Alloc();
+		Node* pDesired = NodeObjectAllocator::GetInstance().Alloc();
 		pDesired->data = data;
 		pDesired->pNextNode = nullptr;
 
@@ -126,7 +126,7 @@ public:
 
 		} while (atomicHead.compare_exchange_weak(expected, desired) == false);
 
-		NodeObjectPool::GetInstance().Free(expected.pNode);
+		NodeObjectAllocator::GetInstance().Free(expected.pNode);
 
 		return true;
 	}

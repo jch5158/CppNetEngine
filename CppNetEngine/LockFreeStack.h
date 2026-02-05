@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "pch.h"
-#include "ObjectPoolManager.h"
+#include "ObjectAllocator.h"
 
 template <typename T, int32 CHUNK_SIZE = 500>
 class LockFreeStack final
@@ -16,7 +16,7 @@ public:
 
 private:
 
-	using NodeObjectPool = ObjectPoolManager<Node, CHUNK_SIZE>;
+	using NodeObjectAllocator = ObjectAllocator<Node, CHUNK_SIZE>;
 
 	struct AlignNode16
 	{
@@ -36,7 +36,7 @@ public:
 		, mCount(0)
 		, mTopAlineNode16{}
 	{
-		NodeObjectPool::GetInstance();
+		NodeObjectAllocator::GetInstance();
 	}
 
 	~LockFreeStack()
@@ -47,7 +47,7 @@ public:
 		{
 			Node* pNextNode = pNode->pNextNode;
 			
-			NodeObjectPool::GetInstance().Free(pNode);
+			NodeObjectAllocator::GetInstance().Free(pNode);
 
 			pNode = pNextNode;
 		}
@@ -62,7 +62,7 @@ public:
 		}
 
 		Node* pExpected{};
-		Node* pDesired = NodeObjectPool::GetInstance().Alloc();
+		Node* pDesired = NodeObjectAllocator::GetInstance().Alloc();
 
 		pDesired->data = data;
 
@@ -107,7 +107,7 @@ public:
 
 		outData = expected.pNode->data;
 
-		NodeObjectPool::GetInstance().Free(expected.pNode);
+		NodeObjectAllocator::GetInstance().Free(expected.pNode);
 
 		return true;
 	}
