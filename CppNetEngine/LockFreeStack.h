@@ -18,7 +18,7 @@ private:
 
 	using NodeObjectAllocator = ObjectAllocator<Node, CHUNK_SIZE>;
 
-	struct AlignNode16
+	struct Node16
 	{
 		Node* pNode;
 		int64 count;
@@ -89,10 +89,10 @@ public:
 			return false;
 		}
 		
-		AlignNode16 expected{};
-		AlignNode16 desired{};
+		Node16 expected{};
+		Node16 desired{};
 
-		std::atomic_ref<AlignNode16> topAlign16Node(mTopAlineNode16);
+		std::atomic_ref<Node16> topAlign16Node(mTopAlineNode16);
 
 		do
 		{
@@ -128,5 +128,5 @@ private:
 
 	alignas(std::hardware_destructive_interference_size) std::atomic<int32> mCount;
 
-	alignas(std::hardware_destructive_interference_size) AlignNode16 mTopAlineNode16;
+	alignas(std::hardware_destructive_interference_size) Node16 mTopAlineNode16;
 };

@@ -18,7 +18,7 @@ private:
 
 	using NodeObjectAllocator = ObjectAllocator<Node, CHUNK_SIZE>;
 
-	struct AlignNode16
+	struct Node16
 	{
 		Node* pNode;
 		int64 count;
@@ -94,10 +94,10 @@ public:
 			return false;
 		}
 
-		AlignNode16 expected{};
-		AlignNode16 desired{};
+		Node16 expected{};
+		Node16 desired{};
 
-		std::atomic_ref<AlignNode16> atomicHead(mHead);
+		std::atomic_ref<Node16> atomicHead(mHead);
 
 		do
 		{
@@ -145,8 +145,8 @@ private:
 
 	void moveTail()
 	{
-		AlignNode16 expected{};
-		AlignNode16 desired{};
+		Node16 expected{};
+		Node16 desired{};
 
 		expected.count = mTail.count;
 		std::atomic_thread_fence(std::memory_order_seq_cst);
@@ -159,7 +159,7 @@ private:
 			return;
 		}
 
-		std::atomic_ref<AlignNode16> atomicTail(mTail);
+		std::atomic_ref<Node16> atomicTail(mTail);
 		atomicTail.compare_exchange_weak(expected, desired);
 	}
 
@@ -167,7 +167,7 @@ private:
 
 	alignas(std::hardware_destructive_interference_size) std::atomic<int32> mCount;
 
-	alignas(std::hardware_destructive_interference_size) AlignNode16 mHead;
+	alignas(std::hardware_destructive_interference_size) Node16 mHead;
 
-	alignas(std::hardware_destructive_interference_size) AlignNode16 mTail;
+	alignas(std::hardware_destructive_interference_size) Node16 mTail;
 };

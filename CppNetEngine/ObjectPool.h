@@ -17,7 +17,7 @@ private:
 		Node* pNextNode;
 	};
 
-	struct AlignNode16
+	struct Node16
 	{
 		Node* pNode;
 		int64 count;
@@ -32,7 +32,7 @@ public:
 
 	explicit ObjectPool(const bool bPlacementNew, const int32 poolingCount)
 		: mbPlacementNew(bPlacementNew)
-		, mTopAlineNode16{}
+		, mTopNode16{}
 		, mPoolingCount(poolingCount)
 	{
 		static_assert(std::is_class_v<T>, "T is not class type.");
@@ -42,14 +42,14 @@ public:
 			Node* pNode = allocNode(!mbPlacementNew);
 
 			pNode->checksum = CHECKSUM_CODE;
-			pNode->pNextNode = mTopAlineNode16.pNode;
-			mTopAlineNode16.pNode = pNode;
+			pNode->pNextNode = mTopNode16.pNode;
+			mTopNode16.pNode = pNode;
 		}
 	}
 
 	~ObjectPool()
 	{
-		Node* pNode = mTopAlineNode16.pNode;
+		Node* pNode = mTopNode16.pNode;
 
 		while (pNode != nullptr)
 		{
@@ -87,21 +87,21 @@ public:
 			return &pNode->data;
 		}
 
-		AlignNode16 expected{};
-		AlignNode16 desired{};
+		Node16 expected{};
+		Node16 desired{};
 
-		std::atomic_ref<AlignNode16> topAlignNode16(mTopAlineNode16);
+		std::atomic_ref<Node16> topNode16(mTopNode16);
 
 		do
 		{
-			expected.count = mTopAlineNode16.count;
+			expected.count = mTopNode16.count;
 			std::atomic_thread_fence(std::memory_order_seq_cst);
-			expected.pNode = mTopAlineNode16.pNode;
+			expected.pNode = mTopNode16.pNode;
 			
 			desired.count = expected.count + 1;
 			desired.pNode = expected.pNode->pNextNode;
 
-		} while (topAlignNode16.compare_exchange_weak(expected, desired) == false);
+		} while (topNode16.compare_exchange_weak(expected, desired) == false);
 
 		if (mbPlacementNew)
 		{
@@ -125,11 +125,11 @@ public:
 			pDesired->data.~T();
 		}
 
-		std::atomic_ref<Node*> topNodePtr(mTopAlineNode16.pNode);
+		std::atomic_ref<Node*> topNodePtr(mTopNode16.pNode);
 
 		do
 		{
-			pExpected = mTopAlineNode16.pNode;
+			pExpected = mTopNode16.pNode;
 			pDesired->pNextNode = pExpected;
 
 		} while (topNodePtr.compare_exchange_weak(pExpected, pDesired) == false);
@@ -164,7 +164,7 @@ private:
 
 	const bool mbPlacementNew;
 
-	alignas(std::hardware_constructive_interference_size) AlignNode16 mTopAlineNode16;
+	alignas(std::hardware_constructive_interference_size) Node16 mTopNode16;
 
 	alignas(std::hardware_constructive_interference_size) std::atomic<int32> mPoolingCount;
 };
