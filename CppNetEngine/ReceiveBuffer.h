@@ -22,22 +22,22 @@ public:
 	void Clear();
 
 	[[nodiscard]]
-	char* GetReadBuffer() const;
-
-	[[nodiscard]]
-	char* GetWriteBuffer() const;
-
-	[[nodiscard]]
 	int32 GetUseSize() const;
 
 	[[nodiscard]]
 	int32 GetFreeSize() const;
 
 	[[nodiscard]]
-	int32 GetDirectWriteSize() const;
+	char* GetReadPointer() const;
 
 	[[nodiscard]]
-	int32 GetDirectReadSize() const;
+	char* GetWritePointer() const;
+
+	[[nodiscard]]
+	int32 GetLinearWriteSize() const;
+
+	[[nodiscard]]
+	int32 GetLinearReadSize() const;
 
 	[[nodiscard]]
 	bool IsEmpty() const;

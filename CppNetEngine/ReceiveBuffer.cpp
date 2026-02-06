@@ -33,16 +33,6 @@ void ReceiveBuffer::Clear()
 	mRear = 0;
 }
 
-char* ReceiveBuffer::GetReadBuffer() const
-{
-	return &mBuffer[mFront];
-}
-
-char* ReceiveBuffer::GetWriteBuffer() const
-{
-	return &mBuffer[mRear];
-}
-
 int32 ReceiveBuffer::GetUseSize() const
 {
 	const int32 front = mFront;
@@ -79,7 +69,17 @@ int32 ReceiveBuffer::GetFreeSize() const
 	return freeSize;
 }
 
-int32 ReceiveBuffer::GetDirectWriteSize() const
+char* ReceiveBuffer::GetReadPointer() const
+{
+	return &mBuffer[mFront];
+}
+
+char* ReceiveBuffer::GetWritePointer() const
+{
+	return &mBuffer[mRear];
+}
+
+int32 ReceiveBuffer::GetLinearWriteSize() const
 {
 	const int32 front = mFront;
 	const int32 rear = mRear;
@@ -97,7 +97,7 @@ int32 ReceiveBuffer::GetDirectWriteSize() const
 	return writeSize;
 }
 
-int32 ReceiveBuffer::GetDirectReadSize() const
+int32 ReceiveBuffer::GetLinearReadSize() const
 {
 	const int32 front = mFront;
 	const int32 rear = mRear;
@@ -134,11 +134,11 @@ int32 ReceiveBuffer::Write(const char* pData, const int32 size)
 	}
 	else
 	{
-		const int32 directSize = GetDirectWriteSize();
-		std::copy_n(pData, directSize, &mBuffer[mRear]);
+		const int32 linearSize = GetLinearWriteSize();
+		std::copy_n(pData, linearSize, &mBuffer[mRear]);
 
-		const int32 remainSize = writeSize - directSize;
-		std::copy_n(&pData[directSize], remainSize, &mBuffer[0]);
+		const int32 remainSize = writeSize - linearSize;
+		std::copy_n(&pData[linearSize], remainSize, &mBuffer[0]);
 	}
 
 	MoveRear(writeSize);
@@ -154,17 +154,17 @@ int32 ReceiveBuffer::Read(char* pBuffer, const int32 size)
 		return readSize;
 	}
 
-	if (readSize + mFront <= mBufferSize)
+	if (readSize + mFront > mBufferSize)
 	{
-		std::copy_n(&mBuffer[mFront], readSize, pBuffer);
+		const int32 linearSize = GetLinearReadSize();
+		std::copy_n(&mBuffer[mFront], linearSize, pBuffer);
+
+		const int32 remainSize = readSize - linearSize;
+		std::copy_n(&mBuffer[0], remainSize, &pBuffer[linearSize]);
 	}
 	else
 	{
-		const int32 directSize = GetDirectReadSize();
-		std::copy_n(&mBuffer[mFront], directSize, pBuffer);
-
-		const int32 remainSize = readSize - directSize;
-		std::copy_n(&mBuffer[0], remainSize, &pBuffer[directSize]);
+		std::copy_n(&mBuffer[mFront], readSize, pBuffer);
 	}
 
 	MoveFront(readSize);
@@ -180,17 +180,17 @@ int32 ReceiveBuffer::Peek(char* pBuffer, const int32 size) const
 		return readSize;
 	}
 
-	if (readSize + mFront <= mBufferSize)
+	if (readSize + mFront > mBufferSize)
 	{
-		std::copy_n(&mBuffer[mFront], readSize, pBuffer);
+		const int32 linearSize = GetLinearReadSize();
+		std::copy_n(&mBuffer[mFront], linearSize, pBuffer);
+
+		const int32 remainSize = readSize - linearSize;
+		std::copy_n(&mBuffer[0], remainSize, &pBuffer[linearSize]);
 	}
 	else
 	{
-		const int32 directSize = GetDirectReadSize();
-		std::copy_n(&mBuffer[mFront], directSize, pBuffer);
-
-		const int32 remainSize = readSize - directSize;
-		std::copy_n(&mBuffer[0], remainSize, &pBuffer[directSize]);
+		std::copy_n(&mBuffer[mFront], readSize, pBuffer);
 	}
 
 	return readSize;
