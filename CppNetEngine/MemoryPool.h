@@ -9,11 +9,18 @@ class MemoryPool final
 {
 private:
 
-	struct ChunkData;
-
 	class Chunk final
 	{
 	public:
+
+		static constexpr uint64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
+
+		struct ChunkData
+		{
+			alignas(16) byte data[ALLOC_SIZE];
+			uint64 checksum;
+			Chunk* pChunk;
+		};
 
 		Chunk(const Chunk&) = delete;
 		Chunk& operator=(const Chunk&) = delete;
@@ -27,6 +34,7 @@ private:
 		{
 			for (uint32 i = 0; i < CHUNK_SIZE; ++i)
 			{
+				mChunkDataArray[i].checksum = CHECKSUM_CODE;
 				mChunkDataArray[i].pChunk = this;
 			}
 		}
@@ -64,6 +72,11 @@ private:
 			mFreeCount.store(0);
 		}
 
+		static bool IsValidChecksum(const ChunkData& chunkData)
+		{
+			return chunkData.checksum == CHECKSUM_CODE;
+		}
+
 	public:
 
 		int32 mAllocCount;
@@ -71,11 +84,7 @@ private:
 		ChunkData mChunkDataArray[CHUNK_SIZE];
 	};
 
-	struct ChunkData
-	{
-		alignas(16) byte data[ALLOC_SIZE];
-		Chunk* pChunk;
-	};
+	using ChunkBlock = Chunk::ChunkData;
 
 public:
 
@@ -110,8 +119,20 @@ public:
 
 	void Free(void* pData)
 	{
-		Chunk* pChunk = (static_cast<ChunkData*>(pData))->pChunk;
+		if (pData == nullptr)
+		{
+			ASSERT(false, "MemoryPool::Free - pData is nullptr");
+			return;
+		}
 
+		ChunkBlock* pChunkBlock = static_cast<ChunkBlock*>(pData);
+		if (!Chunk::IsValidChecksum(*pChunkBlock))
+		{
+			ASSERT(false, "MemoryPool::Free - Invalid checksum detected. Possible memory corruption.");
+			return;
+		}
+
+		Chunk* pChunk = pChunkBlock->pChunk;
 		if (pChunk->FreeWithIsAllFreed())
 		{
 			pChunk->ChunkReset();

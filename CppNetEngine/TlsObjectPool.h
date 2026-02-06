@@ -8,11 +8,18 @@ class TlsObjectPool final
 {
 private:
 
-	struct ChunkData;
-
 	class Chunk final
 	{
 	public:
+
+		static constexpr uint64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
+
+		struct ChunkData
+		{
+			T data;
+			uint64 checksum;
+			Chunk* pChunk;
+		};
 
 		Chunk(const Chunk&) = delete;
 		Chunk& operator=(const Chunk&) = delete;
@@ -26,6 +33,7 @@ private:
 		{
 			for (int32 i = 0; i < CHUNK_SIZE; ++i)
 			{
+				mChunkDataArray[i].checksum = CHECKSUM_CODE;
 				mChunkDataArray[i].pChunk = this;
 			}
 		}
@@ -66,18 +74,19 @@ private:
 			mFreeCount.store(0);
 		}
 
+		static bool IsValidChecksum(const ChunkData& chunkData)
+		{
+			return chunkData.checksum == CHECKSUM_CODE;
+		}
+
 	public:
 
 		int32 mAllocCount;
 		std::atomic<int32> mFreeCount;
 		ChunkData mChunkDataArray[CHUNK_SIZE];
 	};
-
-	struct ChunkData
-	{
-		T data;
-		Chunk* pChunk;
-	};
+	
+	using ChunkBlock = Chunk::ChunkData;
 
 public:
 
@@ -116,8 +125,20 @@ public:
 
 	void Free(T* pData)
 	{
-		Chunk* pChunk = (reinterpret_cast<ChunkData*>(pData))->pChunk;
+		if (pData == nullptr)
+		{
+			ASSERT(false, "TlsObjectPool::Free - pData is nullptr.");
+			return;
+		}
 
+		ChunkBlock pChunkBlock = reinterpret_cast<ChunkBlock&>(pData);
+		if (!Chunk::IsValidChecksum(*pChunkBlock))
+		{
+			ASSERT(false, "TlsObjectPool::Free - Invalid object detected. Possible memory corruption.");
+			return;
+		}
+
+		Chunk* pChunk = pChunkBlock->pChunk;
 		if (pChunk->FreeWithIsAllFreed())
 		{
 			pChunk->ChunkReset();

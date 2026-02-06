@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "MemoryAllocator.h"
+
+#include <assert.h>
+
 #include "CrashHandler.h"
 
 void* MemoryAllocator::	Alloc(const uint64 size)
@@ -22,17 +25,18 @@ void* MemoryAllocator::	Alloc(const uint64 size)
 
 void MemoryAllocator::Free(void* pData, const uint64 size)
 {
+	ASSERT(pData != nullptr, "MemoryAllocator::Free - pData is nullptr");
+
 	if (size > MAX_ALLOC_SIZE)
 	{
-		if (isValidChecksum(pData, size))
+		if (!isValidChecksum(pData, size))
 		{
-			mi_free(pData);
-		}
-		else
-		{
-			CrashHandler::Crash();
+			ASSERT(false, "MemoryAllocator::Free - Invalid checksum detected. Possible memory corruption.");
+
+			return;
 		}
 
+		mi_free(pData);
 		return;
 	}
 

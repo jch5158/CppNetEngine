@@ -67,10 +67,7 @@ public:
 			mPoolingCount.fetch_sub(1);
 		}
 
-		if (mPoolingCount.load() != 0)
-		{
-			CrashHandler::Crash();
-		}
+		ASSERT(mPoolingCount.load() == 0, "ObjectPool::~ObjectPool - Memory leak detected.");
 	}
 
 	[[nodiscard]]
@@ -113,11 +110,18 @@ public:
 
 	void Free(T* pData)
 	{
+		if (pData == nullptr)
+		{
+			ASSERT(false, " ObjectPool::Free - pData is nullptr.");
+			return;
+		}
+		
 		Node* pExpected;
 		Node* pDesired = reinterpret_cast<Node*>(pData);
-		if (pDesired->checksum != CHECKSUM_CODE)
+		if (pDesired->checksum == CHECKSUM_CODE)
 		{
-			CrashHandler::Crash();
+			ASSERT(false, "ObjectPool::Free - Invalid object detected. Possible memory corruption.");
+			return;
 		}
 
 		if (mbPlacementNew)
@@ -150,7 +154,7 @@ private:
 		Node* pNode = static_cast<Node*>(mi_malloc(sizeof(Node)));
 		if (pNode == nullptr)
 		{
-			CrashHandler::Crash();
+			ASSERT(false, "ObjectPool::allocNode - Memory allocation failed.");
 			return nullptr;
 		}
 		
