@@ -11,7 +11,10 @@ public:
 
 	explicit SharedPtrAllocator() = default;
 	explicit SharedPtrAllocator(const SharedPtrAllocator&) = default;
+	explicit SharedPtrAllocator(SharedPtrAllocator&&) = default;
 	SharedPtrAllocator& operator=(const SharedPtrAllocator&) = default;
+	SharedPtrAllocator& operator=(SharedPtrAllocator&&) = default;
+	
 	~SharedPtrAllocator() = default;
     
 	template <typename U>

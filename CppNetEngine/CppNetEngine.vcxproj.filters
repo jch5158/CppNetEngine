@@ -87,6 +87,12 @@
     <ClInclude Include="ReceiveBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="SocketUtils.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetAddress.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -108,6 +114,12 @@
       <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="ReceiveBuffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketUtils.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetAddress.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
