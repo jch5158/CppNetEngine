@@ -12,9 +12,13 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
+
+#ifdef _WIN32
 #include <WinSock2.h>
 #include <MSWSock.h>
 #include <WS2tcpip.h>
+#pragma comment(lib, "Ws2_32.lib")
+#endif
 
 #include <mimalloc.h>
 #include <fmt/core.h>
@@ -26,5 +30,3 @@
 #include "NetEngineTls.h"
 #include "NetEngineGlobal.h"
 #include "StlAllocator.h"
-
-#pragma comment(lib, "Ws2_32.lib")
