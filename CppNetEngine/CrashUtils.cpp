@@ -2,11 +2,11 @@
 #include "client/crashpad_client.h"
 #include "client/crash_report_database.h"
 #include "client/settings.h"
-#include "CrashHandler.h"
+#include "CrashUtils.h"
 #include <filesystem>
 
 // ReSharper disable All
-void CrashHandler::Crash()
+void CrashUtils::Crash()
 {
 	volatile uint32* pCrash = nullptr;
 
@@ -14,7 +14,7 @@ void CrashHandler::Crash()
 	* pCrash = 0xDEAFBEFF;
 }
 
-void CrashHandler::CrashIf(const bool isCrash)
+void CrashUtils::CrashIf(const bool isCrash)
 {
 	if (isCrash)
 	{
@@ -22,7 +22,7 @@ void CrashHandler::CrashIf(const bool isCrash)
 	}
 }
 
-bool CrashHandler::Install(const std::wstring& appName, const std::wstring& appVersion, const std::wstring& url)
+bool CrashUtils::Install(const std::wstring& appName, const std::wstring& appVersion, const std::wstring& url)
 {
     namespace fs = std::filesystem;
 
@@ -78,7 +78,7 @@ bool CrashHandler::Install(const std::wstring& appName, const std::wstring& appV
     return success;
 }
 
-std::string CrashHandler::toU8String(const std::wstring& wStr)
+std::string CrashUtils::toU8String(const std::wstring& wStr)
 {
     namespace fs = std::filesystem;
 

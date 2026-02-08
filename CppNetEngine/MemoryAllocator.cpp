@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "MemoryAllocator.h"
-#include "CrashHandler.h"
 
 void* MemoryAllocator::	Alloc(const uint64 size)
 {

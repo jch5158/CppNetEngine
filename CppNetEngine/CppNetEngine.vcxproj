@@ -195,7 +195,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CrashHandler.h" />
+    <ClInclude Include="CrashUtils.h" />
     <ClInclude Include="EnginePch.h" />
     <ClInclude Include="ISingleton.h" />
     <ClInclude Include="LockFreeQueue.h" />
@@ -218,7 +218,7 @@
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CrashHandler.cpp" />
+    <ClCompile Include="CrashUtils.cpp" />
     <ClCompile Include="MemoryAllocator.cpp" />
     <ClCompile Include="NetAddress.cpp" />
     <ClCompile Include="NetEngineGlobal.cpp" />

@@ -3,6 +3,7 @@
 class NetAddress
 {
 public:
+
 	explicit NetAddress() = default;
 	explicit NetAddress(const SOCKADDR_IN sockAddr);
 	explicit NetAddress(const Wstring& ip, const uint16 port);
@@ -19,6 +20,7 @@ public:
 	static IN_ADDR	IpToAddress(const Wstring& ip);
 
 private:
+
 	SOCKADDR_IN		mSockAddr;
 };
 

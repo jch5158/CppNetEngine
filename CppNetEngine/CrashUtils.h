@@ -1,13 +1,15 @@
 ﻿#pragma once
 
-class CrashHandler final
+class CrashUtils final
 {
 public:
 
-	CrashHandler(const CrashHandler&) = delete;
-	CrashHandler& operator=(const CrashHandler&) = delete;
-	CrashHandler(CrashHandler&&) = delete;
-	CrashHandler& operator=(CrashHandler&&) = delete;
+	CrashUtils() = delete;
+	~CrashUtils() = delete;
+	CrashUtils(const CrashUtils&) = delete;
+	CrashUtils& operator=(const CrashUtils&) = delete;
+	CrashUtils(CrashUtils&&) = delete;
+	CrashUtils& operator=(CrashUtils&&) = delete;
 
 	static void Crash();
 
@@ -18,7 +20,4 @@ public:
 private:
 	
 	static std::string toU8String(const std::wstring& wStr);
-
-	CrashHandler() = default;
-	~CrashHandler() = default;
 };

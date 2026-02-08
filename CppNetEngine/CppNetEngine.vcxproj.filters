@@ -66,7 +66,7 @@
     <ClInclude Include="LockFreeQueue.h">
       <Filter>Container</Filter>
     </ClInclude>
-    <ClInclude Include="CrashHandler.h">
+    <ClInclude Include="CrashUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ISingleton.h">
@@ -107,7 +107,7 @@
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
-    <ClCompile Include="CrashHandler.cpp">
+    <ClCompile Include="CrashUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="MemoryAllocator.cpp">

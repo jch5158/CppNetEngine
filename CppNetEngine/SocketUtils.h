@@ -7,6 +7,10 @@ public:
 
 	SocketUtils() = delete;
 	~SocketUtils() = delete;
+	SocketUtils(const SocketUtils&) = delete;
+	SocketUtils& operator=(const SocketUtils&) = delete;
+	SocketUtils(SocketUtils&&) = delete;
+	SocketUtils& operator=(SocketUtils&&) = delete;
 
 	static bool Init(int32& outErrorCode);
 	static void Clear();
