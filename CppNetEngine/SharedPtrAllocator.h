@@ -37,3 +37,12 @@ public:
         MemoryAllocator::GetInstance().Free(ptr, objSize);
 	}
 };
+
+template <typename T, typename... Args>
+std::shared_ptr<T> AllocShared(Args&&... args)
+{
+	return std::allocate_shared<T>(SharedPtrAllocator<T>{}, std::forward<Args>(args)...);
+}
+
+template <typename T>
+using SharedPtr = std::shared_ptr<T>;
