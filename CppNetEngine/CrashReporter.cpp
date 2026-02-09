@@ -1,9 +1,13 @@
 ﻿#include "pch.h"
-#include "CrashReporter.h"
+
+#include <filesystem>
+
 #include "client/crashpad_client.h"
 #include "client/crash_report_database.h"
 #include "client/settings.h"
-#include <filesystem>
+
+#include "CrashReporter.h"
+#include "StlAllocator.h"
 
 namespace fs = std::filesystem;
 
@@ -77,7 +81,7 @@ bool CrashReporter::Init(const Wstring& appName, const Wstring& appVersion, cons
         base::FilePath(handlerPath.wstring()), // 경로: wstring
         base::FilePath(dbPath.wstring()),      // 경로: wstring
         base::FilePath(metricsPath.wstring()), // 경로: wstring
-        toStdU8String(url),                  // URL: string (UTF-8)
+        toStdU8String(url),                    // URL: string (UTF-8)
         annotations,                           // 메타데이터: map<string, string>
         arguments,
         true,

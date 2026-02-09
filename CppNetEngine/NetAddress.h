@@ -1,8 +1,14 @@
 ﻿#pragma once
+#include "StlAllocator.h"
 
 class NetAddress
 {
 public:
+	
+	NetAddress(const NetAddress&) = delete;
+	NetAddress& operator=(const NetAddress&) = delete;
+	NetAddress(NetAddress&&) = delete;
+	NetAddress& operator=(NetAddress&&) = delete;
 
 	explicit NetAddress() = default;
 	explicit NetAddress(const SOCKADDR_IN sockAddr);

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "StlAllocator.h"
 
 class CrashReporter final
 {
@@ -12,9 +13,7 @@ public:
 	CrashReporter& operator=(CrashReporter&&) = delete;
 
 	static void Crash();
-
 	static void CrashIf(const bool isCrash);
-
 	static bool Init(const Wstring& appName, const Wstring& appVersion, const Wstring& url);
 
 private:

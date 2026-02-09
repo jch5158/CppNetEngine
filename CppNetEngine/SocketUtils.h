@@ -22,9 +22,12 @@ public:
 	static bool SetSendBufferSize(SOCKET socket, int32 size);
 	static bool SetTcpNoDelay(SOCKET socket, bool flag);
 	static bool SetUpdateAcceptSocket(const SOCKET socket, const SOCKET listenSocket);
-	static bool Bind(const SOCKET socket, const NetAddress netAddr);
+	static bool Bind(const SOCKET socket, const NetAddress& netAddr);
 	static bool BindAnyAddress(const SOCKET socket, const uint16 port);
 	static bool Listen(const SOCKET socket, const int32 backlog);
+	static bool ConnectEx();
+	static bool DisconnectEx();
+	static bool AcceptEx();
 
 private:
 

@@ -4,6 +4,12 @@
 
 bool SocketUtils::Init(int32& outErrorCode)
 {
+	static bool isInit = false;
+	if (isInit)
+	{
+		return true;
+	}
+
 	WSADATA wsaData{};
 	if (WSAStartup(WINSOCK_VERSION, &wsaData) == SOCKET_ERROR)
 	{
@@ -39,6 +45,8 @@ bool SocketUtils::Init(int32& outErrorCode)
 	
 	Close(dummySocket);
 
+	isInit = true;
+
 	return true;
 }
 
@@ -70,7 +78,7 @@ void SocketUtils::Close(SOCKET& socket)
 
 bool SocketUtils::SetLinger(const SOCKET socket, const uint16 onOff, const uint16 linger)
 {
-	LINGER option;
+	LINGER option{};
 	option.l_onoff = onOff;
 	option.l_linger = linger;
 	return SetSockOpt(socket, SOL_SOCKET, SO_LINGER, option);
@@ -102,14 +110,14 @@ bool SocketUtils::SetUpdateAcceptSocket(const SOCKET socket, const SOCKET listen
 	return SetSockOpt(socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, listenSocket);
 }
 
-bool SocketUtils::Bind(const SOCKET socket, const NetAddress netAddr)
+bool SocketUtils::Bind(const SOCKET socket, const NetAddress& netAddr)
 {
 	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<const SOCKADDR*>(&netAddr.GetSockAddr()), sizeof(SOCKADDR_IN));
 }
 
 bool SocketUtils::BindAnyAddress(const SOCKET socket, const uint16 port)
 {
-	SOCKADDR_IN myAddress;
+	SOCKADDR_IN myAddress{};
 	myAddress.sin_family = AF_INET;
 	myAddress.sin_addr.s_addr = ::htonl(INADDR_ANY);
 	myAddress.sin_port = ::htons(port);
@@ -120,6 +128,21 @@ bool SocketUtils::BindAnyAddress(const SOCKET socket, const uint16 port)
 bool SocketUtils::Listen(const SOCKET socket, const int32 backlog)
 {
 	return SOCKET_ERROR != ::listen(socket, backlog);
+}
+
+bool SocketUtils::ConnectEx()
+{
+	return false;
+}
+
+bool SocketUtils::DisconnectEx()
+{
+	return false;
+}
+
+bool SocketUtils::AcceptEx()
+{
+	return false;
 }
 
 bool SocketUtils::bindWindowsFunction(const SOCKET socket, GUID guid, LPVOID* fn)

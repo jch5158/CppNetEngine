@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "UniquePtrUtils.h"
 
 class ReceiveBuffer
 {
@@ -55,15 +56,9 @@ private:
 	public:
 
 		BufferDeleter() = delete;
-		explicit BufferDeleter(const int32 size)
-			:mSize(size)
-		{
-		}
 
-		void operator()(char* pBuffer) const
-		{
-			MemoryAllocator::GetInstance().Free(pBuffer, mSize);
-		}
+		explicit BufferDeleter(const int32 size);
+		void operator()(char* pBuffer) const;
 
 	private:
 
@@ -73,6 +68,6 @@ private:
 	int32 mFront;
 	int32 mRear;
 	const int32 mBufferSize;
-	std::unique_ptr<char[], BufferDeleter> mBuffer;  // NOLINT(clang-diagnostic-padded)
+	UniquePtr<char[]> mBuffer;  // NOLINT(clang-diagnostic-padded)
 };
 

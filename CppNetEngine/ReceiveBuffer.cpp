@@ -1,11 +1,13 @@
 ﻿#include "pch.h"
 #include "ReceiveBuffer.h"
+#include "MemoryAllocator.h"
+#include "UniquePtrUtils.h"
 
 ReceiveBuffer::ReceiveBuffer()
 	: mFront(0)
 	, mRear(0)
 	, mBufferSize(DEFAULT_BUFFER_SIZE)
-	, mBuffer(static_cast<char*>(MemoryAllocator::GetInstance().Alloc(DEFAULT_BUFFER_SIZE)), BufferDeleter(DEFAULT_BUFFER_SIZE))
+	, mBuffer(UniquePtrUtils<char[]>::Alloc(DEFAULT_BUFFER_SIZE))
 {
 }
 
@@ -13,7 +15,7 @@ ReceiveBuffer::ReceiveBuffer(const int32 bufferSize)
 	: mFront(0)
 	, mRear(0)
 	, mBufferSize(bufferSize)
-	, mBuffer(static_cast<char*>(MemoryAllocator::GetInstance().Alloc(bufferSize)), BufferDeleter(bufferSize))
+	, mBuffer(UniquePtrUtils<char[]>::Alloc(bufferSize))
 {
 }
 
@@ -194,5 +196,16 @@ int32 ReceiveBuffer::Peek(char* pBuffer, const int32 size) const
 	}
 
 	return readSize;
+}
+
+ReceiveBuffer::BufferDeleter::BufferDeleter(const int32 size)
+	:mSize(size)
+{
+}
+
+
+void ReceiveBuffer::BufferDeleter::operator()(char* pBuffer) const
+{
+	MemoryAllocator::GetInstance().Free(pBuffer, mSize);
 }
 
