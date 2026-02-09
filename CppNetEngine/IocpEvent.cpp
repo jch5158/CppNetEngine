@@ -22,7 +22,18 @@ eIocpEventType IocpEvent::GetEventType() const
 
 IocpAcceptEvent::IocpAcceptEvent()
 	:IocpEvent(eIocpEventType::Accept)
+	, mpClientSession(nullptr)
 {
+}
+
+void IocpAcceptEvent::SetSession(Session* pClientSession)
+{
+	mpClientSession = pClientSession;
+}
+
+Session* IocpAcceptEvent::GetClientSession() const
+{
+	return mpClientSession;
 }
 
 IocpConnectEvent::IocpConnectEvent()

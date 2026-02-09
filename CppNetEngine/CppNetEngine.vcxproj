@@ -214,7 +214,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="ReceiveBuffer.h" />
     <ClInclude Include="Session.h" />
-    <ClInclude Include="SharedPtrAllocator.h" />
+    <ClInclude Include="SharedPtrUtils.h" />
     <ClInclude Include="SocketUtils.h" />
     <ClInclude Include="StlAllocator.h" />
     <ClInclude Include="ThreadManager.h" />

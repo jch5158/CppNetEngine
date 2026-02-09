@@ -130,6 +130,13 @@ bool SocketUtils::Listen(const SOCKET socket, const int32 backlog)
 	return SOCKET_ERROR != ::listen(socket, backlog);
 }
 
+bool SocketUtils::AcceptEx(const SOCKET listenSock, const SOCKET acceptSock, void* pOutputBuffer, OVERLAPPED* pOverlapped)
+{
+	DWORD byteReceived = 0;
+	const int32 retVal = acceptEx(listenSock, acceptSock, pOutputBuffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &byteReceived, pOverlapped);
+	return retVal == TRUE;
+}
+
 bool SocketUtils::ConnectEx()
 {
 	return false;
@@ -140,17 +147,12 @@ bool SocketUtils::DisconnectEx()
 	return false;
 }
 
-bool SocketUtils::AcceptEx()
-{
-	return false;
-}
-
 bool SocketUtils::bindWindowsFunction(const SOCKET socket, GUID guid, LPVOID* fn)
 {
 	DWORD bytes = 0;
 	return SOCKET_ERROR != ::WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), static_cast<LPVOID*>(fn), sizeof(*fn), OUT & bytes, nullptr, nullptr);
 }
 
+LPFN_ACCEPTEX SocketUtils::acceptEx = nullptr;
 LPFN_CONNECTEX SocketUtils::connectEx = nullptr;
 LPFN_DISCONNECTEX SocketUtils::disconnectEx = nullptr;
-LPFN_ACCEPTEX SocketUtils::acceptEx = nullptr;

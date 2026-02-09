@@ -5,14 +5,14 @@ class NetAddress
 {
 public:
 	
-	NetAddress(const NetAddress&) = delete;
-	NetAddress& operator=(const NetAddress&) = delete;
 	NetAddress(NetAddress&&) = delete;
 	NetAddress& operator=(NetAddress&&) = delete;
 
 	explicit NetAddress() = default;
 	explicit NetAddress(const SOCKADDR_IN sockAddr);
 	explicit NetAddress(const Wstring& ip, const uint16 port);
+	explicit NetAddress(const NetAddress& netAddress) = default;
+	NetAddress& operator=(const NetAddress&) = default;
 
 	[[nodiscard]]
 	const SOCKADDR_IN& GetSockAddr() const;

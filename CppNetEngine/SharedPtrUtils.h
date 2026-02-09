@@ -20,7 +20,12 @@ public:
 	template <typename U>
 	explicit SharedPtrAllocator(const SharedPtrAllocator<U>&) {}
 
-    // 4. 할당/해제 함수
+	template<typename U>
+	bool operator==(const SharedPtrAllocator<U>&) const { return true; }
+
+	template<typename U>
+	bool operator!=(const SharedPtrAllocator<U>&) const { return false; }
+
     static T* allocate(const uint64 size)
 	{
 		const uint64 sharedPtrSize = sizeof(T) * size;
@@ -38,11 +43,23 @@ public:
 	}
 };
 
-template <typename T, typename... Args>
-std::shared_ptr<T> AllocShared(Args&&... args)
+class SharedPtrUtils final
 {
-	return std::allocate_shared<T>(SharedPtrAllocator<T>{}, std::forward<Args>(args)...);
-}
+public:
+
+	SharedPtrUtils() = delete;
+	~SharedPtrUtils() = delete;
+	SharedPtrUtils(SharedPtrUtils&) = delete;
+	SharedPtrUtils& operator=(SharedPtrUtils&) = delete;
+	SharedPtrUtils(SharedPtrUtils&&) = delete;
+	SharedPtrUtils& operator=(SharedPtrUtils&&) = delete;
+
+	template <typename T, typename... Args>
+	static std::shared_ptr<T> Alloc(Args&&... args)
+	{
+		return std::allocate_shared<T>(SharedPtrAllocator<T>(), std::forward<Args>(args)...);
+	}
+};
 
 template <typename T>
 using SharedPtr = std::shared_ptr<T>;

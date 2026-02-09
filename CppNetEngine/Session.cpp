@@ -1,2 +1,50 @@
 ﻿#include "pch.h"
 #include "Session.h"
+#include "CrashReporter.h"
+#include "SocketUtils.h"
+
+Session::Session()
+	: mSocket(INVALID_SOCKET)
+	, mNetAddress()
+	, mConnected(false)
+	, mReceiveBuffer()
+{
+	if (SocketUtils::CreateTcpSocket(mSocket) == false)
+	{
+		CrashReporter::Crash();
+	}
+}
+
+Session::~Session()
+{
+	SocketUtils::Close(mSocket);
+}
+
+HANDLE Session::GetHandle() const
+{
+	return reinterpret_cast<HANDLE>(mSocket);  // NOLINT(performance-no-int-to-ptr)
+}
+
+void Session::Dispatch(IocpEvent& iocpEvent, int32 numOfBytes)
+{
+}
+
+void Session::SetNetAddress(const NetAddress& address)
+{
+	mNetAddress = address;
+}
+
+SOCKET Session::GetSocket() const
+{
+	return mSocket;
+}
+
+NetAddress& Session::GetAddress()
+{
+	return mNetAddress;
+}
+
+ReceiveBuffer& Session::GetReceiveBuffer()
+{
+	return mReceiveBuffer;
+}

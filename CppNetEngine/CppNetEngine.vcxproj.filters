@@ -75,7 +75,7 @@
     <ClInclude Include="ISingleton.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="SharedPtrAllocator.h">
+    <ClInclude Include="SharedPtrUtils.h">
       <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="MemoryPool.h">

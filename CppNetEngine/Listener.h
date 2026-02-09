@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "IocpCore.h"
+#include "SharedPtrUtils.h"
 #include "StlAllocator.h"
-#include "UniquePtrUtils.h"
 
 class NetAddress;
 class IocpAcceptEvent;
@@ -23,14 +23,14 @@ public:
 	virtual void Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes) override;
 
 	bool StartAccept(const NetAddress& netAddress);
-	bool CloseAccept();
+	void CloseAccept();
 
 private:
 
-	void registerAccept(IocpAcceptEvent* pAcceptEvent);
-	void processAccept(IocpAcceptEvent* pAcceptEvent);
+	void registerAccept(IocpAcceptEvent& acceptEvent) const;
+	void processAccept(IocpAcceptEvent& acceptEvent) const;
 
 	SOCKET mSocket;
-	Vector<UniquePtr<IocpAcceptEvent>> mAcceptEvents;
+	Vector<IocpAcceptEvent*> mAcceptEvents;
 };
 

@@ -37,7 +37,7 @@ uint16 NetAddress::GetPort() const
 
 IN_ADDR NetAddress::IpToAddress(const Wstring& ip)
 {
-	IN_ADDR address;
+	IN_ADDR address{};
 	::InetPtonW(AF_INET, ip.c_str(), &address);
 	return address;
 }

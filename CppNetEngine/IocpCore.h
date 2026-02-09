@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class IiocpObject
+class IiocpObject  // NOLINT(clang-diagnostic-padded)
 {
 public:
 

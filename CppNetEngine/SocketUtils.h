@@ -25,17 +25,17 @@ public:
 	static bool Bind(const SOCKET socket, const NetAddress& netAddr);
 	static bool BindAnyAddress(const SOCKET socket, const uint16 port);
 	static bool Listen(const SOCKET socket, const int32 backlog);
+	static bool AcceptEx(const SOCKET listenSock, const SOCKET acceptSock, void* pOutputBuffer, OVERLAPPED* pOverlapped);
 	static bool ConnectEx();
 	static bool DisconnectEx();
-	static bool AcceptEx();
 
 private:
 
 	static bool bindWindowsFunction(SOCKET socket, GUID guid, LPVOID* fn);
 
+	static LPFN_ACCEPTEX acceptEx;
 	static LPFN_CONNECTEX connectEx;
 	static LPFN_DISCONNECTEX disconnectEx;
-	static LPFN_ACCEPTEX acceptEx;
 };
 
 template<typename T>

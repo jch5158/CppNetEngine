@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class Session;
+
 enum class eIocpEventType : uint8
 {
 	Accept,
@@ -34,6 +36,14 @@ class IocpAcceptEvent final : public IocpEvent
 {
 public:
 	IocpAcceptEvent();
+
+	void SetSession(Session* pClientSession);
+
+	[[nodiscard]]
+	Session* GetClientSession() const;
+
+private:
+	Session* mpClientSession;
 };
 
 class IocpConnectEvent final : public IocpEvent

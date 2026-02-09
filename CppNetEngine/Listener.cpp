@@ -2,7 +2,8 @@
 #include "Listener.h"
 #include "SocketUtils.h"
 #include "IocpEvent.h"
-#include "UniquePtrUtils.h"
+#include "ObjectAllocator.h"
+#include "Session.h"
 
 Listener::Listener()
 	: mSocket(INVALID_SOCKET)
@@ -22,6 +23,14 @@ HANDLE Listener::GetHandle() const
 
 void Listener::Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes)
 {
+	if (iocpEvent.GetEventType() != eIocpEventType::Accept)
+	{
+		ASSERT(false, "Listener::Dispatch - eIocpEventType is not Accept");
+		return;
+	}
+
+	auto* pAcceptEvent = static_cast<IocpAcceptEvent*>(&iocpEvent);
+	processAccept(*pAcceptEvent);
 }
 
 bool Listener::StartAccept(const NetAddress& netAddress)
@@ -52,21 +61,49 @@ bool Listener::StartAccept(const NetAddress& netAddress)
 	{
 		return false;
 	}
-
-	mAcceptEvents.emplace_back(UniquePtrUtils<IocpAcceptEvent>::Alloc());
+	
+	// TODO : AcceptCount
+	const auto pAcceptEvent = ObjectAllocator<IocpAcceptEvent>::GetInstance().Alloc();
+	registerAccept(*pAcceptEvent);
 
 	return true;
 }
 
-bool Listener::CloseAccept()
+void Listener::CloseAccept()
 {
-	return false;
+	SocketUtils::Close(mSocket);
 }
 
-void Listener::registerAccept(IocpAcceptEvent* pAcceptEvent)
+void Listener::registerAccept(IocpAcceptEvent& acceptEvent) const
 {
+	Session* pSession = ObjectAllocator<Session>::GetInstance().Alloc();
+	acceptEvent.Init();
+	acceptEvent.SetSession(pSession);
+
+	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetReceiveBuffer().GetWritePointer(), static_cast<OVERLAPPED*>(&acceptEvent)))
+	{
+
+	}
 }
 
-void Listener::processAccept(IocpAcceptEvent* pAcceptEvent)
+void Listener::processAccept(IocpAcceptEvent& acceptEvent) const
 {
+	const auto pSession = acceptEvent.GetClientSession();
+
+	if (SocketUtils::SetUpdateAcceptSocket(pSession->GetSocket(), mSocket) == false)
+	{
+		registerAccept(acceptEvent);
+		return;
+	}
+
+	SOCKADDR_IN sockAddr{};
+	int32 sizeOfSockAddr = SIZE_OF_32(sockAddr);
+	if (SOCKET_ERROR == getpeername(pSession->GetSocket(), reinterpret_cast<SOCKADDR*>(&sockAddr), &sizeOfSockAddr))
+	{
+		registerAccept(acceptEvent);
+		return;
+	}
+
+	pSession->SetNetAddress(NetAddress(sockAddr));
+	registerAccept(acceptEvent);
 }
