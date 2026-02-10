@@ -197,15 +197,3 @@ int32 ReceiveBuffer::Peek(char* pBuffer, const int32 size) const
 
 	return readSize;
 }
-
-ReceiveBuffer::BufferDeleter::BufferDeleter(const int32 size)
-	:mSize(size)
-{
-}
-
-
-void ReceiveBuffer::BufferDeleter::operator()(char* pBuffer) const
-{
-	MemoryAllocator::GetInstance().Free(pBuffer, mSize);
-}
-

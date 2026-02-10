@@ -5,7 +5,8 @@ class ReceiveBuffer
 {
 public:
 
-	constexpr static int32 DEFAULT_BUFFER_SIZE = 65535;
+	constexpr static int32 DEFAULT_BUFFER_SIZE = 65535
+	;
 
 	ReceiveBuffer(const ReceiveBuffer&) = delete;
 	ReceiveBuffer& operator=(const ReceiveBuffer&) = delete;
@@ -50,20 +51,6 @@ public:
 	int32 Peek(char* pBuffer, const int32 size) const;
 
 private:
-
-	class BufferDeleter
-	{
-	public:
-
-		BufferDeleter() = delete;
-
-		explicit BufferDeleter(const int32 size);
-		void operator()(char* pBuffer) const;
-
-	private:
-
-		const int32 mSize;
-	};
 
 	int32 mReadPos;
 	int32 mWritePos;
