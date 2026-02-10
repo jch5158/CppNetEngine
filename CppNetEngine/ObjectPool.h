@@ -56,7 +56,10 @@ public:
 
 			if (!mbPlacementNew)
 			{
-				pNode->data.~T();
+				if constexpr (std::is_class_v<T>)
+				{
+					pNode->data.~T();
+				}
 			}
 
 			mi_free(pNode);
@@ -125,7 +128,10 @@ public:
 
 		if (mbPlacementNew)
 		{
-			pDesired->data.~T();
+			if constexpr (std::is_class_v<T>)
+			{
+				pDesired->data.~T();
+			}
 		}
 
 		std::atomic_ref<Node*> topNodePtr(mTopNode16.pNode);

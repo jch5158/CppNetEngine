@@ -14,7 +14,7 @@ public:
 	public:
 		void operator()(T* ptr) const
 		{
-			if (std::is_class_v<T>)
+			if constexpr (std::is_class_v<T>)
 			{
 				ptr->~T();
 			}
