@@ -5,7 +5,7 @@ class ReceiveBuffer
 {
 public:
 
-	constexpr static int32 DEFAULT_BUFFER_SIZE = 8192;
+	constexpr static int32 DEFAULT_BUFFER_SIZE = 65535;
 
 	ReceiveBuffer(const ReceiveBuffer&) = delete;
 	ReceiveBuffer& operator=(const ReceiveBuffer&) = delete;
@@ -16,9 +16,9 @@ public:
 	explicit ReceiveBuffer(const int32 bufferSize);
 	~ReceiveBuffer() = default;
 
-	void MoveRear(const int32 size);
+	void MoveWritePos(const int32 size);
 
-	void MoveFront(const int32 size);
+	void MoveReadPos(const int32 size);
 
 	void Clear();
 
@@ -65,8 +65,8 @@ private:
 		const int32 mSize;
 	};
 
-	int32 mFront;
-	int32 mRear;
+	int32 mReadPos;
+	int32 mWritePos;
 	const int32 mBufferSize;
 	UniquePtr<char[]> mBuffer;  // NOLINT(clang-diagnostic-padded)
 };
