@@ -5,8 +5,7 @@ class ReceiveBuffer
 {
 public:
 
-	constexpr static int32 DEFAULT_BUFFER_SIZE = 65535
-	;
+	constexpr static int32 DEFAULT_BUFFER_SIZE = 65535;
 
 	ReceiveBuffer(const ReceiveBuffer&) = delete;
 	ReceiveBuffer& operator=(const ReceiveBuffer&) = delete;
