@@ -6,7 +6,7 @@
 Session::Session()
 	: mSocket(INVALID_SOCKET)
 	, mNetAddress()
-	, mConnected(false)
+	, mbConnected(false)
 	, mReceiveBuffer()
 {
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)

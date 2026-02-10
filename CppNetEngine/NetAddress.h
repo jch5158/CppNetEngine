@@ -27,6 +27,6 @@ public:
 
 private:
 
-	SOCKADDR_IN		mSockAddr;
+	SOCKADDR_IN	mSockAddr;
 };
 

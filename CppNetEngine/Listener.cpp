@@ -82,7 +82,11 @@ void Listener::registerAccept(IocpAcceptEvent& acceptEvent) const
 
 	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetReceiveBuffer().GetWritePointer(), static_cast<OVERLAPPED*>(&acceptEvent)))
 	{
-
+		const int32 errorCode = WSAGetLastError();
+		if (errorCode != WSA_IO_PENDING)
+		{
+			registerAccept(acceptEvent);
+		}
 	}
 }
 

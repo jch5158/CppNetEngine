@@ -23,7 +23,7 @@ HANDLE IocpCore::GetHandle() const
 	return mIocpHandle;
 }
 
-bool IocpCore::Register(IiocpObject& iocpObject) const
+bool IocpCore::Register(IocpObject& iocpObject) const
 {
 	if (nullptr == CreateIoCompletionPort(iocpObject.GetHandle(), mIocpHandle, reinterpret_cast<ULONG_PTR>(&iocpObject), 0))
 	{
@@ -36,7 +36,7 @@ bool IocpCore::Register(IiocpObject& iocpObject) const
 bool IocpCore::Dispatch(int32& outErrorCode, const uint32 timeout) const
 {
 	uint32 numOfBytes = 0;
-	IiocpObject* pIocpObject = nullptr;
+	IocpObject* pIocpObject = nullptr;
 	IocpEvent* pIocpEvent = nullptr;
 	const int32 gqcsRet = GetQueuedCompletionStatus(mIocpHandle, reinterpret_cast<LPDWORD>(&numOfBytes), reinterpret_cast<PULONG_PTR>(&pIocpObject), reinterpret_cast<LPOVERLAPPED*>(&pIocpEvent), timeout);
 	if (gqcsRet != 0)

@@ -3,9 +3,7 @@
 #include "NetAddress.h"
 #include "ReceiveBuffer.h"
 
-class ReceiveBuffer;
-
-class Session : public IiocpObject
+class Session : public IocpObject
 {
 public:
 
@@ -19,7 +17,7 @@ public:
 
 	[[nodiscard]]
 	virtual HANDLE GetHandle() const override;
-	virtual void Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes);
+	virtual void Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes) override;
 
 	void SetNetAddress(const NetAddress& address);
 
@@ -31,7 +29,7 @@ private:
 
 	SOCKET mSocket;
 	NetAddress mNetAddress;
-	std::atomic<bool> mConnected;
+	std::atomic<bool> mbConnected;
 	ReceiveBuffer mReceiveBuffer;
 };
 

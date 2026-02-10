@@ -1,12 +1,11 @@
 ﻿#pragma once
 #include "IocpCore.h"
-#include "SharedPtrUtils.h"
 #include "StlAllocator.h"
 
 class NetAddress;
 class IocpAcceptEvent;
 
-class Listener : public IiocpObject
+class Listener : public IocpObject
 {
 public:
 
@@ -20,7 +19,7 @@ public:
 
 	[[nodiscard]]
 	virtual HANDLE GetHandle() const override;
-	virtual void Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes) override;
+	virtual void Dispatch(IocpEvent& iocpEvent, int32 numOfBytes) override;
 
 	bool StartAccept(const NetAddress& netAddress);
 	void CloseAccept();

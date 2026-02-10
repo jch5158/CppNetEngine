@@ -1,16 +1,16 @@
 ﻿#pragma once
 
-class IiocpObject  // NOLINT(clang-diagnostic-padded)
+class IocpObject : public std::enable_shared_from_this<IocpObject>
 {
 public:
 
-	IiocpObject(const IiocpObject&) = delete;
-	IiocpObject& operator=(const IiocpObject&) = delete;
-	IiocpObject(IiocpObject&&) = delete;
-	IiocpObject& operator=(IiocpObject&&) = delete;
+	IocpObject(const IocpObject&) = delete;
+	IocpObject& operator=(const IocpObject&) = delete;
+	IocpObject(IocpObject&&) = delete;
+	IocpObject& operator=(IocpObject&&) = delete;
 
-	IiocpObject();
-	virtual ~IiocpObject() = 0;
+	IocpObject();
+	virtual ~IocpObject() = 0;
 
 	[[nodiscard]]
 	virtual HANDLE GetHandle() const = 0;
@@ -33,7 +33,7 @@ public:
 	HANDLE GetHandle() const;
 
 	[[nodiscard]]
-	bool Register(IiocpObject& iocpObject) const;
+	bool Register(IocpObject& iocpObject) const;
 
 	[[nodiscard]]
 	bool Dispatch(int32& outErrorCode, const uint32 timeout = INFINITE) const;

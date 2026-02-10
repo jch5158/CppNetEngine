@@ -21,7 +21,7 @@ eIocpEventType IocpEvent::GetEventType() const
 }
 
 IocpAcceptEvent::IocpAcceptEvent()
-	:IocpEvent(eIocpEventType::Accept)
+	: IocpEvent(eIocpEventType::Accept)
 	, mpClientSession(nullptr)
 {
 }
