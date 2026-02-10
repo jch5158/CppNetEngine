@@ -43,8 +43,8 @@ public:
 	class ArrayDeleter
 	{
 	public:
-		explicit ArrayDeleter(const uint64 size) 
-		: mSize(size)
+		explicit ArrayDeleter(const uint64 size)
+			: mSize(size)
 		{
 		}
 
@@ -58,6 +58,7 @@ public:
 					ptr[count - 1 - i].~T();
 				}
 			}
+
 			MemoryAllocator::GetInstance().Free(ptr, mSize);
 		}
 
