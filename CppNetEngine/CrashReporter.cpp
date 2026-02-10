@@ -20,9 +20,9 @@ void CrashReporter::Crash()
 	* pCrash = 0xDEAFBEFF;
 }
 
-void CrashReporter::CrashIf(const bool isCrash)
+void CrashReporter::CrashIf(const bool bCrash)
 {
-	if (isCrash)
+	if (bCrash)
 	{
 		Crash();
 	}
@@ -45,8 +45,8 @@ static fs::path GetExeDirectory()
 
 bool CrashReporter::Init(const Wstring& appName, const Wstring& appVersion, const Wstring& url)
 {
-    static bool isInitialized = false;
-    if (isInitialized)
+    static bool sbInitialized = false;
+    if (sbInitialized)
     {
         return true;
     }
@@ -77,7 +77,7 @@ bool CrashReporter::Init(const Wstring& appName, const Wstring& appVersion, cons
     static crashpad::CrashpadClient client;
 
     // 5. 핸들러 시작 (Windows에서는 StartHandler가 wstring 경로를 받음)
-    isInitialized = client.StartHandler(
+    sbInitialized = client.StartHandler(
         base::FilePath(handlerPath.wstring()), // 경로: wstring
         base::FilePath(dbPath.wstring()),      // 경로: wstring
         base::FilePath(metricsPath.wstring()), // 경로: wstring
@@ -88,7 +88,7 @@ bool CrashReporter::Init(const Wstring& appName, const Wstring& appVersion, cons
         false
     );
 
-    if (isInitialized)
+    if (sbInitialized)
     {
         fmt::print(L"[Crashpad] Initialized. Dump Path: {}\n", dbPath.wstring());
     }
@@ -97,7 +97,7 @@ bool CrashReporter::Init(const Wstring& appName, const Wstring& appVersion, cons
         fmt::print(L"[Crashpad] Initialization Failed.\n");
     }
 
-    return isInitialized;
+    return sbInitialized;
 }
 
 std::string CrashReporter::toStdU8String(const Wstring& wStr)

@@ -13,7 +13,7 @@ public:
 	CrashReporter& operator=(CrashReporter&&) = delete;
 
 	static void Crash();
-	static void CrashIf(const bool isCrash);
+	static void CrashIf(const bool bCrash);
 	static bool Init(const Wstring& appName, const Wstring& appVersion, const Wstring& url);
 
 private:
