@@ -27,7 +27,7 @@ public:
 	int32 UseSize() const;
 
 	[[nodiscard]]
-	auto MaxSize() const -> int32;
+	int32 MaxSize() const;
 
 private:
 
