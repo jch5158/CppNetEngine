@@ -8,6 +8,8 @@ Session::Session()
 	, mNetAddress()
 	, mbConnected(false)
 	, mReceiveBuffer()
+	, mSendQueue(65535)
+	, mSendPendingQueue(65535)
 {
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{

@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include "IocpCore.h"
+#include "LockFreeQueue.h"
 #include "NetAddress.h"
 #include "ReceiveBuffer.h"
+#include "SharedPtrUtils.h"
 
 class Session : public IocpObject
 {
@@ -31,5 +33,7 @@ private:
 	NetAddress mNetAddress;
 	std::atomic<bool> mbConnected;
 	ReceiveBuffer mReceiveBuffer;
+	LockFreeQueue<SendBufferRef> mSendQueue; // 전송할 버퍼
+	LockFreeQueue<SendBufferRef> mSendPendingQueue; // 전송중인 버퍼
 };
 

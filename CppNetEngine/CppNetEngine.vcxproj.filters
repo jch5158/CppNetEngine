@@ -22,14 +22,14 @@
     <Filter Include="EnginePch">
       <UniqueIdentifier>{a0925f2d-3277-4dbe-9fe8-3bbc205e03c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Interface">
-      <UniqueIdentifier>{e0791a0c-49cb-4011-a2e8-c3975f0a0171}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Network">
       <UniqueIdentifier>{f94ca58d-a0f7-429c-9d56-46cf78ae1cec}</UniqueIdentifier>
     </Filter>
     <Filter Include="IOCP">
       <UniqueIdentifier>{97b44a5e-8f99-45d1-ab83-f575b00b813c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pattern">
+      <UniqueIdentifier>{e0791a0c-49cb-4011-a2e8-c3975f0a0171}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,18 +70,12 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ISingleton.h">
-      <Filter>Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedPtrUtils.h">
-      <Filter>Memory</Filter>
+      <Filter>Pattern</Filter>
     </ClInclude>
     <ClInclude Include="MemoryPool.h">
       <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="MemoryAllocator.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="StlAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="ReceiveBuffer.h">
@@ -105,10 +99,18 @@
     <ClInclude Include="Listener.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="UniquePtrUtils.h">
-      <Filter>Memory</Filter>
+    <ClInclude Include="SendBuffer.h">
+      <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="SendBuffer.h" />
+    <ClInclude Include="UniquePtrUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedPtrUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="StlAllocator.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -150,6 +152,8 @@
     <ClCompile Include="Listener.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="SendBuffer.cpp" />
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

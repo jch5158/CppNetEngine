@@ -178,7 +178,7 @@ private:
 };
 
 
-template <typename T, uint32 CHUNK_SIZE = 500>
+template <typename T, int32 CHUNK_SIZE = 500>
 class TlsObjectPool final
 {
 private:
@@ -206,7 +206,7 @@ private:
 			, mFreeCount(0)
 			, mChunkDataArray{}
 		{
-			for (uint32 i = 0; i < CHUNK_SIZE; ++i)
+			for (int32 i = 0; i < CHUNK_SIZE; ++i)
 			{
 				mChunkDataArray[i].checksum = CHECKSUM_CODE;
 				mChunkDataArray[i].pChunk = this;
@@ -220,7 +220,7 @@ private:
 
 		T* GetData()
 		{
-			if (mAllocCount >= static_cast<int32>(CHUNK_SIZE))
+			if (mAllocCount >= CHUNK_SIZE)
 			{
 				return nullptr;
 			}
@@ -275,6 +275,7 @@ public:
 		, mObjectPool(false, 0)
 	{
 		static_assert(std::is_class_v<T>, "T is not class type.");
+		static_assert(CHUNK_SIZE > 0, "CHUNK_SIZE must be non-negative");
 	}
 
 	~TlsObjectPool() = default;
@@ -306,7 +307,7 @@ public:
 			return;
 		}
 
-		ChunkBlock pChunkBlock = reinterpret_cast<ChunkBlock&>(pData);
+		ChunkBlock* pChunkBlock = reinterpret_cast<ChunkBlock*>(pData);
 		if (!Chunk::IsValidChecksum(*pChunkBlock))
 		{
 			ASSERT(false, "TlsObjectPool::Free - Invalid object detected. Possible memory corruption.");

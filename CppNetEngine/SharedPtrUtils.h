@@ -65,7 +65,10 @@ template <typename T>
 using SharedPtr = std::shared_ptr<T>;
 
 using ListenRef = SharedPtr<class Listen>;
-using ListenConstRef = SharedPtr<const class Listen>;
+using ListenConstRef = SharedPtr<const Listen>;
 
 using SessionRef = SharedPtr<class Session>;
-using SessionConstRef = SharedPtr<const class Session>;
+using SessionConstRef = SharedPtr<const Session>;
+
+using SendBufferRef = SharedPtr<class SendBuffer>;
+using SendBufferConstRef = SharedPtr<const SendBuffer>;

@@ -4,7 +4,7 @@
 #include "pch.h"
 #include "ObjectPool.h"
 
-template <uint32 ALLOC_SIZE, uint32 CHUNK_SIZE = 500>
+template <uint32 ALLOC_SIZE, int32 CHUNK_SIZE = 500>
 class MemoryPool final
 {
 private:
@@ -32,7 +32,7 @@ private:
 			, mFreeCount(0)
 			, mChunkDataArray{}
 		{
-			for (uint32 i = 0; i < CHUNK_SIZE; ++i)
+			for (int32 i = 0; i < CHUNK_SIZE; ++i)
 			{
 				mChunkDataArray[i].checksum = CHECKSUM_CODE;
 				mChunkDataArray[i].pChunk = this;
@@ -43,7 +43,7 @@ private:
 
 		void* GetData()
 		{
-			if (static_cast<uint32>(mAllocCount) >= CHUNK_SIZE)
+			if (mAllocCount >= CHUNK_SIZE)
 			{
 				return nullptr;
 			}
@@ -96,6 +96,8 @@ public:
 	explicit MemoryPool()
 		:mObjectPool(false, 0)
 	{
+		static_assert(ALLOC_SIZE > 0, "ALLOC_SIZE must be non-negative");
+		static_assert(CHUNK_SIZE > 0, "CHUNK_SIZE must be non-negative");
 	}
 
 	~MemoryPool() = default;

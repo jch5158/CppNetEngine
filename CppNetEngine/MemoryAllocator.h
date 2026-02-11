@@ -37,21 +37,20 @@ public:
 
 	[[nodiscard]]
 	void* Alloc(const uint64 size);
-
 	void Free(void* pData, const uint64 size);
 
 private:
 
+
 	static void setChecksum(void* pData, const uint64 size);
 
+	[[nodiscard]]
 	static bool isValidChecksum(void* pData, const uint64 size);
 
+	[[nodiscard]]
 	static uint64 getBucketIndex(const uint64 size, const uint32 stride);
 
 
-	// ----------------------------------------------------------------------
-	// [Type Helper] 구조체 템플릿을 이용해 Tuple 타입 생성 (에러 해결)
-	// ----------------------------------------------------------------------
 	template <typename SEQUENCE>
 	struct TupleBuilder
 	{
@@ -89,9 +88,6 @@ private:
 		}
 	};
 
-	// --------------------------------------------------------------------------
-	// [통합 테이블 생성기] 어떤 Action이든 처리하는 만능 함수
-	// --------------------------------------------------------------------------
 	template <typename ACTION, uint64... INDEX>
 	static const auto& getTable(std::index_sequence<INDEX...>) 
 	{
@@ -103,7 +99,6 @@ private:
 		return table;
 	}
 
-	// 최종 Tuple 타입 정의
 	using SmallBucketsTuple = TupleBuilder<std::make_index_sequence<SMALL_POOL_COUNT>>::type;
 	using LargeBucketsTuple = TupleBuilder<std::make_index_sequence<LARGE_POOL_COUNT>>::type;
 
