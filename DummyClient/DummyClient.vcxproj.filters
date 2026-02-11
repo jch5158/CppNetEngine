@@ -23,7 +23,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="PDL.pb.cc">
+    <ClCompile Include="Protocol.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
   </ItemGroup>
@@ -31,12 +31,12 @@
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="PDL.pb.h">
+    <ClInclude Include="Protocol.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="PDL.proto">
+    <CustomBuild Include="Protocol.proto">
       <Filter>Protocol</Filter>
     </CustomBuild>
   </ItemGroup>
