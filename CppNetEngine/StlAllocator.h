@@ -30,6 +30,12 @@ public:
 	{
 		MemoryAllocator::GetInstance().Free(reinterpret_cast<void*>(pData), size * sizeof(T));
 	}
+
+	template <typename U>
+	bool operator==(const StlAllocator<U>&) const { return true; }
+
+	template <typename U>
+	bool operator!=(const StlAllocator<U>&) const { return false; }
 };
 
 template <typename T>
