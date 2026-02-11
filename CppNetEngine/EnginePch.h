@@ -30,3 +30,6 @@
 #include "NetEngineTls.h"
 #include "NetEngineGlobal.h"
 #include "StlTypes.h"
+#include "UniquePtrUtils.h"
+#include "SharedPtrUtils.h"
+#include "CrashReporter.h"

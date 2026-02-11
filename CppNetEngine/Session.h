@@ -33,7 +33,7 @@ private:
 	NetAddress mNetAddress;
 	std::atomic<bool> mbConnected;
 	ReceiveBuffer mReceiveBuffer;
-	LockFreeQueue<SendBufferRef> mSendQueue; // 전송할 버퍼
+	LockFreeQueue<SendBufferRef> mSendQueue;		// 전송할 버퍼
 	LockFreeQueue<SendBufferRef> mSendPendingQueue; // 전송중인 버퍼
 };
 

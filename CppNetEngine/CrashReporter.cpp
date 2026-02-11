@@ -10,7 +10,6 @@
 
 namespace fs = std::filesystem;
 
-// ReSharper disable All
 void CrashReporter::Crash()
 {
 	volatile uint32* pCrash = nullptr;
@@ -27,14 +26,13 @@ void CrashReporter::CrashIf(const bool bCrash)
 	}
 }
 
-static fs::path GetExeDirectory()
+fs::path CrashReporter::GetExeDirectory()
 {
 #ifdef _WIN32
     wchar_t buffer[MAX_PATH];
-    // 실행 파일의 전체 경로(예: C:\Game\Bin\Game.exe)를 가져옴
-    if (GetModuleFileNameW(NULL, buffer, MAX_PATH) > 0)
+    if (GetModuleFileNameW(nullptr, buffer, MAX_PATH) > 0)
     {
-        fs::path exePath(buffer);
+        const fs::path exePath(buffer);
         return exePath.parent_path(); // 파일명을 제외한 디렉터리 리턴
     }
 #endif
@@ -50,13 +48,11 @@ bool CrashReporter::Init(const Wstring& appName, const Wstring& appVersion, cons
         return true;
     }
 
-    // 1. 경로 설정 (std::filesystem은 유니코드 경로를 자동 처리함)
-    fs::path currentDir = GetExeDirectory();
-    fs::path handlerPath = currentDir / L"crashpad_handler.exe";
-    fs::path dbPath = currentDir / L"crashes";
-    fs::path metricsPath = currentDir / L"metrics";
+    const fs::path currentDir = GetExeDirectory();
+    const fs::path handlerPath = currentDir / L"crashpad_handler.exe";
+    const fs::path dbPath = currentDir / L"crashes";
+    const fs::path metricsPath = currentDir / L"metrics";
 
-    // 핸들러 확인 (wcout 사용)
     if (!fs::exists(handlerPath))
     {
         fmt::print(L"[Error] crashpad_handler not found at: {}\n", handlerPath.wstring());
@@ -101,7 +97,7 @@ bool CrashReporter::Init(const Wstring& appName, const Wstring& appVersion, cons
 
 std::string CrashReporter::toStdU8String(const Wstring& wStr)
 {
-	std::u8string u8Str = fs::path(wStr).u8string();
+	const std::u8string u8Str = fs::path(wStr).u8string();
 
     std::string str(reinterpret_cast<const char*>(u8Str.c_str()));
 

@@ -72,6 +72,6 @@ using String = std::basic_string<char, std::char_traits<char>, StlAllocator<char
 
 using Wstring = std::basic_string<wchar_t, std::char_traits<wchar_t>, StlAllocator<wchar_t>>;
 
-using U8string = std::basic_string<char8_t, std::char_traits<char8_t>, StlAllocator<char8_t>>;
+using U8String = std::basic_string<char8_t, std::char_traits<char8_t>, StlAllocator<char8_t>>;
 
-using U16string = std::basic_string<char16_t, std::char_traits<char16_t>, StlAllocator<char16_t>>;
+using U16String = std::basic_string<char16_t, std::char_traits<char16_t>, StlAllocator<char16_t>>;
