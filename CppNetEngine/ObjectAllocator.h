@@ -21,6 +21,7 @@ private:
 		:mTlsObjectPool()
 	{
 		static_assert(std::is_class_v<T>, "T is not class type.");
+		static_assert(CHUNK_SIZE > 0, "CHUNK_SIZE must be non-negative");
 	}
 
 public:
