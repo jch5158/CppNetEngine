@@ -5,7 +5,6 @@
 #include <ctime>
 #include <conio.h>
 #include "CrashReporter.h"
-#include "TlsObjectPool.h"
 #include "MemoryPool.h"
 
 int32 main()

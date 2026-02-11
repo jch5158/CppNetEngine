@@ -28,7 +28,7 @@ public:
 	// ReSharper disable once CppInconsistentNaming
 	static void deallocate(T* pData, const uint64 size)
 	{
-		MemoryAllocator::GetInstance().Free(pData, size * sizeof(T));
+		MemoryAllocator::GetInstance().Free(reinterpret_cast<void*>(pData), size * sizeof(T));
 	}
 };
 

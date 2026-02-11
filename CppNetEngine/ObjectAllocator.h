@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "ISingleton.h"
-#include "TlsObjectPool.h"
+#include "ObjectPool.h"
 
 template <typename T, uint32 CHUNK_SIZE = 500>
 class ObjectAllocator final : public ISingleton<ObjectAllocator<T, CHUNK_SIZE>>

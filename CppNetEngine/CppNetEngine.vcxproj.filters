@@ -60,9 +60,6 @@
     <ClInclude Include="LockFreeStack.h">
       <Filter>Container</Filter>
     </ClInclude>
-    <ClInclude Include="TlsObjectPool.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
@@ -111,6 +108,7 @@
     <ClInclude Include="UniquePtrUtils.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="SendBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -152,5 +150,6 @@
     <ClCompile Include="Listener.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="SendBuffer.cpp" />
   </ItemGroup>
 </Project>

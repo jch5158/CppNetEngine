@@ -104,3 +104,6 @@ struct GetUniquePtrType<T[]>
 
 template <typename T>
 using UniquePtr = GetUniquePtrType<T>::Type; 
+
+template <typename T>
+using UniqueContPtr = GetUniquePtrType<const T>::Type;
