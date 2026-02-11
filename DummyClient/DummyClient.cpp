@@ -12,9 +12,10 @@ int32 main()
 {
 	CrashReporter::Init(L"DummyClient", L"1.0.0", L"");
 
-	UniquePtr<int> p = UniquePtrUtils<int>::Alloc(10);
 
-	std::cout << *p;
+	void* pData = MemoryAllocator::GetInstance().Alloc(65535);
+
+	MemoryAllocator::GetInstance().Free(pData, 65535);
 
 	return 0;
 }

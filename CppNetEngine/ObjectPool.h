@@ -72,14 +72,15 @@ public:
 		ASSERT(mPoolingCount.load() == 0, "ObjectPool::~ObjectPool - Memory leak detected.");
 	}
 
-	[[nodiscard]]
-	T* Alloc()
+
+	template <typename... Args>
+	T* Alloc(Args&&... args)
 	{
 		if (mPoolingCount.fetch_sub(1) <= 0)
 		{
 			mPoolingCount.fetch_add(1);
 
-			Node* pNode = allocNode(true);
+			Node* pNode = allocNode(true, std::forward<Args>(args)...);
 			pNode->checksum = CHECKSUM_CODE;
 			pNode->pNextNode = nullptr;
 
@@ -154,7 +155,8 @@ public:
 
 private:
 
-	Node* allocNode(const bool bPlacementNew)
+	template <typename... Args>
+	Node* allocNode(const bool bPlacementNew, Args&&... args)
 	{
 		Node* pNode = static_cast<Node*>(mi_malloc(sizeof(Node)));
 		if (pNode == nullptr)
@@ -165,7 +167,7 @@ private:
 		
 		if (bPlacementNew)
 		{
-			new(&pNode->data)T();
+			new(&pNode->data)T(std::forward<Args>(args)...);
 		}
 
 		return pNode;

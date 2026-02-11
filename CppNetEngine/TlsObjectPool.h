@@ -31,7 +31,7 @@ private:
 			, mFreeCount(0)
 			, mChunkDataArray{}
 		{
-			for (int32 i = 0; i < CHUNK_SIZE; ++i)
+			for (uint32 i = 0; i < CHUNK_SIZE; ++i)
 			{
 				mChunkDataArray[i].checksum = CHECKSUM_CODE;
 				mChunkDataArray[i].pChunk = this;
@@ -45,7 +45,7 @@ private:
 
 		T* GetData()
 		{
-			if (mAllocCount >= CHUNK_SIZE)
+			if (mAllocCount >= static_cast<int32>(CHUNK_SIZE))
 			{
 				return nullptr;
 			}
@@ -104,14 +104,14 @@ public:
 
 	~TlsObjectPool() = default;
 
-	[[nodiscard]]
-	T* Alloc()
+	template <typename... Args>
+	T* Alloc(Args&&... args)
 	{
 		mAllocCount.fetch_add(1);
 
 		if (spTlsChunk == nullptr)
 		{
-			spTlsChunk = mObjectPool.Alloc();
+			spTlsChunk = mObjectPool.Alloc(std::forward<Args>(args)...);
 		}
 
 		T* pData = spTlsChunk->GetData();

@@ -10,11 +10,12 @@ class MemoryAllocator final : public ISingleton<MemoryAllocator>
 {
 private:
 
-	static constexpr uint32 CHUNK_SIZE = 500;
-	static constexpr uint32 BUCKET_STRIDE = 32;
-	static constexpr uint32 POOL_COUNT = 128;
-	static constexpr uint32 MIN_ALLOC_SIZE = 32;
-	static constexpr uint32 MAX_ALLOC_SIZE = 4096;
+	static constexpr uint32 SMALL_STRIDE = 256;
+	static constexpr uint32 LARGE_STRIDE = 4096;
+	static constexpr uint32 THRESHOLD = 4096;
+	static constexpr uint32 MAX_SIZE = 65536;
+	static constexpr uint32 SMALL_POOL_COUNT = (THRESHOLD / SMALL_STRIDE) - 1;
+	static constexpr uint32 LARGE_POOL_COUNT = (MAX_SIZE / LARGE_STRIDE);
 	static constexpr uint64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
 
 public:
@@ -45,45 +46,44 @@ private:
 
 	static bool isValidChecksum(void* pData, const uint64 size);
 
-	static uint64 getBucketIndex(const uint64 size);
+	static uint64 getBucketIndex(const uint64 size, const uint32 stride);
+
 
 	// ----------------------------------------------------------------------
 	// [Type Helper] 구조체 템플릿을 이용해 Tuple 타입 생성 (에러 해결)
 	// ----------------------------------------------------------------------
 	template <typename SEQUENCE>
-	struct TupleBuilder;
+	struct TupleBuilder
+	{
+	};
 
 	template <uint64... INDEX>
 	struct TupleBuilder<std::index_sequence<INDEX...>>
 	{
-		// (Is + 1) * 32 => 32, 64, ... 4096 타입 생성
-		using type = std::tuple<MemoryPool<(INDEX + 1) * BUCKET_STRIDE>...>;
+		using type = std::tuple<MemoryPool<(INDEX + 1) * SMALL_STRIDE>...>;
 	};
 
-	// 최종 Tuple 타입 정의
-	using BucketsTuple = TupleBuilder<std::make_index_sequence<POOL_COUNT>>::type;
-
+	template <typename T>
 	class AllocActor
 	{
 	public:
-		using FuncType = void* (*)(BucketsTuple&);
+		using FuncType = void* (*)(T&);
 
-		// 실제 수행할 함수 (기존 AllocImpl)
 		template <uint64 INDEX>
-		static void* Do(BucketsTuple& buckets)
+		static void* Do(T& buckets)
 		{
 			return std::get<INDEX>(buckets).Alloc();
 		}
 	};
 
+	template <typename T>
 	class FreeActor
 	{
 	public:
-		using FuncType = void (*)(BucketsTuple&, void*);
+		using FuncType = void (*)(T&, void*);
 
-		// 실제 수행할 함수 (기존 FreeImpl)
 		template <uint64 INDEX>
-		static void Do(BucketsTuple& buckets, void* pData) 
+		static void Do(T& buckets, void* pData) 
 		{
 			std::get<INDEX>(buckets).Free(pData);
 		}
@@ -95,11 +95,23 @@ private:
 	template <typename ACTION, uint64... INDEX>
 	static const auto& getTable(std::index_sequence<INDEX...>) 
 	{
-		static const std::array<typename ACTION::FuncType, POOL_COUNT> table
-			= { &ACTION::template Do<INDEX>... }; // ★ 핵심: Action 안에 있는 Do<Is>를 꺼냄
+		constexpr int32 count = static_cast<int32>(sizeof...(INDEX));
+
+		static const std::array<typename ACTION::FuncType, count> table
+			= { &ACTION::template Do<INDEX>... };
 
 		return table;
 	}
 
-	BucketsTuple mBuckets;  // NOLINT(clang-diagnostic-padded)
+	// 최종 Tuple 타입 정의
+	using SmallBucketsTuple = TupleBuilder<std::make_index_sequence<SMALL_POOL_COUNT>>::type;
+	using LargeBucketsTuple = TupleBuilder<std::make_index_sequence<LARGE_POOL_COUNT>>::type;
+
+	using SmallAllocActor = AllocActor<SmallBucketsTuple>;
+	using SmallFreeActor = FreeActor<SmallBucketsTuple>;
+	using LargeAllocActor = AllocActor<LargeBucketsTuple>;
+	using LargeFreeActor = FreeActor<LargeBucketsTuple>;
+
+	SmallBucketsTuple mSmallBuckets;
+	LargeBucketsTuple mLargeBuckets;
 };
