@@ -217,7 +217,7 @@
     <ClInclude Include="Session.h" />
     <ClInclude Include="SharedPtrUtils.h" />
     <ClInclude Include="SocketUtils.h" />
-    <ClInclude Include="StlAllocator.h" />
+    <ClInclude Include="StlTypes.h" />
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniquePtrUtils.h" />

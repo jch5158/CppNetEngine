@@ -108,7 +108,7 @@
     <ClInclude Include="SharedPtrUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="StlAllocator.h">
+    <ClInclude Include="StlTypes.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>

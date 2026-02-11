@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "StlAllocator.h"
 
 class CrashReporter final
 {

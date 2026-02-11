@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "IocpCore.h"
-#include "StlAllocator.h"
 
 class NetAddress;
 class IocpAcceptEvent;

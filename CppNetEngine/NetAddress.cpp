@@ -2,8 +2,6 @@
 
 #include "NetAddress.h"
 
-#include "StlAllocator.h"
-
 NetAddress::NetAddress(const SOCKADDR_IN sockAddr)
 	: mSockAddr(sockAddr)
 {

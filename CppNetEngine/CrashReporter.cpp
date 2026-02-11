@@ -7,7 +7,6 @@
 #include "client/settings.h"
 
 #include "CrashReporter.h"
-#include "StlAllocator.h"
 
 namespace fs = std::filesystem;
 
