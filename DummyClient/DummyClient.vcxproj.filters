@@ -12,6 +12,9 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{7e0148f6-4b61-4a58-9360-b0c963d4a324}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{65444944-9044-42d0-a343-2514b3ad5a5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DummyClient.cpp">
@@ -20,10 +23,21 @@
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
+    <ClCompile Include="PDL.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
+    <ClInclude Include="PDL.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="PDL.proto">
+      <Filter>Protocol</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

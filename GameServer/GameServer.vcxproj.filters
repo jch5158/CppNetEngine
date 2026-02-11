@@ -12,6 +12,9 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{5af14659-c093-466b-ac07-6f792cc5849c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{062f4b94-6953-4ea3-8897-06eb44f7dde8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -20,10 +23,21 @@
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
+    <ClCompile Include="PDL.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
+    <ClInclude Include="PDL.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="PDL.proto">
+      <Filter>Protocol</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@
     "crashpad",
     "fmt",
     "mimalloc",
-    "spdlog"
+    "spdlog",
+    "protobuf"
   ]
 }

@@ -11,6 +11,5 @@ int32 main()
 {
 	CrashReporter::Init(L"DummyClient", L"1.0.0", L"");
 
-
 	return 0;
 }
