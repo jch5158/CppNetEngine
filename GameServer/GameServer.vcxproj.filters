@@ -36,7 +36,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Protocol.proto">
+    <CustomBuild Include="..\Protocol\Protocol.proto">
       <Filter>Protocol</Filter>
     </CustomBuild>
   </ItemGroup>
