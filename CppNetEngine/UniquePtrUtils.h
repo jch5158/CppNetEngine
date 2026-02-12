@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "pch.h"
 #include "MemoryAllocator.h"
 
 template <typename T>

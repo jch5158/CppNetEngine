@@ -1,5 +1,6 @@
 ﻿// ReSharper disable CppInconsistentNaming
 #pragma once
+
 #include "MemoryAllocator.h"
 
 template <typename T>
