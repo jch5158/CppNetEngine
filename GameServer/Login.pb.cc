@@ -31,6 +31,7 @@ inline constexpr S2C_TEST::Impl_::Impl_(
       : id_{::uint64_t{0u}},
         hp_{0u},
         attack_{0u},
+        test_{0u},
         _cached_size_{0} {}
 
 template <typename>
@@ -71,6 +72,7 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::Protocol::S2C_TEST, _impl_.id_),
         PROTOBUF_FIELD_OFFSET(::Protocol::S2C_TEST, _impl_.hp_),
         PROTOBUF_FIELD_OFFSET(::Protocol::S2C_TEST, _impl_.attack_),
+        PROTOBUF_FIELD_OFFSET(::Protocol::S2C_TEST, _impl_.test_),
 };
 
 static const ::_pbi::MigrationSchema
@@ -82,15 +84,15 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_Login_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\013Login.proto\022\010Protocol\"2\n\010S2C_TEST\022\n\n\002i"
-    "d\030\001 \001(\004\022\n\n\002hp\030\002 \001(\r\022\016\n\006attack\030\003 \001(\rb\006pro"
-    "to3"
+    "\n\013Login.proto\022\010Protocol\"@\n\010S2C_TEST\022\n\n\002i"
+    "d\030\001 \001(\004\022\n\n\002hp\030\002 \001(\r\022\016\n\006attack\030\003 \001(\r\022\014\n\004t"
+    "est\030\004 \001(\rb\006proto3"
 };
 static ::absl::once_flag descriptor_table_Login_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_Login_2eproto = {
     false,
     false,
-    83,
+    97,
     descriptor_table_protodef_Login_2eproto,
     "Login.proto",
     &descriptor_table_Login_2eproto_once,
@@ -134,9 +136,9 @@ inline void S2C_TEST::SharedCtor(::_pb::Arena* arena) {
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, id_),
            0,
-           offsetof(Impl_, attack_) -
+           offsetof(Impl_, test_) -
                offsetof(Impl_, id_) +
-               sizeof(Impl_::attack_));
+               sizeof(Impl_::test_));
 }
 S2C_TEST::~S2C_TEST() {
   // @@protoc_insertion_point(destructor:Protocol.S2C_TEST)
@@ -185,15 +187,15 @@ const ::google::protobuf::internal::ClassData* S2C_TEST::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 0, 2> S2C_TEST::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 0, 2> S2C_TEST::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    3, 24,  // max_field_number, fast_idx_mask
+    4, 24,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967288,  // skipmap
+    4294967280,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    3,  // num_field_entries
+    4,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -203,7 +205,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 0, 2> S2C_TEST::_table_ = {
     ::_pbi::TcParser::GetTable<::Protocol::S2C_TEST>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // uint32 test = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(S2C_TEST, _impl_.test_), 63>(),
+     {32, 63, 0, PROTOBUF_FIELD_OFFSET(S2C_TEST, _impl_.test_)}},
     // uint64 id = 1;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(S2C_TEST, _impl_.id_), 63>(),
      {8, 63, 0, PROTOBUF_FIELD_OFFSET(S2C_TEST, _impl_.id_)}},
@@ -225,6 +229,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 0, 2> S2C_TEST::_table_ = {
     // uint32 attack = 3;
     {PROTOBUF_FIELD_OFFSET(S2C_TEST, _impl_.attack_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUInt32)},
+    // uint32 test = 4;
+    {PROTOBUF_FIELD_OFFSET(S2C_TEST, _impl_.test_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt32)},
   }},
   // no aux_entries
   {{
@@ -239,8 +246,8 @@ PROTOBUF_NOINLINE void S2C_TEST::Clear() {
   (void) cached_has_bits;
 
   ::memset(&_impl_.id_, 0, static_cast<::size_t>(
-      reinterpret_cast<char*>(&_impl_.attack_) -
-      reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.attack_));
+      reinterpret_cast<char*>(&_impl_.test_) -
+      reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.test_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -278,6 +285,13 @@ PROTOBUF_NOINLINE void S2C_TEST::Clear() {
             target = stream->EnsureSpace(target);
             target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
                 3, this_._internal_attack(), target);
+          }
+
+          // uint32 test = 4;
+          if (this_._internal_test() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+                4, this_._internal_test(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -320,6 +334,11 @@ PROTOBUF_NOINLINE void S2C_TEST::Clear() {
               total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
                   this_._internal_attack());
             }
+            // uint32 test = 4;
+            if (this_._internal_test() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+                  this_._internal_test());
+            }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
@@ -342,6 +361,9 @@ void S2C_TEST::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google
   if (from._internal_attack() != 0) {
     _this->_impl_.attack_ = from._impl_.attack_;
   }
+  if (from._internal_test() != 0) {
+    _this->_impl_.test_ = from._impl_.test_;
+  }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -357,8 +379,8 @@ void S2C_TEST::InternalSwap(S2C_TEST* PROTOBUF_RESTRICT other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S2C_TEST, _impl_.attack_)
-      + sizeof(S2C_TEST::_impl_.attack_)
+      PROTOBUF_FIELD_OFFSET(S2C_TEST, _impl_.test_)
+      + sizeof(S2C_TEST::_impl_.test_)
       - PROTOBUF_FIELD_OFFSET(S2C_TEST, _impl_.id_)>(
           reinterpret_cast<char*>(&_impl_.id_),
           reinterpret_cast<char*>(&other->_impl_.id_));

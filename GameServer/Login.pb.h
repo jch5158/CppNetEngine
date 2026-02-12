@@ -217,6 +217,7 @@ class S2C_TEST final : public ::google::protobuf::Message
     kIdFieldNumber = 1,
     kHpFieldNumber = 2,
     kAttackFieldNumber = 3,
+    kTestFieldNumber = 4,
   };
   // uint64 id = 1;
   void clear_id() ;
@@ -248,12 +249,22 @@ class S2C_TEST final : public ::google::protobuf::Message
   void _internal_set_attack(::uint32_t value);
 
   public:
+  // uint32 test = 4;
+  void clear_test() ;
+  ::uint32_t test() const;
+  void set_test(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_test() const;
+  void _internal_set_test(::uint32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:Protocol.S2C_TEST)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 0,
+      2, 4, 0,
       0, 2>
       _table_;
 
@@ -274,6 +285,7 @@ class S2C_TEST final : public ::google::protobuf::Message
     ::uint64_t id_;
     ::uint32_t hp_;
     ::uint32_t attack_;
+    ::uint32_t test_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -361,6 +373,28 @@ inline ::uint32_t S2C_TEST::_internal_attack() const {
 inline void S2C_TEST::_internal_set_attack(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.attack_ = value;
+}
+
+// uint32 test = 4;
+inline void S2C_TEST::clear_test() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.test_ = 0u;
+}
+inline ::uint32_t S2C_TEST::test() const {
+  // @@protoc_insertion_point(field_get:Protocol.S2C_TEST.test)
+  return _internal_test();
+}
+inline void S2C_TEST::set_test(::uint32_t value) {
+  _internal_set_test(value);
+  // @@protoc_insertion_point(field_set:Protocol.S2C_TEST.test)
+}
+inline ::uint32_t S2C_TEST::_internal_test() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.test_;
+}
+inline void S2C_TEST::_internal_set_test(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.test_ = value;
 }
 
 #ifdef __GNUC__
