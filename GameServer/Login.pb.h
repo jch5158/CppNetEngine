@@ -52,9 +52,9 @@ struct TableStruct_Login_2eproto {
 extern const ::google::protobuf::internal::DescriptorTable
     descriptor_table_Login_2eproto;
 namespace Protocol {
-class S2C_TEST;
-struct S2C_TESTDefaultTypeInternal;
-extern S2C_TESTDefaultTypeInternal _S2C_TEST_default_instance_;
+class C2S_LOGIN;
+struct C2S_LOGINDefaultTypeInternal;
+extern C2S_LOGINDefaultTypeInternal _C2S_LOGIN_default_instance_;
 }  // namespace Protocol
 namespace google {
 namespace protobuf {
@@ -68,31 +68,31 @@ namespace Protocol {
 
 // -------------------------------------------------------------------
 
-class S2C_TEST final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:Protocol.S2C_TEST) */ {
+class C2S_LOGIN final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:Protocol.C2S_LOGIN) */ {
  public:
-  inline S2C_TEST() : S2C_TEST(nullptr) {}
-  ~S2C_TEST() PROTOBUF_FINAL;
+  inline C2S_LOGIN() : C2S_LOGIN(nullptr) {}
+  ~C2S_LOGIN() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(S2C_TEST* msg, std::destroying_delete_t) {
+  void operator delete(C2S_LOGIN* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(S2C_TEST));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(C2S_LOGIN));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR S2C_TEST(
+  explicit PROTOBUF_CONSTEXPR C2S_LOGIN(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline S2C_TEST(const S2C_TEST& from) : S2C_TEST(nullptr, from) {}
-  inline S2C_TEST(S2C_TEST&& from) noexcept
-      : S2C_TEST(nullptr, std::move(from)) {}
-  inline S2C_TEST& operator=(const S2C_TEST& from) {
+  inline C2S_LOGIN(const C2S_LOGIN& from) : C2S_LOGIN(nullptr, from) {}
+  inline C2S_LOGIN(C2S_LOGIN&& from) noexcept
+      : C2S_LOGIN(nullptr, std::move(from)) {}
+  inline C2S_LOGIN& operator=(const C2S_LOGIN& from) {
     CopyFrom(from);
     return *this;
   }
-  inline S2C_TEST& operator=(S2C_TEST&& from) noexcept {
+  inline C2S_LOGIN& operator=(C2S_LOGIN&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -120,16 +120,16 @@ class S2C_TEST final : public ::google::protobuf::Message
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const S2C_TEST& default_instance() {
+  static const C2S_LOGIN& default_instance() {
     return *internal_default_instance();
   }
-  static inline const S2C_TEST* internal_default_instance() {
-    return reinterpret_cast<const S2C_TEST*>(
-        &_S2C_TEST_default_instance_);
+  static inline const C2S_LOGIN* internal_default_instance() {
+    return reinterpret_cast<const C2S_LOGIN*>(
+        &_C2S_LOGIN_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 0;
-  friend void swap(S2C_TEST& a, S2C_TEST& b) { a.Swap(&b); }
-  inline void Swap(S2C_TEST* other) {
+  friend void swap(C2S_LOGIN& a, C2S_LOGIN& b) { a.Swap(&b); }
+  inline void Swap(C2S_LOGIN* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -137,7 +137,7 @@ class S2C_TEST final : public ::google::protobuf::Message
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(S2C_TEST* other) {
+  void UnsafeArenaSwap(C2S_LOGIN* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -145,13 +145,13 @@ class S2C_TEST final : public ::google::protobuf::Message
 
   // implements Message ----------------------------------------------
 
-  S2C_TEST* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<S2C_TEST>(arena);
+  C2S_LOGIN* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<C2S_LOGIN>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const S2C_TEST& from);
+  void CopyFrom(const C2S_LOGIN& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const S2C_TEST& from) { S2C_TEST::MergeImpl(*this, from); }
+  void MergeFrom(const C2S_LOGIN& from) { C2S_LOGIN::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -188,18 +188,18 @@ class S2C_TEST final : public ::google::protobuf::Message
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(S2C_TEST* other);
+  void InternalSwap(C2S_LOGIN* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "Protocol.S2C_TEST"; }
+  static ::absl::string_view FullMessageName() { return "Protocol.C2S_LOGIN"; }
 
  protected:
-  explicit S2C_TEST(::google::protobuf::Arena* arena);
-  S2C_TEST(::google::protobuf::Arena* arena, const S2C_TEST& from);
-  S2C_TEST(::google::protobuf::Arena* arena, S2C_TEST&& from) noexcept
-      : S2C_TEST(arena) {
+  explicit C2S_LOGIN(::google::protobuf::Arena* arena);
+  C2S_LOGIN(::google::protobuf::Arena* arena, const C2S_LOGIN& from);
+  C2S_LOGIN(::google::protobuf::Arena* arena, C2S_LOGIN&& from) noexcept
+      : C2S_LOGIN(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -259,7 +259,7 @@ class S2C_TEST final : public ::google::protobuf::Message
   void _internal_set_test(::uint32_t value);
 
   public:
-  // @@protoc_insertion_point(class_scope:Protocol.S2C_TEST)
+  // @@protoc_insertion_point(class_scope:Protocol.C2S_LOGIN)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
@@ -281,7 +281,7 @@ class S2C_TEST final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const S2C_TEST& from_msg);
+                          const C2S_LOGIN& from_msg);
     ::uint64_t id_;
     ::uint32_t hp_;
     ::uint32_t attack_;
@@ -307,92 +307,92 @@ class S2C_TEST final : public ::google::protobuf::Message
 #endif  // __GNUC__
 // -------------------------------------------------------------------
 
-// S2C_TEST
+// C2S_LOGIN
 
 // uint64 id = 1;
-inline void S2C_TEST::clear_id() {
+inline void C2S_LOGIN::clear_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.id_ = ::uint64_t{0u};
 }
-inline ::uint64_t S2C_TEST::id() const {
-  // @@protoc_insertion_point(field_get:Protocol.S2C_TEST.id)
+inline ::uint64_t C2S_LOGIN::id() const {
+  // @@protoc_insertion_point(field_get:Protocol.C2S_LOGIN.id)
   return _internal_id();
 }
-inline void S2C_TEST::set_id(::uint64_t value) {
+inline void C2S_LOGIN::set_id(::uint64_t value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.S2C_TEST.id)
+  // @@protoc_insertion_point(field_set:Protocol.C2S_LOGIN.id)
 }
-inline ::uint64_t S2C_TEST::_internal_id() const {
+inline ::uint64_t C2S_LOGIN::_internal_id() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.id_;
 }
-inline void S2C_TEST::_internal_set_id(::uint64_t value) {
+inline void C2S_LOGIN::_internal_set_id(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.id_ = value;
 }
 
 // uint32 hp = 2;
-inline void S2C_TEST::clear_hp() {
+inline void C2S_LOGIN::clear_hp() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.hp_ = 0u;
 }
-inline ::uint32_t S2C_TEST::hp() const {
-  // @@protoc_insertion_point(field_get:Protocol.S2C_TEST.hp)
+inline ::uint32_t C2S_LOGIN::hp() const {
+  // @@protoc_insertion_point(field_get:Protocol.C2S_LOGIN.hp)
   return _internal_hp();
 }
-inline void S2C_TEST::set_hp(::uint32_t value) {
+inline void C2S_LOGIN::set_hp(::uint32_t value) {
   _internal_set_hp(value);
-  // @@protoc_insertion_point(field_set:Protocol.S2C_TEST.hp)
+  // @@protoc_insertion_point(field_set:Protocol.C2S_LOGIN.hp)
 }
-inline ::uint32_t S2C_TEST::_internal_hp() const {
+inline ::uint32_t C2S_LOGIN::_internal_hp() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.hp_;
 }
-inline void S2C_TEST::_internal_set_hp(::uint32_t value) {
+inline void C2S_LOGIN::_internal_set_hp(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.hp_ = value;
 }
 
 // uint32 attack = 3;
-inline void S2C_TEST::clear_attack() {
+inline void C2S_LOGIN::clear_attack() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.attack_ = 0u;
 }
-inline ::uint32_t S2C_TEST::attack() const {
-  // @@protoc_insertion_point(field_get:Protocol.S2C_TEST.attack)
+inline ::uint32_t C2S_LOGIN::attack() const {
+  // @@protoc_insertion_point(field_get:Protocol.C2S_LOGIN.attack)
   return _internal_attack();
 }
-inline void S2C_TEST::set_attack(::uint32_t value) {
+inline void C2S_LOGIN::set_attack(::uint32_t value) {
   _internal_set_attack(value);
-  // @@protoc_insertion_point(field_set:Protocol.S2C_TEST.attack)
+  // @@protoc_insertion_point(field_set:Protocol.C2S_LOGIN.attack)
 }
-inline ::uint32_t S2C_TEST::_internal_attack() const {
+inline ::uint32_t C2S_LOGIN::_internal_attack() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.attack_;
 }
-inline void S2C_TEST::_internal_set_attack(::uint32_t value) {
+inline void C2S_LOGIN::_internal_set_attack(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.attack_ = value;
 }
 
 // uint32 test = 4;
-inline void S2C_TEST::clear_test() {
+inline void C2S_LOGIN::clear_test() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.test_ = 0u;
 }
-inline ::uint32_t S2C_TEST::test() const {
-  // @@protoc_insertion_point(field_get:Protocol.S2C_TEST.test)
+inline ::uint32_t C2S_LOGIN::test() const {
+  // @@protoc_insertion_point(field_get:Protocol.C2S_LOGIN.test)
   return _internal_test();
 }
-inline void S2C_TEST::set_test(::uint32_t value) {
+inline void C2S_LOGIN::set_test(::uint32_t value) {
   _internal_set_test(value);
-  // @@protoc_insertion_point(field_set:Protocol.S2C_TEST.test)
+  // @@protoc_insertion_point(field_set:Protocol.C2S_LOGIN.test)
 }
-inline ::uint32_t S2C_TEST::_internal_test() const {
+inline ::uint32_t C2S_LOGIN::_internal_test() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.test_;
 }
-inline void S2C_TEST::_internal_set_test(::uint32_t value) {
+inline void C2S_LOGIN::_internal_set_test(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.test_ = value;
 }

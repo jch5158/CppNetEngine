@@ -10,7 +10,7 @@ void* MemoryAllocator::	Alloc(const uint64 size)
 
 	void* pData = nullptr;
 
-	if (size < THRESHOLD)
+	if (size <= (THRESHOLD - SMALL_STRIDE))
 	{
 		const uint64 index = getBucketIndex(size, SMALL_STRIDE);
 
@@ -31,8 +31,6 @@ void* MemoryAllocator::	Alloc(const uint64 size)
 		pData = mi_malloc(size + sizeof(uint64));
 
 		setChecksum(pData, size);
-
-		return pData;
 	}
 
 	return pData;
@@ -42,7 +40,7 @@ void MemoryAllocator::Free(void* pData, const uint64 size)
 {
 	ASSERT(pData != nullptr, "MemoryAllocator::Free - pData is nullptr");
 
-	if (size < THRESHOLD)
+	if (size <= (THRESHOLD - SMALL_STRIDE))
 	{
 		const uint64 index = getBucketIndex(size, SMALL_STRIDE);
 

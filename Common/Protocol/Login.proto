@@ -1,7 +1,7 @@
 ﻿syntax = "proto3";
 package Protocol;
 
-message S2C_TEST
+message C2S_LOGIN
 {
 	uint64 id = 1;
 	uint32 hp = 2;

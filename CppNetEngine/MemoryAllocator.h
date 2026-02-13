@@ -51,15 +51,15 @@ private:
 	static uint64 getBucketIndex(const uint64 size, const uint32 stride);
 
 
-	template <typename SEQUENCE>
+	template <uint32 STRIDE, typename SEQUENCE>
 	struct TupleBuilder
 	{
 	};
 
-	template <uint64... INDEX>
-	struct TupleBuilder<std::index_sequence<INDEX...>>
+	template <uint32 STRIDE, uint64... INDEX>
+	struct TupleBuilder<STRIDE, std::index_sequence<INDEX...>>
 	{
-		using type = std::tuple<MemoryPool<(INDEX + 1) * SMALL_STRIDE>...>;
+		using type = std::tuple<MemoryPool<(INDEX + 1)* STRIDE>...>;
 	};
 
 	template <typename T>
@@ -99,8 +99,8 @@ private:
 		return table;
 	}
 
-	using SmallBucketsTuple = TupleBuilder<std::make_index_sequence<SMALL_POOL_COUNT>>::type;
-	using LargeBucketsTuple = TupleBuilder<std::make_index_sequence<LARGE_POOL_COUNT>>::type;
+	using SmallBucketsTuple = TupleBuilder<SMALL_STRIDE, std::make_index_sequence<SMALL_POOL_COUNT>>::type;
+	using LargeBucketsTuple = TupleBuilder<LARGE_STRIDE, std::make_index_sequence<LARGE_POOL_COUNT>>::type;
 
 	using SmallAllocActor = AllocActor<SmallBucketsTuple>;
 	using SmallFreeActor = FreeActor<SmallBucketsTuple>;
