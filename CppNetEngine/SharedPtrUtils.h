@@ -63,13 +63,33 @@ public:
 };
 
 template <typename T>
+using WeakPtr = std::weak_ptr<T>;
+
+template <typename T>
 using SharedPtr = std::shared_ptr<T>;
 
-using ListenRef = SharedPtr<class Listen>;
-using ListenConstRef = SharedPtr<const Listen>;
+using ListenerRef = SharedPtr<class Listen>;
+using ListenerConstRef = SharedPtr<const Listen>;
 
 using SessionRef = SharedPtr<class Session>;
 using SessionConstRef = SharedPtr<const Session>;
 
 using SendBufferRef = SharedPtr<class SendBuffer>;
 using SendBufferConstRef = SharedPtr<const SendBuffer>;
+
+using IocpCoreRef = SharedPtr<class IocpCore>;
+using IocpCoreConstRef = SharedPtr<const IocpCore>;
+
+using WeakServiceRef = WeakPtr<class Service>;
+using WeakServiceConstRef = WeakPtr<const Service>;
+using ServiceRef = SharedPtr<Service>;
+using ServiceConstRef = SharedPtr<const Service>;
+
+using IocpObjectRef = SharedPtr<class IocpObject>;
+using IocpObjectConstRef = SharedPtr<const IocpObjectRef>;
+
+using ServerServiceRef = SharedPtr<class ServerService>;
+using ServerServiceConstRef = SharedPtr<const ServerService>;
+
+using ClientServiceRef = SharedPtr<class ClientService>;
+using ClientServiceConstRef = SharedPtr<const ClientService>;

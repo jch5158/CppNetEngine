@@ -1,8 +1,7 @@
 ﻿#include "pch.h"
 #include "SocketUtils.h"
-#include "NetAddress.h"
 
-bool SocketUtils::Init(int32& outErrorCode)
+bool SocketUtils::Init()
 {
 	static bool isInit = false;
 	if (isInit)
@@ -13,7 +12,6 @@ bool SocketUtils::Init(int32& outErrorCode)
 	WSADATA wsaData{};
 	if (WSAStartup(WINSOCK_VERSION, &wsaData) == SOCKET_ERROR)
 	{
-		outErrorCode = WSAGetLastError();
 		return false;
 	}
 
@@ -21,25 +19,21 @@ bool SocketUtils::Init(int32& outErrorCode)
 	/* 런타임에 주소 얻어오는 API */
 	if (CreateTcpSocket(dummySocket) == false)
 	{
-		outErrorCode = WSAGetLastError();
 		return false;
 	}
 
 	if (bindWindowsFunction(dummySocket, WSAID_CONNECTEX, reinterpret_cast<LPVOID*>(&connectEx)) == false)
 	{
-		outErrorCode = WSAGetLastError();
 		return false;
 	}
 
 	if (bindWindowsFunction(dummySocket, WSAID_DISCONNECTEX, reinterpret_cast<LPVOID*>(&disconnectEx)) == false)
 	{
-		outErrorCode = WSAGetLastError();
 		return false;
 	}
 
 	if (bindWindowsFunction(dummySocket, WSAID_ACCEPTEX, reinterpret_cast<LPVOID*>(&acceptEx)) == false)
 	{
-		outErrorCode = WSAGetLastError();
 		return false;
 	}
 	
@@ -110,9 +104,9 @@ bool SocketUtils::SetUpdateAcceptSocket(const SOCKET socket, const SOCKET listen
 	return SetSockOpt(socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, listenSocket);
 }
 
-bool SocketUtils::Bind(const SOCKET socket, const NetAddress& netAddr)
+bool SocketUtils::Bind(const SOCKET socket, const SOCKADDR_IN& sockAddr)
 {
-	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<const SOCKADDR*>(&netAddr.GetSockAddr()), sizeof(SOCKADDR_IN));
+	return SOCKET_ERROR != bind(socket, reinterpret_cast<const SOCKADDR*>(&sockAddr), sizeof(SOCKADDR_IN));
 }
 
 bool SocketUtils::BindAnyAddress(const SOCKET socket, const uint16 port)
@@ -122,7 +116,7 @@ bool SocketUtils::BindAnyAddress(const SOCKET socket, const uint16 port)
 	myAddress.sin_addr.s_addr = ::htonl(INADDR_ANY);
 	myAddress.sin_port = ::htons(port);
 
-	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<const SOCKADDR*>(&myAddress), sizeof(myAddress));
+	return SOCKET_ERROR != bind(socket, reinterpret_cast<const SOCKADDR*>(&myAddress), sizeof(myAddress));
 }
 
 bool SocketUtils::Listen(const SOCKET socket, const int32 backlog)
@@ -137,20 +131,39 @@ bool SocketUtils::AcceptEx(const SOCKET listenSock, const SOCKET acceptSock, voi
 	return retVal == TRUE;
 }
 
-bool SocketUtils::ConnectEx()
+bool SocketUtils::ConnectEx(const SOCKET socket, SOCKADDR_IN& sockAddr, OVERLAPPED* pOverlapped)
 {
-	return false;
+	DWORD numOfBytes = 0;
+	return connectEx(socket, reinterpret_cast<SOCKADDR*>(&sockAddr), sizeof(SOCKADDR_IN), nullptr, 0, &numOfBytes, pOverlapped);
 }
 
-bool SocketUtils::DisconnectEx()
+bool SocketUtils::DisconnectEx(const SOCKET socket, OVERLAPPED* pOverlapped)
 {
-	return false;
+	return disconnectEx(socket, pOverlapped, TF_REUSE_SOCKET, 0);
+}
+
+void SocketUtils::CancelIoEx(const SOCKET socket, OVERLAPPED* pOverlapped)
+{
+	::CancelIoEx(reinterpret_cast<HANDLE>(socket), pOverlapped);  // NOLINT(performance-no-int-to-ptr)
+}
+
+bool SocketUtils::WsaSend(const SOCKET socket, WSABUF* pWsabuf, const int32 bufSize, OVERLAPPED* pOverlapped)
+{
+	DWORD numOfBytes = 0;
+	return SOCKET_ERROR != WSASend(socket, pWsabuf, static_cast<DWORD>(bufSize), &numOfBytes, 0, pOverlapped, nullptr);
+}
+
+bool SocketUtils::WsaReceive(const SOCKET socket, WSABUF* pWsabuf, const int32 bufSize, OVERLAPPED* pOverlapped)
+{
+	DWORD numOfBytes = 0;
+	DWORD flags = 0;
+	return SOCKET_ERROR != WSARecv(socket, pWsabuf, bufSize, &numOfBytes, &flags, pOverlapped, nullptr);
 }
 
 bool SocketUtils::bindWindowsFunction(const SOCKET socket, GUID guid, LPVOID* fn)
 {
 	DWORD bytes = 0;
-	return SOCKET_ERROR != ::WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), static_cast<LPVOID*>(fn), sizeof(*fn), OUT & bytes, nullptr, nullptr);
+	return SOCKET_ERROR != WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), static_cast<LPVOID*>(fn), sizeof(*fn), OUT & bytes, nullptr, nullptr);
 }
 
 LPFN_ACCEPTEX SocketUtils::acceptEx = nullptr;

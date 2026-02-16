@@ -16,7 +16,7 @@ NetAddress::NetAddress(const Wstring& ip, const uint16 port)
 	mSockAddr.sin_port = ::htons(port);
 }
 
-const SOCKADDR_IN& NetAddress::GetSockAddr() const
+SOCKADDR_IN& NetAddress::GetSockAddr()
 {
 	return mSockAddr;
 }

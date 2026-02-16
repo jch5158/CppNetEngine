@@ -29,6 +29,9 @@ public:
 	[[nodiscard]]
 	int32 MaxSize() const;
 
+	[[nodiscard]]
+	char* GetBufferPtr() const;
+
 private:
 
 	int32 mWritePos;

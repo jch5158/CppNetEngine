@@ -49,3 +49,8 @@ int32 SendBuffer::MaxSize() const
 {
 	return mBufferSize;
 }
+
+char* SendBuffer::GetBufferPtr() const
+{
+	return &mBuffer[0];
+}

@@ -191,6 +191,8 @@ private:
 
 		struct ChunkData
 		{
+			ChunkData() = default;
+
 			T data;
 			uint64 checksum;
 			Chunk* pChunk;

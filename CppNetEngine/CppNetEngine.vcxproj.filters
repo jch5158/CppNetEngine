@@ -111,6 +111,9 @@
     <ClInclude Include="StlTypes.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Service.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -153,6 +156,9 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="SendBuffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Service.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

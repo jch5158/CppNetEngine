@@ -7,7 +7,7 @@ ReceiveBuffer::ReceiveBuffer()
 	: mReadPos(0)
 	, mWritePos(0)
 	, mBufferSize(DEFAULT_BUFFER_SIZE)
-	, mBuffer(UniquePtrUtils<char[]>::Alloc(DEFAULT_BUFFER_SIZE))
+	, mBuffer(UniquePtrUtils<byte[]>::Alloc(DEFAULT_BUFFER_SIZE))
 {
 }
 
@@ -15,7 +15,7 @@ ReceiveBuffer::ReceiveBuffer(const int32 bufferSize)
 	: mReadPos(0)
 	, mWritePos(0)
 	, mBufferSize(bufferSize)
-	, mBuffer(UniquePtrUtils<char[]>::Alloc(bufferSize))
+	, mBuffer(UniquePtrUtils<byte[]>::Alloc(bufferSize))
 {
 }
 
@@ -33,6 +33,11 @@ void ReceiveBuffer::Clear()
 {
 	mReadPos = 0;
 	mWritePos = 0;
+}
+
+byte* ReceiveBuffer::GetBufferPtr() const
+{
+	return &mBuffer[0];
 }
 
 int32 ReceiveBuffer::GetUseSize() const
@@ -71,12 +76,12 @@ int32 ReceiveBuffer::GetFreeSize() const
 	return freeSize;
 }
 
-char* ReceiveBuffer::GetReadPointer() const
+byte* ReceiveBuffer::GetReadPointer() const
 {
 	return &mBuffer[mReadPos];
 }
 
-char* ReceiveBuffer::GetWritePointer() const
+byte* ReceiveBuffer::GetWritePointer() const
 {
 	return &mBuffer[mWritePos];
 }
@@ -122,7 +127,7 @@ bool ReceiveBuffer::IsEmpty() const
 	return mReadPos == mWritePos;
 }
 
-int32 ReceiveBuffer::Write(const char* pData, const int32 size)
+int32 ReceiveBuffer::Write(const byte* pData, const int32 size)
 {
 	const int32 writeSize = std::min(GetFreeSize(), size);
 	if (writeSize == 0)
@@ -148,7 +153,7 @@ int32 ReceiveBuffer::Write(const char* pData, const int32 size)
 	return writeSize;
 }
 
-int32 ReceiveBuffer::Read(char* pBuffer, const int32 size)
+int32 ReceiveBuffer::Read(byte* pBuffer, const int32 size)
 {
 	const int32 readSize = std::min(GetUseSize(), size);
 	if (readSize == 0)
@@ -174,7 +179,7 @@ int32 ReceiveBuffer::Read(char* pBuffer, const int32 size)
 	return readSize;
 }
 
-int32 ReceiveBuffer::Peek(char* pBuffer, const int32 size) const
+int32 ReceiveBuffer::Peek(byte* pBuffer, const int32 size) const
 {
 	const int32 readSize = std::min(GetUseSize(), size);
 	if (readSize == 0)

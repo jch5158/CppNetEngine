@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "LockFreeQueue.h"
+#include "SharedPtrUtils.h"
 
 class Session;
 
@@ -6,8 +8,9 @@ enum class eIocpEventType : uint8
 {
 	Accept,
 	Connect,
-	Receive,
-	Send
+	Disconnect,
+	Send,
+	Receive
 };
 
 class IocpEvent : public OVERLAPPED
@@ -27,9 +30,17 @@ public:
 	[[nodiscard]]
 	eIocpEventType GetEventType() const;
 
+	[[nodiscard]]
+	IocpObjectRef GetIocpObjectRef();
+
+	void SetIocpObjectRef(const IocpObjectRef& iocpObjectRef);
+
+	void ReleaseIocpObjectRef();
+
 private:
 
 	const eIocpEventType mEventType;
+	IocpObjectRef mIocpObjectRef;
 };
 
 class IocpAcceptEvent final : public IocpEvent
@@ -37,19 +48,25 @@ class IocpAcceptEvent final : public IocpEvent
 public:
 	IocpAcceptEvent();
 
-	void SetSession(Session* pClientSession);
+	void SetSession(SessionRef pClientSession);
 
 	[[nodiscard]]
-	Session* GetClientSession() const;
+	SessionRef GetClientSession() const;
 
 private:
-	Session* mpClientSession;
+	SessionRef mpClientSession;
 };
 
 class IocpConnectEvent final : public IocpEvent
 {
 public:
 	IocpConnectEvent();
+};
+
+class IocpDisconnectEvent final : public IocpEvent
+{
+public:
+	IocpDisconnectEvent();
 };
 
 class IocpReceiveEvent final : public IocpEvent
@@ -62,4 +79,10 @@ class IocpSendEvent final : public IocpEvent
 {
 public:
 	IocpSendEvent();
+
+	[[nodiscard]]
+	Vector<SendBufferRef>& GetSendPendingBuffer();
+
+private:
+	Vector<SendBufferRef> mSendPendingBuffer; // 전송중인 버퍼
 };

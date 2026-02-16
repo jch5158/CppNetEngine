@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "IocpEvent.h"
 
+#include "Session.h"
+
 IocpEvent::IocpEvent(const eIocpEventType eventType)
 	:mEventType(eventType)
 {
@@ -20,18 +22,33 @@ eIocpEventType IocpEvent::GetEventType() const
 	return mEventType;
 }
 
+IocpObjectRef IocpEvent::GetIocpObjectRef()
+{
+	return mIocpObjectRef;
+}
+
+void IocpEvent::SetIocpObjectRef(const IocpObjectRef& iocpObjectRef)
+{
+	mIocpObjectRef = iocpObjectRef;
+}
+
+void IocpEvent::ReleaseIocpObjectRef()
+{
+	mIocpObjectRef = nullptr;
+}
+
 IocpAcceptEvent::IocpAcceptEvent()
 	: IocpEvent(eIocpEventType::Accept)
 	, mpClientSession(nullptr)
 {
 }
 
-void IocpAcceptEvent::SetSession(Session* pClientSession)
+void IocpAcceptEvent::SetSession(SessionRef pClientSession)
 {
-	mpClientSession = pClientSession;
+	mpClientSession = std::move(pClientSession);
 }
 
-Session* IocpAcceptEvent::GetClientSession() const
+SessionRef IocpAcceptEvent::GetClientSession() const
 {
 	return mpClientSession;
 }
@@ -48,5 +65,12 @@ IocpReceiveEvent::IocpReceiveEvent()
 
 IocpSendEvent::IocpSendEvent()
 	:IocpEvent(eIocpEventType::Send)
+	, mSendPendingBuffer()
 {
+	mSendPendingBuffer.reserve(Session::MAX_SEND_WSABUF_SIZE);
+}
+
+Vector<SendBufferRef>& IocpSendEvent::GetSendPendingBuffer()
+{
+	return mSendPendingBuffer;
 }

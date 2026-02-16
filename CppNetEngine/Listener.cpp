@@ -3,6 +3,7 @@
 #include "SocketUtils.h"
 #include "IocpEvent.h"
 #include "ObjectAllocator.h"
+#include "Service.h"
 #include "Session.h"
 
 Listener::Listener()
@@ -33,26 +34,36 @@ void Listener::Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes)
 	processAccept(*pAcceptEvent);
 }
 
-bool Listener::StartAccept(const NetAddress& netAddress)
+bool Listener::StartAccept(ServerServiceRef pServerService)
 {
+	if (pServerService == nullptr)
+	{
+		return false;
+	}
+
+	mpServerService = std::move(pServerService);
+
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
 		return false;
 	}
 
-	// TODO : IOCP 연동
+	if (mpServerService->GetIocpCore()->Register(shared_from_this()) == false)
+	{
+		return false;
+	}
 
 	if (SocketUtils::SetReuseAddress(mSocket, true) == false)
 	{
 		return false;
 	}
 
-	if (SocketUtils::SetLinger(mSocket, 0, 0) == false)
+	if (SocketUtils::SetLinger(mSocket, 1, 0) == false)
 	{
 		return false;
 	}
 
-	if (SocketUtils::Bind(mSocket, netAddress) == false)
+	if (SocketUtils::Bind(mSocket, mpServerService->GetNetAddress().GetSockAddr()) == false)
 	{
 		return false;
 	}
@@ -62,9 +73,15 @@ bool Listener::StartAccept(const NetAddress& netAddress)
 		return false;
 	}
 	
-	// TODO : AcceptCount
-	const auto pAcceptEvent = ObjectAllocator<IocpAcceptEvent>::GetInstance().Alloc();
-	registerAccept(*pAcceptEvent);
+	const int32 acceptEventCount = mpServerService->GetMaxSessionCount();
+	for (int i = 0; i < acceptEventCount; ++i)
+	{
+		auto pAcceptEvent = ObjectAllocator<IocpAcceptEvent>::GetInstance().Alloc();
+		pAcceptEvent->Init();
+		pAcceptEvent->SetIocpObjectRef(shared_from_this());
+		mAcceptEvents.emplace_back(pAcceptEvent);
+		registerAccept(*pAcceptEvent);
+	}
 
 	return true;
 }
@@ -76,11 +93,11 @@ void Listener::CloseAccept()
 
 void Listener::registerAccept(IocpAcceptEvent& acceptEvent) const
 {
-	Session* pSession = ObjectAllocator<Session>::GetInstance().Alloc();
+	const SessionRef pSession = mpServerService->CreateSession();
 	acceptEvent.Init();
 	acceptEvent.SetSession(pSession);
 
-	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetReceiveBuffer().GetWritePointer(), static_cast<OVERLAPPED*>(&acceptEvent)))
+	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetReceiveBuffer().GetWritePointer(),&acceptEvent))
 	{
 		const int32 errorCode = WSAGetLastError();
 		if (errorCode != WSA_IO_PENDING)
@@ -92,7 +109,7 @@ void Listener::registerAccept(IocpAcceptEvent& acceptEvent) const
 
 void Listener::processAccept(IocpAcceptEvent& acceptEvent) const
 {
-	const auto pSession = acceptEvent.GetClientSession();
+	const SessionRef pSession = acceptEvent.GetClientSession();
 
 	if (SocketUtils::SetUpdateAcceptSocket(pSession->GetSocket(), mSocket) == false)
 	{
@@ -109,5 +126,6 @@ void Listener::processAccept(IocpAcceptEvent& acceptEvent) const
 	}
 
 	pSession->SetNetAddress(NetAddress(sockAddr));
+	pSession->ProcessConnect();
 	registerAccept(acceptEvent);
 }

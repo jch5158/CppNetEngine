@@ -23,16 +23,19 @@ public:
 	void Clear();
 
 	[[nodiscard]]
+	byte* GetBufferPtr() const;
+
+	[[nodiscard]]
 	int32 GetUseSize() const;
 
 	[[nodiscard]]
 	int32 GetFreeSize() const;
 
 	[[nodiscard]]
-	char* GetReadPointer() const;
+	byte* GetReadPointer() const;
 
 	[[nodiscard]]
-	char* GetWritePointer() const;
+	byte* GetWritePointer() const;
 
 	[[nodiscard]]
 	int32 GetLinearWriteSize() const;
@@ -43,17 +46,17 @@ public:
 	[[nodiscard]]
 	bool IsEmpty() const;
 
-	int32 Write(const char* pData, const int32 size);
+	int32 Write(const byte* pData, const int32 size);
 
-	int32 Read(char* pBuffer, const int32 size);
+	int32 Read(byte* pBuffer, const int32 size);
 
-	int32 Peek(char* pBuffer, const int32 size) const;
+	int32 Peek(byte* pBuffer, const int32 size) const;
 
 private:
 
 	int32 mReadPos;
 	int32 mWritePos;
 	const int32 mBufferSize;
-	UniquePtr<char[]> mBuffer;  // NOLINT(clang-diagnostic-padded)
+	UniquePtr<byte[]> mBuffer;  // NOLINT(clang-diagnostic-padded)
 };
 

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "IocpCore.h"
+#include "SharedPtrUtils.h"
 
-class NetAddress;
 class IocpAcceptEvent;
 
 class Listener : public IocpObject
@@ -20,7 +20,7 @@ public:
 	virtual HANDLE GetHandle() const override;
 	virtual void Dispatch(IocpEvent& iocpEvent, int32 numOfBytes) override;
 
-	bool StartAccept(const NetAddress& netAddress);
+	bool StartAccept(ServerServiceRef pServerService);
 	void CloseAccept();
 
 private:
@@ -30,5 +30,6 @@ private:
 
 	SOCKET mSocket;
 	Vector<IocpAcceptEvent*> mAcceptEvents;
+	ServerServiceRef mpServerService;
 };
 

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "NetAddress.h"
 
 class SocketUtils final  // NOLINT(cppcoreguidelines-special-member-functions)
 {
@@ -12,7 +11,7 @@ public:
 	SocketUtils(SocketUtils&&) = delete;
 	SocketUtils& operator=(SocketUtils&&) = delete;
 
-	static bool Init(int32& outErrorCode);
+	static bool Init();
 	static void Clear();
 	static bool CreateTcpSocket(SOCKET& outSocket);
 	static void Close(SOCKET& socket);
@@ -22,12 +21,15 @@ public:
 	static bool SetSendBufferSize(SOCKET socket, int32 size);
 	static bool SetTcpNoDelay(SOCKET socket, bool flag);
 	static bool SetUpdateAcceptSocket(const SOCKET socket, const SOCKET listenSocket);
-	static bool Bind(const SOCKET socket, const NetAddress& netAddr);
+	static bool Bind(const SOCKET socket, const SOCKADDR_IN& sockAddr);
 	static bool BindAnyAddress(const SOCKET socket, const uint16 port);
 	static bool Listen(const SOCKET socket, const int32 backlog);
 	static bool AcceptEx(const SOCKET listenSock, const SOCKET acceptSock, void* pOutputBuffer, OVERLAPPED* pOverlapped);
-	static bool ConnectEx();
-	static bool DisconnectEx();
+	static bool ConnectEx(const SOCKET socket, SOCKADDR_IN& sockAddr, OVERLAPPED* pOverlapped);
+	static bool DisconnectEx(const SOCKET socket, OVERLAPPED* pOverlapped);
+	static void CancelIoEx(const SOCKET socket, OVERLAPPED* pOverlapped);
+	static bool WsaSend(const SOCKET socket, WSABUF* pWsabuf, const int32 bufSize, OVERLAPPED* pOverlapped);
+	static bool WsaReceive(const SOCKET socket, WSABUF* pWsabuf, const int32 bufSize, OVERLAPPED* pOverlapped);
 
 private:
 

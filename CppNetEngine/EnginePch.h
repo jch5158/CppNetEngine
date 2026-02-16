@@ -9,6 +9,8 @@
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
+#include <concurrent_unordered_map.h>
+#include <concurrent_unordered_set.h>
 #include <thread>
 #include <atomic>
 #include <mutex>

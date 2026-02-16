@@ -14,7 +14,7 @@ public:
 
 	[[nodiscard]]
 	virtual HANDLE GetHandle() const = 0;
-	virtual void Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes) = 0;
+	virtual void Dispatch(class IocpEvent& iocpEvent, const int32 numOfBytes) = 0;
 };
 
 class IocpCore final
@@ -33,7 +33,7 @@ public:
 	HANDLE GetHandle() const;
 
 	[[nodiscard]]
-	bool Register(IocpObject& iocpObject) const;
+	bool Register(const IocpObjectRef& iocpObject) const;
 
 	[[nodiscard]]
 	bool Dispatch(int32& outErrorCode, const uint32 timeout = INFINITE) const;

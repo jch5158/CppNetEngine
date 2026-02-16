@@ -14,7 +14,7 @@ public:
 	NetAddress& operator=(const NetAddress&) = default;
 
 	[[nodiscard]]
-	const SOCKADDR_IN& GetSockAddr() const;
+	SOCKADDR_IN& GetSockAddr();
 	
 	[[nodiscard]]
 	Wstring	GetIpAddress() const;

@@ -131,6 +131,11 @@ public:
 		return true;
 	}
 
+	bool IsEmpty() const
+	{
+		return mCount.load() == 0;
+	}
+
 	int32 Count() const
 	{
 		return mCount.load();

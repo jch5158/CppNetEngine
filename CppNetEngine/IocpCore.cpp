@@ -23,9 +23,9 @@ HANDLE IocpCore::GetHandle() const
 	return mIocpHandle;
 }
 
-bool IocpCore::Register(IocpObject& iocpObject) const
+bool IocpCore::Register(const IocpObjectRef& iocpObject) const
 {
-	if (nullptr == CreateIoCompletionPort(iocpObject.GetHandle(), mIocpHandle, reinterpret_cast<ULONG_PTR>(&iocpObject), 0))
+	if (nullptr == CreateIoCompletionPort(iocpObject->GetHandle(), mIocpHandle, 0, 0))
 	{
 		return false;
 	}
