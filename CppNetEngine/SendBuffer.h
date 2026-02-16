@@ -17,7 +17,7 @@ public:
 	~SendBuffer() = default;
 
 	[[nodiscard]]
-	char* Reserve(const int32 size) const;
+	byte* Reserve(const int32 size) const;
 	void Commit(const int32 size);
 
 	[[nodiscard]]
@@ -30,12 +30,12 @@ public:
 	int32 MaxSize() const;
 
 	[[nodiscard]]
-	char* GetBufferPtr() const;
+	byte* GetBufferPtr() const;
 
 private:
 
 	int32 mWritePos;
 	const int32 mBufferSize;
-	UniquePtr<char[]> mBuffer;  // NOLINT(clang-diagnostic-padded)
+	UniquePtr<byte[]> mBuffer;  // NOLINT(clang-diagnostic-padded)
 };
 

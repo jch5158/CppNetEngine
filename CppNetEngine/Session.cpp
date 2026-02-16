@@ -216,7 +216,7 @@ void Session::RegisterSend()
 		}
 
 		mSendEvent.GetSendPendingBuffer().emplace_back(pSendBuffer);
-		wsabufs[sendCount].buf = pSendBuffer->GetBufferPtr();
+		wsabufs[sendCount].buf = reinterpret_cast<char*>(pSendBuffer->GetBufferPtr());
 		wsabufs[sendCount].len = pSendBuffer->UseSize();
 	}
 

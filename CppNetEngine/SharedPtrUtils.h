@@ -74,6 +74,9 @@ using ListenerConstRef = SharedPtr<const Listen>;
 using SessionRef = SharedPtr<class Session>;
 using SessionConstRef = SharedPtr<const Session>;
 
+using PacketSessionRef = SharedPtr<class PacketSession>;
+using PacketSessionConstRef = SharedPtr<const PacketSession>;
+
 using SendBufferRef = SharedPtr<class SendBuffer>;
 using SendBufferConstRef = SharedPtr<const SendBuffer>;
 

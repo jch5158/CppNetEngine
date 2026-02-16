@@ -4,18 +4,18 @@
 SendBuffer::SendBuffer()
 	: mWritePos(0)
 	, mBufferSize(DEFAULT_BUFFER_SIZE)
-	, mBuffer(UniquePtrUtils<char[]>::Alloc(DEFAULT_BUFFER_SIZE))
+	, mBuffer(UniquePtrUtils<byte[]>::Alloc(DEFAULT_BUFFER_SIZE))
 {
 }
 
 SendBuffer::SendBuffer(const int32 bufferSize)
 	: mWritePos(0)
 	, mBufferSize(bufferSize)
-	, mBuffer(UniquePtrUtils<char[]>::Alloc(bufferSize))
+	, mBuffer(UniquePtrUtils<byte[]>::Alloc(bufferSize))
 {
 }
 
-char* SendBuffer::Reserve(const int32 size) const
+byte* SendBuffer::Reserve(const int32 size) const
 {
 	if (FreeSize() <= size)
 	{
@@ -50,7 +50,7 @@ int32 SendBuffer::MaxSize() const
 	return mBufferSize;
 }
 
-char* SendBuffer::GetBufferPtr() const
+byte* SendBuffer::GetBufferPtr() const
 {
 	return &mBuffer[0];
 }
