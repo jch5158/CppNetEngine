@@ -41,6 +41,9 @@ public:
 template <typename T>
 using Vector = std::vector<T, StlAllocator<T>>;
 
+template <typename T, uint64 SIZE>
+using Array = std::array<T, SIZE>;
+
 template<typename T>
 using List = std::list<T, StlAllocator<T>>;
 

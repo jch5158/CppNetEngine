@@ -1,19 +1,13 @@
 ﻿#include "pch.h"
-#include "ReceiveBuffer.h"
-#include <process.h>
-#include <Windows.h>
-#include <ctime>
-#include <conio.h>
-#include "CrashReporter.h"
-#include "MemoryPool.h"
+#include "SendBufferAllocator.h"
 
 int32 main()
 {
+	using namespace cpp_net_engine;
+
 	CrashReporter::Init(L"DummyClient", L"1.0.0", L"");
 
-	void* p = MemoryAllocator::GetInstance().Alloc(4096);
-
-	*static_cast<int*>(p) = 30;
+	INetBufferRef p = MakeSendBuffer(65535);
 
 	return 0;
 }

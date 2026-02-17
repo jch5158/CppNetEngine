@@ -1,7 +1,6 @@
 ﻿// ReSharper disable CppClangTidyClangDiagnosticPadded
 #pragma once
 
-#include "pch.h"
 #include "ObjectPool.h"
 
 template <uint32 ALLOC_SIZE, int32 CHUNK_SIZE = 500>

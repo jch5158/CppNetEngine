@@ -195,8 +195,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AllocatorUtils.h" />
     <ClInclude Include="CrashReporter.h" />
     <ClInclude Include="EnginePch.h" />
+    <ClInclude Include="INetBuffer.h" />
     <ClInclude Include="IocpCore.h" />
     <ClInclude Include="IocpEvent.h" />
     <ClInclude Include="ISingleton.h" />
@@ -213,8 +215,9 @@
     <ClInclude Include="ObjectAllocator.h" />
     <ClInclude Include="PacketSession.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="ReceiveBuffer.h" />
-    <ClInclude Include="SendBuffer.h" />
+    <ClInclude Include="NetReceiveBuffer.h" />
+    <ClInclude Include="NetSendBuffer.h" />
+    <ClInclude Include="SendBufferAllocator.h" />
     <ClInclude Include="Service.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SharedPtrUtils.h" />
@@ -240,8 +243,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ReceiveBuffer.cpp" />
-    <ClCompile Include="SendBuffer.cpp" />
+    <ClCompile Include="SendBufferAllocator.cpp" />
     <ClCompile Include="Service.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SocketUtils.cpp" />

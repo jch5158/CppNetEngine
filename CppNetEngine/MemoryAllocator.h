@@ -10,12 +10,12 @@ class MemoryAllocator final : public ISingleton<MemoryAllocator>
 {
 private:
 
-	static constexpr uint32 SMALL_STRIDE = 256;
-	static constexpr uint32 LARGE_STRIDE = 4096;
-	static constexpr uint32 THRESHOLD = 4096;
-	static constexpr uint32 MAX_SIZE = 65536;
-	static constexpr uint32 SMALL_POOL_COUNT = (THRESHOLD / SMALL_STRIDE) - 1;
-	static constexpr uint32 LARGE_POOL_COUNT = (MAX_SIZE / LARGE_STRIDE);
+	static constexpr int32 SMALL_STRIDE = 256;
+	static constexpr int32 LARGE_STRIDE = 4096;
+	static constexpr int32 THRESHOLD = 4096;
+	static constexpr int32 MAX_SIZE = 65536;
+	static constexpr int32 SMALL_POOL_COUNT = (THRESHOLD / SMALL_STRIDE) - 1;
+	static constexpr int32 LARGE_POOL_COUNT = (MAX_SIZE / LARGE_STRIDE);
 	static constexpr uint64 CHECKSUM_CODE = 0xDEADBEEFBEFFDEAD;
 
 public:
@@ -36,27 +36,26 @@ public:
 	virtual ~MemoryAllocator() override = default;
 
 	[[nodiscard]]
-	void* Alloc(const uint64 size);
-	void Free(void* pData, const uint64 size);
+	void* Alloc(const int64 size);
+	void Free(void* pData, const int64 size);
 
 private:
 
-
-	static void setChecksum(void* pData, const uint64 size);
-
-	[[nodiscard]]
-	static bool isValidChecksum(void* pData, const uint64 size);
+	static void setChecksum(void* pData, const int64 size);
 
 	[[nodiscard]]
-	static uint64 getBucketIndex(const uint64 size, const uint32 stride);
+	static bool isValidChecksum(void* pData, const int64 size);
+
+	[[nodiscard]]
+	static int32 getBucketIndex(const int64 size, const int32 stride);
 
 
-	template <uint32 STRIDE, typename SEQUENCE>
+	template <int32 STRIDE, typename SEQUENCE>
 	struct TupleBuilder
 	{
 	};
 
-	template <uint32 STRIDE, uint64... INDEX>
+	template <int32 STRIDE, int32... INDEX>
 	struct TupleBuilder<STRIDE, std::index_sequence<INDEX...>>
 	{
 		using type = std::tuple<MemoryPool<(INDEX + 1)* STRIDE>...>;
@@ -68,7 +67,7 @@ private:
 	public:
 		using FuncType = void* (*)(T&);
 
-		template <uint64 INDEX>
+		template <int32 INDEX>
 		static void* Do(T& buckets)
 		{
 			return std::get<INDEX>(buckets).Alloc();
@@ -81,14 +80,14 @@ private:
 	public:
 		using FuncType = void (*)(T&, void*);
 
-		template <uint64 INDEX>
+		template <int32 INDEX>
 		static void Do(T& buckets, void* pData) 
 		{
 			std::get<INDEX>(buckets).Free(pData);
 		}
 	};
 
-	template <typename ACTION, uint64... INDEX>
+	template <typename ACTION, int32... INDEX>
 	static const auto& getTable(std::index_sequence<INDEX...>) 
 	{
 		constexpr int32 count = static_cast<int32>(sizeof...(INDEX));

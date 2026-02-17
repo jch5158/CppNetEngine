@@ -58,6 +58,11 @@ IocpConnectEvent::IocpConnectEvent()
 {
 }
 
+IocpDisconnectEvent::IocpDisconnectEvent()
+	:IocpEvent(eIocpEventType::Disconnect)
+{
+}
+
 IocpReceiveEvent::IocpReceiveEvent()
 	:IocpEvent(eIocpEventType::Receive)
 {
@@ -70,7 +75,7 @@ IocpSendEvent::IocpSendEvent()
 	mSendPendingBuffer.reserve(Session::MAX_SEND_WSABUF_SIZE);
 }
 
-Vector<SendBufferRef>& IocpSendEvent::GetSendPendingBuffer()
+Vector<INetBufferRef>& IocpSendEvent::GetSendPendingBuffer()
 {
 	return mSendPendingBuffer;
 }

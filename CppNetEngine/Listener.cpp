@@ -97,7 +97,7 @@ void Listener::registerAccept(IocpAcceptEvent& acceptEvent) const
 	acceptEvent.Init();
 	acceptEvent.SetSession(pSession);
 
-	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetReceiveBuffer().GetWritePointer(),&acceptEvent))
+	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetNetReceiveBuffer().GetWritePtr(),&acceptEvent))
 	{
 		const int32 errorCode = WSAGetLastError();
 		if (errorCode != WSA_IO_PENDING)

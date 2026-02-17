@@ -77,8 +77,8 @@ using SessionConstRef = SharedPtr<const Session>;
 using PacketSessionRef = SharedPtr<class PacketSession>;
 using PacketSessionConstRef = SharedPtr<const PacketSession>;
 
-using SendBufferRef = SharedPtr<class SendBuffer>;
-using SendBufferConstRef = SharedPtr<const SendBuffer>;
+using INetBufferRef = SharedPtr<class INetBuffer>;
+using INetBufferConstRef = SharedPtr<const INetBuffer>;
 
 using IocpCoreRef = SharedPtr<class IocpCore>;
 using IocpCoreConstRef = SharedPtr<const IocpCore>;

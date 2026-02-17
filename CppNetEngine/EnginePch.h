@@ -35,3 +35,4 @@
 #include "UniquePtrUtils.h"
 #include "SharedPtrUtils.h"
 #include "CrashReporter.h"
+#include "AllocatorUtils.h"

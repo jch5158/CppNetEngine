@@ -3,7 +3,7 @@
 #include "IocpEvent.h"
 #include "LockFreeQueue.h"
 #include "NetAddress.h"
-#include "ReceiveBuffer.h"
+#include "NetReceiveBuffer.h"
 #include "SharedPtrUtils.h"
 
 class Session : public IocpObject
@@ -39,13 +39,13 @@ public:
 	ServiceRef GetService() const;
 	SOCKET GetSocket() const;
 	NetAddress& GetAddress();
-	ReceiveBuffer& GetReceiveBuffer();
+	NetReceiveBuffer<>& GetNetReceiveBuffer();
 	SessionRef GetSessionRef();
 
 	bool IsConnected() const;
 	bool Connect();
 	bool Disconnect();
-	void Send(const SendBufferRef& pSendBuffer);
+	void Send(const INetBufferRef& pSendBuffer);
 
 	bool RegisterConnect();
 	bool RegisterDisconnect();
@@ -69,8 +69,8 @@ private:
 	SOCKET mSocket;
 	NetAddress mNetAddress;
 	std::atomic<bool> mbConnected;
-	ReceiveBuffer mReceiveBuffer;
+	NetReceiveBuffer<> mNetReceiveBuffer;
 	std::atomic<bool> mbSendRegistered;
-	LockFreeQueue<SendBufferRef> mSendQueue;
+	LockFreeQueue<INetBufferRef> mSendQueue;
 };
 

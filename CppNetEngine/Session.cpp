@@ -1,9 +1,9 @@
 ﻿#include "pch.h"
 #include "Session.h"
 #include "CrashReporter.h"
-#include "SendBuffer.h"
 #include "Service.h"
 #include "SocketUtils.h"
+#include "NetSendBuffer.h"
 
 Session::Session()
 	: mSessionIndex(-1)
@@ -15,7 +15,7 @@ Session::Session()
 	, mSocket(INVALID_SOCKET)
 	, mNetAddress()
 	, mbConnected(false)
-	, mReceiveBuffer()
+	, mNetReceiveBuffer()
 	, mSendQueue(65535)
 {
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
@@ -86,9 +86,9 @@ NetAddress& Session::GetAddress()
 	return mNetAddress;
 }
 
-ReceiveBuffer& Session::GetReceiveBuffer()
+NetReceiveBuffer<>& Session::GetNetReceiveBuffer()
 {
-	return mReceiveBuffer;
+	return mNetReceiveBuffer;
 }
 
 SessionRef Session::GetSessionRef()
@@ -111,7 +111,7 @@ bool Session::Disconnect()
 	return RegisterDisconnect();
 }
 
-void Session::Send(const SendBufferRef& pSendBuffer)
+void Session::Send(const INetBufferRef& pSendBuffer)
 {
 	if (!IsConnected())
 	{
@@ -209,15 +209,15 @@ void Session::RegisterSend()
 	int32 sendCount;
 	for (sendCount = 0; sendCount < MAX_SEND_WSABUF_SIZE; ++sendCount)
 	{
-		SendBufferRef pSendBuffer;
+		INetBufferRef pSendBuffer = nullptr;
 		if (mSendQueue.TryDequeue(pSendBuffer) == false)
 		{
 			break;
 		}
 
 		mSendEvent.GetSendPendingBuffer().emplace_back(pSendBuffer);
-		wsabufs[sendCount].buf = reinterpret_cast<char*>(pSendBuffer->GetBufferPtr());
-		wsabufs[sendCount].len = pSendBuffer->UseSize();
+		wsabufs[sendCount].buf = reinterpret_cast<char*>(pSendBuffer->GetReadPtr());
+		wsabufs[sendCount].len = pSendBuffer->GetUseSize();
 	}
 
 	if (SocketUtils::WsaSend(mSocket, wsabufs, sendCount, &mSendEvent) == false)
@@ -245,17 +245,17 @@ void Session::RegisterReceive()
 
 	WSABUF wsabufs[MAX_RECEIVE_WSABUF_SIZE]{};
 
-	const int32 linearSize = mReceiveBuffer.GetLinearWriteSize();
-	const int32 remainSize = mReceiveBuffer.GetFreeSize() - linearSize;
+	const int32 linearSize = mNetReceiveBuffer.GetLinearWriteSize();
+	const int32 remainSize = mNetReceiveBuffer.GetFreeSize() - linearSize;
 
-	wsabufs[0].buf = reinterpret_cast<char*>(mReceiveBuffer.GetWritePointer());
+	wsabufs[0].buf = reinterpret_cast<char*>(mNetReceiveBuffer.GetWritePtr());
 	wsabufs[0].len = linearSize;
 
 	int32 wsabufsLen = 1;
 	if (remainSize != 0)
 	{
 		++wsabufsLen;
-		wsabufs[1].buf = reinterpret_cast<char*>(mReceiveBuffer.GetBufferPtr());
+		wsabufs[1].buf = reinterpret_cast<char*>(mNetReceiveBuffer.GetBufferPtr());
 		wsabufs[1].len = remainSize;
 	}
 
@@ -323,17 +323,17 @@ void Session::ProcessReceive(const int32 numOfBytes)
 		return;
 	}
 
-	mReceiveBuffer.MoveWritePos(numOfBytes);
+	mNetReceiveBuffer.MoveWritePos(numOfBytes);
 
-	const int32 dataSize = mReceiveBuffer.GetUseSize();
-	const int32 processLen = OnReceive(mReceiveBuffer.GetReadPointer(), numOfBytes);
+	const int32 dataSize = mNetReceiveBuffer.GetUseSize();
+	const int32 processLen = OnReceive(mNetReceiveBuffer.GetReadPtr(), numOfBytes);
 	if (processLen < 0 || processLen > dataSize)
 	{
 		Disconnect();
 		return;
 	}
 
-	mReceiveBuffer.MoveReadPos(processLen);
+	mNetReceiveBuffer.MoveReadPos(processLen);
 
 	RegisterReceive();
 }
