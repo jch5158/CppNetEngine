@@ -34,10 +34,11 @@ public:
 		return mTlsObjectPool.AllocCount();
 	}
 
+	template <typename... Args>
 	[[nodiscard]]
-	T* Alloc()
+	T* Alloc(Args&&... args)
 	{
-		T* pData = mTlsObjectPool.Alloc();
+		T* pData = mTlsObjectPool.Alloc(std::forward<Args>(args)...);
 
 		return pData;
 	}

@@ -2,8 +2,9 @@
 
 #include "Types.h"
 #include "INetBuffer.h"
+#include <algorithm>
 
-template <int32 BUFFER_SIZE = 65536>
+template <int32 BUFFER_SIZE = INetBuffer::MAX_BUFFER_SIZE>
 class NetReceiveBuffer final : public INetBuffer
 {
 public:
@@ -227,3 +228,4 @@ private:
 	Array<byte, BUFFER_SIZE> mBuffer;
 };
 
+template class NetReceiveBuffer<INetBuffer::MAX_BUFFER_SIZE>;

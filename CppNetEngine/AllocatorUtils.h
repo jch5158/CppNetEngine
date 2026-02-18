@@ -4,16 +4,17 @@
 #include "UniquePtrUtils.h"
 #include "SharedPtrUtils.h"
 #include "SendBufferAllocator.h"
+#include <utility>
 
 namespace cpp_net_engine
 {
 	template <typename T, typename... Args>
-	T* ObjectAlloc(Args&&... args)
+	T* NewObject(Args&&... args)
 	{
 		return ObjectAllocator<T>::GetInstance().Alloc(std::forward<Args>(args)...);
 	}
 
-	inline void* MemoryAlloc(const int64 size)
+	inline void* RawAlloc(const int64 size)
 	{
 		return MemoryAllocator::GetInstance().Alloc(size);
 	}
@@ -24,19 +25,19 @@ namespace cpp_net_engine
 	}
 
 	template <typename T, typename... Args>
-	UniquePtr<T> MakeUniquePtr(Args&&... args)
+	UniquePtr<T> MakeUnique(Args&&... args)
 	{
 		return UniquePtrUtils<T>::Alloc(std::forward<Args>(args)...);
 	}
 
 	template <typename T>
-	UniquePtr<T[]> MakeUniquePtrArray()
+	UniquePtr<T[]> MakeUniqueArray()
 	{
 		return UniquePtrUtils<T[]>::Alloc();
 	}
 
 	template <typename T, typename... Args>
-	std::shared_ptr<T> MakeSharedPtr(Args&&... args)
+	std::shared_ptr<T> MakeShared(Args&&... args)
 	{
 		return SharedPtrUtils::Alloc<T>(std::forward<Args>(args)...);
 	}

@@ -60,5 +60,8 @@
     <CustomBuild Include="..\Common\Protocol\Struct.proto">
       <Filter>Protocol\Proto</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\Common\Protocol\PacketId.proto">
+      <Filter>Protocol\Proto</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

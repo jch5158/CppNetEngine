@@ -18,6 +18,9 @@
     <Filter Include="Protocol\Proto">
       <UniqueIdentifier>{4ba55651-0ebc-4e60-98b4-f34dc136dd50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PacketHandler">
+      <UniqueIdentifier>{ed3c4da4-e562-47ba-a8ad-28d1f7c9538b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DummyClient.cpp">
@@ -35,6 +38,12 @@
     <ClCompile Include="Struct.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
+    <ClCompile Include="ClientLoginPacketHandler.cpp">
+      <Filter>PacketHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketId.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -49,6 +58,12 @@
     <ClInclude Include="Struct.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
+    <ClInclude Include="PacketId.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientLoginPacketHandler.h">
+      <Filter>PacketHandler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\Common\Protocol\Login.proto">
@@ -58,6 +73,9 @@
       <Filter>Protocol\Proto</Filter>
     </CustomBuild>
     <CustomBuild Include="..\Common\Protocol\Struct.proto">
+      <Filter>Protocol\Proto</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Common\Protocol\PacketId.proto">
       <Filter>Protocol\Proto</Filter>
     </CustomBuild>
   </ItemGroup>

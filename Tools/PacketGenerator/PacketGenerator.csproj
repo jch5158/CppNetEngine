@@ -15,4 +15,8 @@
     <PackageReference Include="Google.Protobuf" Version="3.33.5" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="set PROTO_DIR=$(SolutionDir)Common\Protocol&#xA;set PROTOC_PATH=$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf&#xA;set VCPKG_INC=$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\include&#xA;set OUT_DIR=$(ProjectDir)Generated&#xA;&#xA;if not exist &quot;%25OUT_DIR%25&quot; mkdir &quot;%25OUT_DIR%25&quot;&#xA;&quot;%25PROTOC_PATH%25\protoc.exe&quot; -I=&quot;%25PROTO_DIR%25&quot; -I=&quot;%25VCPKG_INC%25&quot; --csharp_out=&quot;%25OUT_DIR%25&quot; &quot;%25PROTO_DIR%25\*.proto&quot;" />
+  </Target>
+
 </Project>

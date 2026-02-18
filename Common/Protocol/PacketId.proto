@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+package Protocol;
+
+import "google/protobuf/descriptor.proto";
+
+enum eRole 
+{
+    ROLE_NONE = 0;
+    CLIENT = 1;
+    GAME_SERVER = 2;
+}
+
+extend google.protobuf.MessageOptions 
+{
+    eRole sender = 50000;
+    eRole receiver = 50001;
+}
+
+enum ePacketId {
+  ID_NONE = 0;
+  ID_C2S_LOGIN_REQ = 1000;
+  ID_S2C_LOGIN_RES = 1001;
+  ID_S2C_LOGIN_TEST_RES = 1002;
+  ID_C2S_MOVE = 2000;
+ }
