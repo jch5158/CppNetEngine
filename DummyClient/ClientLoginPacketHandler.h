@@ -1,4 +1,4 @@
-﻿// ReSharper disable CppInconsistentNaming
+// ReSharper disable CppInconsistentNaming
 #pragma once
 #include <functional>
 #include "PacketSession.h"
@@ -48,7 +48,7 @@ public:
 private:
 
 	template<typename PACKET_TYPE, typename HANDLE>
-	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& session, byte* pBuffer, const int16 len) const
+	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& session, byte* pBuffer, const uint16 len) const
 	{
 		PACKET_TYPE packet;
 		if (packet.ParseFromArray(pBuffer + SIZE_OF_16(PacketHeader), len - SIZE_OF_16(PacketHeader)) == false)
