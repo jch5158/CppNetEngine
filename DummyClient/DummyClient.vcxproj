@@ -129,7 +129,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
+      <Command>call "$(SolutionDir)BuildScripts\CopyCrashpad.bat" "$(SolutionDir)" "$(OutDir)" "$(VcpkgTriplet)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
@@ -157,7 +157,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
+      <Command>call "$(SolutionDir)BuildScripts\CopyCrashpad.bat" "$(SolutionDir)" "$(OutDir)" "$(VcpkgTriplet)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
@@ -184,7 +184,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
+      <Command>call "$(SolutionDir)BuildScripts\CopyCrashpad.bat" "$(SolutionDir)" "$(OutDir)" "$(VcpkgTriplet)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
@@ -213,7 +213,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
+      <Command>call "$(SolutionDir)BuildScripts\CopyCrashpad.bat" "$(SolutionDir)" "$(OutDir)" "$(VcpkgTriplet)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
@@ -273,7 +273,6 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\%(Filename).pb.cc;$(ProjectDir)\%(Filename).pb.h;%(Outputs)</Outputs>
     </None>
-    <None Include="..\tools\packetgenerator\program.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protocol\Enum.proto">

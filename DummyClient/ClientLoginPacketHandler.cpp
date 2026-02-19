@@ -1,4 +1,6 @@
-﻿#include "pch.h"
+﻿// ReSharper disable CppInconsistentNaming
+
+#include "pch.h"
 #include "Generated/ClientLoginPacketHandler.h"
 #include "Generated/Login.pb.h"
 #include "Generated/PacketId.pb.h"

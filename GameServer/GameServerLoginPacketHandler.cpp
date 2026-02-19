@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+﻿// ReSharper disable CppInconsistentNaming
+#include "pch.h"
 #include "Generated/GameServerLoginPacketHandler.h"
 
 bool GameServerLoginPacketHandler::HANDLE_PACKET_INVALID(PacketSessionRef& session, byte* pBuffer, const uint16 len)

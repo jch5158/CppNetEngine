@@ -1,3 +1,5 @@
+@echo off
+
 :: 인자로 전달받은 매크로 경로들
 set "SOLUTION_DIR=%~1"
 set "PROJECT_DIR=%~2"

@@ -78,6 +78,5 @@
     <None Include="..\Common\Protocol\Struct.proto">
       <Filter>Protocol\Proto</Filter>
     </None>
-    <None Include="..\tools\packetgenerator\program.cs" />
   </ItemGroup>
 </Project>
