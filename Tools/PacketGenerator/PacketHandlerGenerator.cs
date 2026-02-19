@@ -10,10 +10,10 @@ namespace PacketGenerator
 {
     internal class PacketHandlerGenerator
     {
-        public static bool Generate(eRole role, string delimiter, string protoName, string protoDirPath,
+        public static bool Generate(eRole role, string protoName, string protoDirPath,
             string outputDirPath)
         {
-            string filePath = Path.Combine(protoDirPath, $"{protoName}.desc");
+            var filePath = Path.Combine(protoDirPath, $"{protoName}.desc");
 
             if (!File.Exists(filePath))
             {
@@ -21,18 +21,18 @@ namespace PacketGenerator
                 return false;
             }
 
-            if (!GenerateInitHandleString(role, delimiter, $"{protoName}.proto", filePath, out var initHandleString))
+            if (!GenerateInitHandleString(role, $"{protoName}.proto", filePath, out var initHandleString))
             {
                 return false;
             }
 
-            if (!GenerateHandleFunctionDeclares(role, delimiter, $"{protoName}.proto", filePath,
+            if (!GenerateHandleFunctionDeclares(role, $"{protoName}.proto", filePath,
                     out var handleFunctionDeclareString))
             {
                 return false;
             }
 
-            var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, protoName, role,
+            var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, protoName, role.ToString(),
                 initHandleString,
                 handleFunctionDeclareString);
 
@@ -49,7 +49,7 @@ namespace PacketGenerator
             return true;
         }
 
-        private static bool GenerateInitHandleString(eRole role, string delimiter, string protoName, string filePath,
+        private static bool GenerateInitHandleString(eRole role, string protoName, string filePath,
             out string initHandleString)
         {
             initHandleString = "";
@@ -86,11 +86,6 @@ namespace PacketGenerator
                         }
 
                         var packetName = msg.Name;
-                        if (!packetName.Contains(delimiter))
-                        {
-                            continue;
-                        }
-
                         initHandleString += string.Format(PacketFormatter.INIT_FILE_FORMAT, "ID_" + packetName,
                             packetName);
                     }
@@ -106,7 +101,7 @@ namespace PacketGenerator
             return true;
         }
 
-        private static bool GenerateHandleFunctionDeclares(eRole role, string delimiter, string protoName, string filePath,
+        private static bool GenerateHandleFunctionDeclares(eRole role, string protoName, string filePath,
             out string handleFunctionDeclareString)
         {
             handleFunctionDeclareString = "";
@@ -139,18 +134,13 @@ namespace PacketGenerator
                         }
 
                         var packetName = msg.Name;
-                        if (!packetName.Contains(delimiter))
-                        {
-                            continue;
-                        }
-
                         handleFunctionDeclareString += string.Format(PacketFormatter.DECLARE_FILE_FORMAT, packetName);
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[GenerateInitHandleString] 패킷 핸들러 생성 중 오류 발생: {e.Message}");
+                Console.WriteLine($"[GenerateHandleFunctionDeclares] 패킷 핸들러 생성 중 오류 발생: {e.Message}");
 
                 return false;
             }

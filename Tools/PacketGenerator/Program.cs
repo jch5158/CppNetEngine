@@ -9,7 +9,7 @@ var baseDirPath = AppDomain.CurrentDomain.BaseDirectory;
 var protoPath = Path.Combine(baseDirPath, @"..\..\..\..\Common\Protocol");
 var outputPath = Path.Combine(baseDirPath, @"..\..\..\..\DummyClient\ClientLoginPacketHandler.h");
 
-if(PacketHandlerGenerator.Generate(eRole.Client, "S2C", "Login", protoPath, outputPath) == true)
+if(PacketHandlerGenerator.Generate(eRole.Client, "Login", protoPath, outputPath) == true)
 {
     Console.WriteLine("SUCCESS");
 }
