@@ -11,7 +11,10 @@ namespace PacketGenerator
 #pragma once
 #include <functional>
 #include ""PacketSession.h""
+#include ""Enum.pb.h""
+#include ""Struct.pb.h""
 #include ""PacketId.pb.h""
+
 #include ""{0}.pb.h""
 
 class {1}{0}PacketHandler final : ISingleton<{1}{0}PacketHandler>

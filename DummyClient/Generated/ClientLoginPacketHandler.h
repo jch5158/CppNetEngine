@@ -1,8 +1,10 @@
-// ReSharper disable CppInconsistentNaming
+﻿// ReSharper disable CppInconsistentNaming
 #pragma once
 #include <functional>
 #include "PacketSession.h"
 #include "PacketId.pb.h"
+#include "Enum.pb.h"
+#include "Struct.pb.h"
 #include "Login.pb.h"
 
 class ClientLoginPacketHandler final : ISingleton<ClientLoginPacketHandler>
