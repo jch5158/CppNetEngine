@@ -7,9 +7,9 @@ using Protocol;
 // 1. 실행 파일이 있는 절대 폴더 경로 가져오기 (예: C:\Tools\Generator\)
 var baseDirPath = AppDomain.CurrentDomain.BaseDirectory;
 var protoPath = Path.Combine(baseDirPath, @"..\..\..\..\Common\Protocol");
-var outputPath = Path.Combine(baseDirPath, @"..\..\..\..\DummyClient\ClientLoginPacketHandler.h");
+var outputPath = Path.Combine(baseDirPath, @"..\..\..\..\DummyClient");
 
-if(PacketHandlerGenerator.Generate(eRole.Client, "Login", protoPath, outputPath) == true)
+if(PacketHandlerGenerator.GenerateFile(eRole.Client, protoPath, outputPath) == true)
 {
     Console.WriteLine("SUCCESS");
 }

@@ -1,0 +1,12 @@
+{
+  "projects": [
+    {
+      "projectName": "DummyClient",
+      "role": "CLIENT"
+    },
+    {
+      "projectName": "GameServer",
+      "role": "GAME_SERVER"
+    }
+  ]
+}

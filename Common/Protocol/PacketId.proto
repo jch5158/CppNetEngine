@@ -16,7 +16,8 @@ extend google.protobuf.MessageOptions
     eRole receiver = 50001;
 }
 
-enum ePacketId {
+enum ePacketId 
+{
   ID_NONE = 0;
   ID_C2S_LOGIN_REQ = 1000;
   ID_S2C_LOGIN_RES = 1001;

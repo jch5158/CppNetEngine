@@ -10,40 +10,56 @@ namespace PacketGenerator
 {
     internal class PacketHandlerGenerator
     {
-        public static bool Generate(eRole role, string protoName, string protoDirPath,
+        public static bool Generate()
+        {
+            return true;
+        }
+
+        public static bool GenerateFile(eRole role, string protoDirPath,
             string outputDirPath)
         {
-            var filePath = Path.Combine(protoDirPath, $"{protoName}.desc");
-
-            if (!File.Exists(filePath))
+            var descFiles = Directory.GetFiles(protoDirPath, "*.desc");
+            if (descFiles.Length == 0)
             {
-                Console.WriteLine($"[Error] 파일을 찾을 수 없습니다! 경로를 확인하세요.");
+                Console.WriteLine($"[Error] '{protoDirPath}' 경로에서 .desc 파일을 찾을 수 없습니다.");
                 return false;
             }
 
-            if (!GenerateInitHandleString(role, $"{protoName}.proto", filePath, out var initHandleString))
+            foreach (var protoFilePath in descFiles)
             {
-                return false;
-            }
+                var protoName = Path.GetFileNameWithoutExtension(protoFilePath);
+                if (protoName is "Enum" or "PacketId" or "Struct")
+                {
+                    continue;
+                }
 
-            if (!GenerateHandleFunctionDeclares(role, $"{protoName}.proto", filePath,
-                    out var handleFunctionDeclareString))
-            {
-                return false;
-            }
+                var fileName = $"{role.ToString()}{protoName}PacketHandler.h";
+                var outputFilePath = Path.Combine(outputDirPath, fileName);
 
-            var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, protoName, role.ToString(),
-                initHandleString,
-                handleFunctionDeclareString);
+                if (!GenerateInitHandleString(role, $"{protoName}.proto", protoFilePath, out var initHandleString))
+                {
+                    return false;
+                }
 
-            try
-            {
-                File.WriteAllText(outputDirPath, handleFileContent);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"[Generate] 패킷 핸들러 생성 중 오류 발생: {e.Message}");
-                return false;
+                if (!GenerateHandleFunctionDeclares(role, $"{protoName}.proto", protoFilePath,
+                        out var handleFunctionDeclareString))
+                {
+                    return false;
+                }
+
+                var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, protoName, role.ToString(),
+                    initHandleString,
+                    handleFunctionDeclareString);
+
+                try
+                {
+                    File.WriteAllText(outputFilePath, handleFileContent);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"[Generate] 패킷 핸들러 생성 중 오류 발생: {e.Message}");
+                    return false;
+                }
             }
 
             return true;
