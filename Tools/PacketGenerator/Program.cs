@@ -6,10 +6,22 @@ using Protocol;
 
 // 1. 실행 파일이 있는 절대 폴더 경로 가져오기 (예: C:\Tools\Generator\)
 var baseDirPath = AppDomain.CurrentDomain.BaseDirectory;
-var protoPath = Path.Combine(baseDirPath, @"..\..\..\..\Common\Protocol");
-var outputPath = Path.Combine(baseDirPath, @"..\..\..\..\DummyClient");
+var configDirPath = Path.Combine(baseDirPath, @"..\..\Config\PacketConfig.json");
+var resultConfig = PacketConfig.Load(configDirPath);
 
-if(PacketHandlerGenerator.GenerateFile(eRole.Client, protoPath, outputPath) == true)
+foreach (var project in resultConfig.Projects)
 {
-    Console.WriteLine("SUCCESS");
+    if(!Enum.TryParse<eRole>(project.Role, true, out var role))
+    {
+        Console.WriteLine($"[Error] 프로젝트 '{project.Name}'의 역할 '{project.Role}'이(가) 유효하지 않습니다.");
+        continue;
+    }
+
+    var protoPath = Path.Combine(baseDirPath, @"..\..\..\..\Common\Protocol");
+    var outputPath = Path.Combine(baseDirPath, @$"..\..\..\..\{project.Name}\Generated");
+    if (PacketHandlerGenerator.GenerateFile(role, project.Name, protoPath, outputPath))
+    {
+        Console.WriteLine("SUCCESS");
+    }
 }
+

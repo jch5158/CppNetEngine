@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
-#include "ClientLoginPacketHandler.h"
-#include "Login.pb.h"
-#include "PacketId.pb.h"
+#include "Generated/ClientLoginPacketHandler.h"
+#include "Generated/Login.pb.h"
+#include "Generated/PacketId.pb.h"
 #include "PacketSession.h"
 
 bool ClientLoginPacketHandler::HANDLE_PACKET_INVALID(PacketSessionRef& session, byte* pBuffer, const uint16 len)
@@ -19,4 +19,5 @@ bool ClientLoginPacketHandler::HANDLE_S2C_LOGIN_RES(PacketSessionRef& session, c
 bool ClientLoginPacketHandler::HANDLE_S2C_LOGIN_TEST_RES(PacketSessionRef& session,
 	const Protocol::S2C_LOGIN_TEST_RES& packet)
 {
+	return true;
 }

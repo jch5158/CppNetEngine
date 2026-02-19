@@ -5,7 +5,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PublishAot>true</PublishAot>
+    <PublishAot>False</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<OutputPath>Binary\$(Configuration)\</OutputPath>
@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.33.5" />
     <PackageReference Include="Google.Protobuf.Tools" Version="3.33.5" />
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -41,9 +41,12 @@ public:
 	}
 
 	static bool HANDLE_PACKET_INVALID(PacketSessionRef& session, byte* pBuffer, const uint16 len);
-    
     static bool HANDLE_S2C_LOGIN_RES(PacketSessionRef& session, const Protocol::S2C_LOGIN_RES& packet);
     static bool HANDLE_S2C_LOGIN_TEST_RES(PacketSessionRef& session, const Protocol::S2C_LOGIN_TEST_RES& packet);
+    
+    
+    static INetBufferRef MakeSendBuffer(Protocol::C2S_LOGIN_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_C2S_LOGIN_REQ)); }
+    
 
 private:
 
@@ -57,6 +60,23 @@ private:
 		}
 
 		return handlePacket(session, packet);
+	}
+
+    template<typename T>
+	static INetBufferRef MakeSendBuffer(T& packet, const uint16 packetId)
+	{
+		const uint16 dataSize = static_cast<uint16>(packet.ByteSizeLong());
+		const uint16 packetSize = dataSize + sizeof(PacketHeader);
+
+		auto sendBuffer = cpp_net_engine::MakeSendBuffer(packetSize);
+		auto* header = reinterpret_cast<PacketHeader*>(sendBuffer->GetBufferPtr());
+		header->size = packetSize;
+		header->id = packetId;
+
+		ASSERT(packet.SerializeToArray(&header[1], dataSize), "ClientLoginPacketHandler::MakeSendBuffer SerializeToArray is Failed");
+		sendBuffer->MoveWritePos(packetSize);
+
+		return sendBuffer;
 	}
 
 	Vector<PacketHandle> mPacketHandles;

@@ -27,6 +27,7 @@
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/generated_enum_reflection.h"
+#include "google/protobuf/descriptor.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.
@@ -55,11 +56,46 @@ namespace protobuf {
 }  // namespace google
 
 namespace Protocol {
+enum eRole : int {
+  ROLE_NONE = 0,
+  CLIENT = 1,
+  GAME_SERVER = 2,
+  eRole_INT_MIN_SENTINEL_DO_NOT_USE_ =
+      std::numeric_limits<::int32_t>::min(),
+  eRole_INT_MAX_SENTINEL_DO_NOT_USE_ =
+      std::numeric_limits<::int32_t>::max(),
+};
+
+bool eRole_IsValid(int value);
+extern const uint32_t eRole_internal_data_[];
+constexpr eRole eRole_MIN = static_cast<eRole>(0);
+constexpr eRole eRole_MAX = static_cast<eRole>(2);
+constexpr int eRole_ARRAYSIZE = 2 + 1;
+const ::google::protobuf::EnumDescriptor*
+eRole_descriptor();
+template <typename T>
+const std::string& eRole_Name(T value) {
+  static_assert(std::is_same<T, eRole>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to eRole_Name().");
+  return eRole_Name(static_cast<eRole>(value));
+}
+template <>
+inline const std::string& eRole_Name(eRole value) {
+  return ::google::protobuf::internal::NameOfDenseEnum<eRole_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool eRole_Parse(absl::string_view name, eRole* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<eRole>(
+      eRole_descriptor(), name, value);
+}
 enum ePacketId : int {
-  PKT_NONE = 0,
-  PKT_C2S_LOGIN_REQ = 1000,
-  PKT_S2C_LOGIN_RES = 1001,
-  PKT_C2S_MOVE = 2000,
+  ID_NONE = 0,
+  ID_C2S_LOGIN_REQ = 1000,
+  ID_S2C_LOGIN_RES = 1001,
+  ID_S2C_LOGIN_TEST_RES = 1002,
+  ID_C2S_MOVE = 2000,
   ePacketId_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
   ePacketId_INT_MAX_SENTINEL_DO_NOT_USE_ =
@@ -93,6 +129,16 @@ inline bool ePacketId_Parse(absl::string_view name, ePacketId* value) {
 
 
 
+static const int kSenderFieldNumber = 50000;
+extern ::google::protobuf::internal::ExtensionIdentifier<
+    ::google::protobuf::MessageOptions, ::google::protobuf::internal::EnumTypeTraits< ::Protocol::eRole, ::Protocol::eRole_IsValid>, 14,
+    false>
+    sender;
+static const int kReceiverFieldNumber = 50001;
+extern ::google::protobuf::internal::ExtensionIdentifier<
+    ::google::protobuf::MessageOptions, ::google::protobuf::internal::EnumTypeTraits< ::Protocol::eRole, ::Protocol::eRole_IsValid>, 14,
+    false>
+    receiver;
 
 // ===================================================================
 
@@ -112,6 +158,12 @@ inline bool ePacketId_Parse(absl::string_view name, ePacketId* value) {
 namespace google {
 namespace protobuf {
 
+template <>
+struct is_proto_enum<::Protocol::eRole> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::Protocol::eRole>() {
+  return ::Protocol::eRole_descriptor();
+}
 template <>
 struct is_proto_enum<::Protocol::ePacketId> : std::true_type {};
 template <>

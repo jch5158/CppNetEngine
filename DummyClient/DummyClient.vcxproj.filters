@@ -29,19 +29,19 @@
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="Login.pb.cc">
-      <Filter>Protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="Enum.pb.cc">
-      <Filter>Protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="Struct.pb.cc">
-      <Filter>Protocol</Filter>
-    </ClCompile>
     <ClCompile Include="ClientLoginPacketHandler.cpp">
       <Filter>PacketHandler</Filter>
     </ClCompile>
-    <ClCompile Include="PacketId.pb.cc">
+    <ClCompile Include="Generated\Enum.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\Login.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\PacketId.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\Struct.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
   </ItemGroup>
@@ -49,34 +49,35 @@
     <ClInclude Include="pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="Login.pb.h">
+    <ClInclude Include="Generated\Enum.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="Enum.pb.h">
+    <ClInclude Include="Generated\Login.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="Struct.pb.h">
+    <ClInclude Include="Generated\PacketId.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="PacketId.pb.h">
+    <ClInclude Include="Generated\Struct.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="ClientLoginPacketHandler.h">
+    <ClInclude Include="Generated\ClientLoginPacketHandler.h">
       <Filter>PacketHandler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\Common\Protocol\Login.proto">
+    <None Include="..\Common\Protocol\Enum.proto">
       <Filter>Protocol\Proto</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\Common\Protocol\Enum.proto">
+    </None>
+    <None Include="..\Common\Protocol\Login.proto">
       <Filter>Protocol\Proto</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\Common\Protocol\Struct.proto">
+    </None>
+    <None Include="..\Common\Protocol\PacketId.proto">
       <Filter>Protocol\Proto</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\Common\Protocol\PacketId.proto">
+    </None>
+    <None Include="..\Common\Protocol\Struct.proto">
       <Filter>Protocol\Proto</Filter>
-    </CustomBuild>
+    </None>
+    <None Include="..\tools\packetgenerator\program.cs" />
   </ItemGroup>
 </Project>

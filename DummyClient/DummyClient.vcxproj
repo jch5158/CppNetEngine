@@ -131,6 +131,9 @@
     <PostBuildEvent>
       <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -156,6 +159,9 @@
     <PostBuildEvent>
       <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -180,6 +186,9 @@
     <PostBuildEvent>
       <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -206,23 +215,32 @@
     <PostBuildEvent>
       <Command>xcopy /Y /D "$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\crashpad\crashpad_handler.exe" "$(OutDir)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)BuildScripts\Protoc.bat" "$(SolutionDir)" "$(ProjectDir)" "$(VcpkgTriplet)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClientLoginPacketHandler.cpp" />
     <ClCompile Include="DummyClient.cpp" />
-    <ClCompile Include="Enum.pb.cc">
+    <ClCompile Include="Generated\Enum.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Login.pb.cc">
+    <ClCompile Include="Generated\Login.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PacketId.pb.cc">
+    <ClCompile Include="Generated\PacketId.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Generated\Struct.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -234,23 +252,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Struct.pb.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClientLoginPacketHandler.h" />
-    <ClInclude Include="Enum.pb.h" />
-    <ClInclude Include="Login.pb.h" />
-    <ClInclude Include="PacketId.pb.h" />
+    <ClInclude Include="Generated\ClientLoginPacketHandler.h" />
+    <ClInclude Include="Generated\Enum.pb.h" />
+    <ClInclude Include="Generated\Login.pb.h" />
+    <ClInclude Include="Generated\PacketId.pb.h" />
+    <ClInclude Include="Generated\Struct.pb.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Struct.pb.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\Common\Protocol\Login.proto">
+    <None Include="..\Common\Protocol\Login.proto">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\%(Filename).pb.cc;$(ProjectDir)\%(Filename).pb.h;%(Outputs)</Outputs>
@@ -260,10 +272,11 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\%(Filename).pb.cc;$(ProjectDir)\%(Filename).pb.h;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\%(Filename).pb.cc;$(ProjectDir)\%(Filename).pb.h;%(Outputs)</Outputs>
-    </CustomBuild>
+    </None>
+    <None Include="..\tools\packetgenerator\program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\Common\Protocol\Enum.proto">
+    <None Include="..\Common\Protocol\Enum.proto">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)%(Filename).pb.cc;$(ProjectDir)%(Filename).pb.h;%(Outputs)</Outputs>
@@ -273,8 +286,8 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).pb.cc;$(ProjectDir)%(Filename).pb.h;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).pb.cc;$(ProjectDir)%(Filename).pb.h;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="..\Common\Protocol\Struct.proto">
+    </None>
+    <None Include="..\Common\Protocol\Struct.proto">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)%(Filename).pb.cc;$(ProjectDir)%(Filename).pb.h</Outputs>
@@ -284,10 +297,10 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).pb.cc;$(ProjectDir)%(Filename).pb.h</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).pb.cc;$(ProjectDir)%(Filename).pb.h</Outputs>
-    </CustomBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\Common\Protocol\PacketId.proto">
+    <None Include="..\Common\Protocol\PacketId.proto">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\%(Filename).pb.cc;$(ProjectDir)\%(Filename).pb.h;%(Outputs)</Outputs>
@@ -297,7 +310,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\%(Filename).pb.cc;$(ProjectDir)\%(Filename).pb.h;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)vcpkg_installed\x64-windows-static\x64-windows-static\tools\protobuf\protoc.exe --cpp_out=$(ProjectDir) --proto_path=$(SolutionDir)Common\Protocol --descriptor_set_out=$(SolutionDir)Common\Protocol\%(Filename).desc --include_imports %(FullPath)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\%(Filename).pb.cc;$(ProjectDir)\%(Filename).pb.h;%(Outputs)</Outputs>
-    </CustomBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

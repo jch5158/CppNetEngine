@@ -15,8 +15,8 @@ namespace PacketGenerator
             return true;
         }
 
-        public static bool GenerateFile(eRole role, string protoDirPath,
-            string outputDirPath)
+        public static bool GenerateFile(eRole role, string projectName,
+            string protoDirPath, string outputDirPath)
         {
             var descFiles = Directory.GetFiles(protoDirPath, "*.desc");
             if (descFiles.Length == 0)
@@ -47,12 +47,26 @@ namespace PacketGenerator
                     return false;
                 }
 
+                if (!GenerateMakeSendBufferFunction(role, $"{protoName}.proto", protoFilePath,
+                        out var makeSendBufferFunctionString))
+                {
+                    return false;
+                }
+
                 var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, protoName, role.ToString(),
                     initHandleString,
-                    handleFunctionDeclareString);
+                    handleFunctionDeclareString,
+                    makeSendBufferFunctionString);
 
                 try
                 {
+                    var directoryPath = Path.GetDirectoryName(outputFilePath);
+
+                    if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
                     File.WriteAllText(outputFilePath, handleFileContent);
                 }
                 catch (Exception e)
@@ -163,5 +177,57 @@ namespace PacketGenerator
 
             return true;
         }
+
+        private static bool GenerateMakeSendBufferFunction(eRole role, string protoName, string filePath,
+            out string makeSendBufferFunctionString)
+        {
+            makeSendBufferFunctionString = "";
+            try
+            {
+                // 1. 레지스트리 생성 및 등록 (이 코드가 없으면 무조건 Unknown으로 빠집니다!)
+                var registry = new ExtensionRegistry
+                {
+                    PacketIdExtensions.Sender,
+                    PacketIdExtensions.Receiver
+                };
+
+                using var stream = File.OpenRead(filePath);
+                var descriptorSet = FileDescriptorSet.Parser.WithExtensionRegistry(registry).ParseFrom(stream);
+                foreach (var fileProto in descriptorSet.File)
+                {
+                    if (!fileProto.Name.EndsWith(protoName))
+                    {
+                        continue;
+                    }
+
+                    foreach (var msg in fileProto.MessageType)
+                    {
+                        var options = msg.Options;
+                        if (options == null)
+                        {
+                            continue;
+                        }
+
+                        if (options.GetExtension(PacketIdExtensions.Sender) != role)
+                        {
+                            continue;
+                        }
+
+                        var packetName = msg.Name;
+                        makeSendBufferFunctionString += string.Format(PacketFormatter.MAKE_SEND_BUFFER_FUNCTION_FORMAT,
+                            packetName, $"ID_{packetName}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[GenerateMakeSendBufferFunction] 패킷 핸들러 생성 중 오류 발생: {e.Message}");
+                return false;
+            }
+
+            return true;
+
+        }
+
     }
 }
