@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "NetEngineGlobal.h"
-#include "ThreadManager.h"
 
 void NetEngineGlobal::Initialize()
 {
@@ -9,5 +8,4 @@ void NetEngineGlobal::Initialize()
 
 void NetEngineGlobal::singletonInit()
 {
-	ThreadManager::GetInstance();
 }

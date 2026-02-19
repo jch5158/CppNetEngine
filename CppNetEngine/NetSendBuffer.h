@@ -87,7 +87,7 @@ public:
 	}
 
 	[[nodiscard]]
-	byte* Reserve(const int32 size) const
+	virtual byte* Reserve(const int32 size) override
 	{
 		if (std::cmp_less(GetFreeSize(), size))
 		{
@@ -97,7 +97,7 @@ public:
 		return &mBuffer[mWritePos];
 	}
 
-	void Commit(const int32 size)
+	virtual void Commit(const int32 size) override
 	{
 		MoveWritePos(size);
 	}

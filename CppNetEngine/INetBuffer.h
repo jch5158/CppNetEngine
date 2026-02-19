@@ -39,5 +39,10 @@ public:
 	virtual void MoveReadPos(const int32 size) = 0;
 
 	virtual void MoveWritePos(const int32 size) = 0;
+
+	[[nodiscard]]
+	virtual byte* Reserve(const int32 size) = 0;
+
+	virtual void Commit(const int32 size) = 0;
 };
 

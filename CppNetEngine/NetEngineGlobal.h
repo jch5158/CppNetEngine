@@ -8,13 +8,12 @@ public:
 	NetEngineGlobal(NetEngineGlobal&&) = delete;
 	NetEngineGlobal& operator=(NetEngineGlobal&&) = delete;
 
-	NetEngineGlobal() = default;
-	~NetEngineGlobal() = default;
+	NetEngineGlobal() = delete;
+	~NetEngineGlobal() = delete;
 
 	static void Initialize();
 
 private:
 
 	static void singletonInit();
-
 };

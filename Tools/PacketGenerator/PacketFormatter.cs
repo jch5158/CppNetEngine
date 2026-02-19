@@ -65,14 +65,17 @@ private:
 		const uint16 packetSize = dataSize + sizeof(PacketHeader);
 
 		auto sendBuffer = cpp_net_engine::MakeSendBuffer(packetSize);
-		auto* header = reinterpret_cast<PacketHeader*>(sendBuffer->GetBufferPtr());
+
+		byte* pBuffer = sendBuffer->Reserve(packetSize);
+
+		auto* header = reinterpret_cast<PacketHeader*>(pBuffer);
 		header->size = packetSize;
 		header->id = packetId;
-
 		ASSERT(packet.SerializeToArray(&header[1], dataSize), ""{1}{0}PacketHandler::MakeSendBuffer SerializeToArray is Failed"");
-		sendBuffer->MoveWritePos(packetSize);
-
-		return sendBuffer;
+		
+        sendBuffer->Commit(packetSize);
+		
+        return sendBuffer;
 	}}
 
 	Vector<PacketHandle> mPacketHandles;

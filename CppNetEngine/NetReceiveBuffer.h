@@ -101,6 +101,22 @@ public:
 	}
 
 	[[nodiscard]]
+	virtual byte* Reserve(const int32 size) override
+	{
+		if (std::cmp_less(GetLinearWriteSize(), size))
+		{
+			return nullptr;
+		}
+
+		return GetWritePtr();
+	}
+
+	virtual void Commit(const int32 size) override
+	{
+		MoveWritePos(size);
+	}
+
+	[[nodiscard]]
 	int32 GetLinearWriteSize() const
 	{
 		const int32 readPos = mReadPos;
