@@ -36,7 +36,7 @@ public:
 	{
 		const auto [size, id] = *(reinterpret_cast<PacketHeader*>(pBuffer));
 		const auto iter = mPacketHandleMap.find(id);
-		if (iter == mPacketHandleMap.end())
+		if (iter != mPacketHandleMap.end())
 		{
 			return iter->second(session, pBuffer, len);
 		}
