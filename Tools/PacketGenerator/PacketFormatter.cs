@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PacketGenerator
+﻿namespace PacketGenerator
 {
     internal static class PacketFormatter
     {
@@ -10,35 +6,37 @@ namespace PacketGenerator
             @"// ReSharper disable CppInconsistentNaming
 #pragma once
 #include <functional>
-#include ""PacketSession.h""
+#include ""PacketId.pb.h""
 #include ""Enum.pb.h""
 #include ""Struct.pb.h""
-#include ""PacketId.pb.h""
-#include ""{0}.pb.h""
+#include ""{1}.pb.h""
+#include ""StlTypes.h""
+#include ""PacketSession.h""
 
-class {1}{0}PacketHandler final : ISingleton<{1}{0}PacketHandler>
+class {0}{1}PacketHandler final : ISingleton<{0}{1}PacketHandler>
 {{
 public:
 	
 	using PacketHandle = std::function<bool(PacketSessionRef&, byte*, uint16)>;
 	
-	{1}{0}PacketHandler()
-		:mPacketHandles(UINT16_MAX, nullptr)
+	{0}{1}PacketHandler()
+		:mPacketHandleMap()
 	{{
-		for (auto& mPacketHandle : mPacketHandles)
-		{{
-			mPacketHandle = HANDLE_PACKET_INVALID;
-		}}
-
 		{2}
 	}}
 
-	virtual ~{1}{0}PacketHandler() override = default;
+	virtual ~{0}{1}PacketHandler() override = default;
 
 	bool HandlePacket(PacketSessionRef& session, byte* pBuffer, const uint16 len) const
 	{{
 		const auto [size, id] = *(reinterpret_cast<PacketHeader*>(pBuffer));
-		return mPacketHandles[id](session, pBuffer, len);
+		const auto iter = mPacketHandleMap.find(id);
+		if (iter == mPacketHandleMap.end())
+		{{
+			return iter->second(session, pBuffer, len);
+		}}
+
+		return HANDLE_PACKET_INVALID(session, pBuffer, len);
 	}}
 
 	static bool HANDLE_PACKET_INVALID(PacketSessionRef& session, byte* pBuffer, const uint16 len);
@@ -80,12 +78,12 @@ private:
         return sendBuffer;
 	}}
 
-	Vector<PacketHandle> mPacketHandles;
+	HashMap<uint32, PacketHandle> mPacketHandleMap;
 }};";
 
         public static readonly string INIT_FILE_FORMAT =
 @"
-		mPacketHandles[Protocol::ePacketId::{0}] = [this](PacketSessionRef& session, byte* pBuffer, const uint16 len)->bool
+		mPacketHandleMap[Protocol::ePacketId::{0}] = [this](PacketSessionRef& session, byte* pBuffer, const uint16 len)->bool
 		{{
 		    return HandlePacket<Protocol::{1}>(HANDLE_{1}, session, pBuffer, len);
 		}};

@@ -23,4 +23,4 @@ enum ePacketId
   ID_S2C_LOGIN_RES = 1001;
   ID_S2C_LOGIN_TEST_RES = 1002;
   ID_C2S_MOVE = 2000;
- }
+}

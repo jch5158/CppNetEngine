@@ -10,12 +10,36 @@ namespace PacketGenerator
 {
     internal class PacketHandlerGenerator
     {
-        public static bool Generate()
+        public static bool Generate(PacketProjectsConfig config, string baseDirPath)
         {
+            foreach (var projectReceiver in config.Projects)
+            {
+                foreach (var projectSender in config.Projects)
+                {
+                    if (projectReceiver.Name == projectSender.Name)
+                    {
+                        continue;
+                    }
+
+                    if (!Enum.TryParse<eRole>(projectReceiver.Role, true, out var receiver) || !Enum.TryParse<eRole>(projectSender.Role, true, out var sender))
+                    {
+                        Console.WriteLine($"[Error] 프로젝트 '{projectReceiver.Name}'의 역할 '{projectReceiver.Role}'이(가) 유효하지 않습니다.");
+                        continue;
+                    }
+
+                    var protoPath = Path.Combine(baseDirPath, @"..\..\..\..\Common\Protocol");
+                    var outputPath = Path.Combine(baseDirPath, @$"..\..\..\..\{projectReceiver.Name}\Generated");
+                    if (!GenerateFile(receiver, sender, projectReceiver.Name, projectSender.Name, protoPath, outputPath))
+                    {
+                        Console.WriteLine("GenerateFile is Failed");
+                    }
+                }
+            }
+
             return true;
         }
 
-        public static bool GenerateFile(eRole role, string projectName,
+        public static bool GenerateFile(eRole receiver, eRole sender, string prjReceiverName, string prjSenderName,
             string protoDirPath, string outputDirPath)
         {
             var descFiles = Directory.GetFiles(protoDirPath, "*.desc");
@@ -33,27 +57,27 @@ namespace PacketGenerator
                     continue;
                 }
 
-                var fileName = $"{role.ToString()}{protoName}PacketHandler.h";
+                var fileName = $"{sender.ToString()}{protoName.ToString()}PacketHandler.h";
                 var outputFilePath = Path.Combine(outputDirPath, fileName);
 
-                if (!GenerateInitHandleString(role, $"{protoName}.proto", protoFilePath, out var initHandleString))
+                if (!GenerateInitHandleString(receiver, sender, $"{protoName}.proto", protoFilePath, out var initHandleString))
                 {
                     return false;
                 }
 
-                if (!GenerateHandleFunctionDeclares(role, $"{protoName}.proto", protoFilePath,
+                if (!GenerateHandleFunctionDeclares(receiver, sender, $"{protoName}.proto", protoFilePath,
                         out var handleFunctionDeclareString))
                 {
                     return false;
                 }
 
-                if (!GenerateMakeSendBufferFunction(role, $"{protoName}.proto", protoFilePath,
+                if (!GenerateMakeSendBufferFunction(receiver, sender, $"{protoName}.proto", protoFilePath,
                         out var makeSendBufferFunctionString))
                 {
                     return false;
                 }
 
-                var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, protoName, role.ToString(),
+                var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, sender.ToString(), protoName,
                     initHandleString,
                     handleFunctionDeclareString,
                     makeSendBufferFunctionString);
@@ -79,7 +103,7 @@ namespace PacketGenerator
             return true;
         }
 
-        private static bool GenerateInitHandleString(eRole role, string protoName, string filePath,
+        private static bool GenerateInitHandleString(eRole receiver, eRole sender, string protoName, string filePath,
             out string initHandleString)
         {
             initHandleString = "";
@@ -110,7 +134,7 @@ namespace PacketGenerator
                             continue;
                         }
 
-                        if (options.GetExtension(PacketIdExtensions.Receiver) != role)
+                        if (options.GetExtension(PacketIdExtensions.Receiver) != receiver && options.GetExtension(PacketIdExtensions.Sender) != sender)
                         {
                             continue;
                         }
@@ -131,7 +155,7 @@ namespace PacketGenerator
             return true;
         }
 
-        private static bool GenerateHandleFunctionDeclares(eRole role, string protoName, string filePath,
+        private static bool GenerateHandleFunctionDeclares(eRole receiver, eRole sender, string protoName, string filePath,
             out string handleFunctionDeclareString)
         {
             handleFunctionDeclareString = "";
@@ -158,7 +182,7 @@ namespace PacketGenerator
                     foreach (var msg in fileProto.MessageType)
                     {
                         var options = msg.Options;
-                        if (options.GetExtension(PacketIdExtensions.Receiver) != role)
+                        if (options.GetExtension(PacketIdExtensions.Receiver) != receiver && options.GetExtension(PacketIdExtensions.Sender) != sender)
                         {
                             continue;
                         }
@@ -178,7 +202,7 @@ namespace PacketGenerator
             return true;
         }
 
-        private static bool GenerateMakeSendBufferFunction(eRole role, string protoName, string filePath,
+        private static bool GenerateMakeSendBufferFunction(eRole receiver, eRole sender, string protoName, string filePath,
             out string makeSendBufferFunctionString)
         {
             makeSendBufferFunctionString = "";
@@ -208,7 +232,7 @@ namespace PacketGenerator
                             continue;
                         }
 
-                        if (options.GetExtension(PacketIdExtensions.Sender) != role)
+                        if (options.GetExtension(PacketIdExtensions.Receiver) != receiver && options.GetExtension(PacketIdExtensions.Sender) != sender)
                         {
                             continue;
                         }
