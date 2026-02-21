@@ -10,7 +10,6 @@ NetAddress::NetAddress(const SOCKADDR_IN& sockAddr)
 NetAddress::NetAddress(const Wstring& ip, const uint16 port)
 	: mSockAddr{}
 {
-	std::memset(&mSockAddr, 0, sizeof(mSockAddr));
 	mSockAddr.sin_family = AF_INET;
 	mSockAddr.sin_addr = IpToAddress(ip);
 	mSockAddr.sin_port = ::htons(port);
