@@ -31,6 +31,9 @@
     <Filter Include="Pattern">
       <UniqueIdentifier>{e0791a0c-49cb-4011-a2e8-c3975f0a0171}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Job">
+      <UniqueIdentifier>{8d774a0e-136e-4008-855e-facdab60d221}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -126,6 +129,7 @@
     <ClInclude Include="AllocatorUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Job.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -173,5 +177,6 @@
     <ClCompile Include="SendBufferAllocator.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="Job.cpp" />
   </ItemGroup>
 </Project>

@@ -102,7 +102,7 @@ public:
 
 		if (mbPlacementNew)
 		{
-			new(&expected.pNode->data)T();
+			new(&expected.pNode->data)T(std::forward<Args>(args)...);
 		}
 
 		return &expected.pNode->data;
