@@ -3,7 +3,7 @@
 #include "JobQueue.h"
 
 JobScheduler::JobScheduler()
-	:mJobIocpHandle(INVALID_HANDLE_VALUE)
+	:mJobIocpHandle(nullptr)
 	, mDispatchQueue()
 {
 	mJobIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
@@ -15,7 +15,7 @@ JobScheduler::JobScheduler()
 
 JobScheduler::~JobScheduler()
 {
-	if (mJobIocpHandle != INVALID_HANDLE_VALUE)
+	if (mJobIocpHandle != nullptr)
 	{
 		CloseHandle(mJobIocpHandle);
 	}
@@ -26,6 +26,7 @@ void JobScheduler::Push(const JobQueueRef& pJobQueue)
 	if (mDispatchQueue.TryEnqueue(pJobQueue) == false)
 	{
 		ASSERT(false, "JobScheduler::Push - Job queue manager is full. Failed to push job queue.");
+		return;
 	}
 
 	if (PostQueuedCompletionStatus(mJobIocpHandle, 0, 0, nullptr) == false)

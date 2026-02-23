@@ -22,8 +22,8 @@ public:
 	}
 
 private:
-	std::chrono::milliseconds mTimeSlice;
-	std::chrono::steady_clock::time_point mStart;
+	const std::chrono::milliseconds mTimeSlice;
+	const std::chrono::steady_clock::time_point mStart;
 };
 
 class JobScheduler : public ISingleton<JobScheduler>
