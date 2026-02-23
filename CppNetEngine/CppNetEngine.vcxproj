@@ -203,6 +203,8 @@
     <ClInclude Include="IocpEvent.h" />
     <ClInclude Include="ISingleton.h" />
     <ClInclude Include="Job.h" />
+    <ClInclude Include="JobQueue.h" />
+    <ClInclude Include="JobScheduler.h" />
     <ClInclude Include="Listener.h" />
     <ClInclude Include="LockFreeQueue.h" />
     <ClInclude Include="LockFreeStack.h" />
@@ -232,7 +234,8 @@
     <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="IocpCore.cpp" />
     <ClCompile Include="IocpEvent.cpp" />
-    <ClCompile Include="Job.cpp" />
+    <ClCompile Include="JobQueue.cpp" />
+    <ClCompile Include="JobScheduler.cpp" />
     <ClCompile Include="Listener.cpp" />
     <ClCompile Include="MemoryAllocator.cpp" />
     <ClCompile Include="NetAddress.cpp" />

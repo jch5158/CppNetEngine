@@ -6,6 +6,7 @@
 class ThreadManager final : public ISingleton<ThreadManager>
 {
 public:
+	static constexpr int64 DEFAULT_JOB_WORK_DURATION = 16;  // ms
 
 	friend class ISingleton<ThreadManager>;
 
@@ -27,15 +28,17 @@ public:
 
 	static void InitTls();
 	static void DestroyTls();
+	//static void ExecuteJob();
 
 	[[nodiscard]]
-	uint32 GetThreadId() const;
+	static uint32 GetThreadId();
 
 private:
 
 	Mutex mLock;
-	std::vector<std::thread> mThreads;
+	Vector<std::thread> mThreads;
 
 	static thread_local uint32 sTlsThreadId;
+	static thread_local std::chrono::time_point<std::chrono::steady_clock> sTlsJobWorkEndTime;
 };
 

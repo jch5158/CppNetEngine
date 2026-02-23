@@ -25,9 +25,6 @@
     <Filter Include="Network">
       <UniqueIdentifier>{f94ca58d-a0f7-429c-9d56-46cf78ae1cec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IOCP">
-      <UniqueIdentifier>{97b44a5e-8f99-45d1-ab83-f575b00b813c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Pattern">
       <UniqueIdentifier>{e0791a0c-49cb-4011-a2e8-c3975f0a0171}</UniqueIdentifier>
     </Filter>
@@ -90,12 +87,6 @@
     <ClInclude Include="NetAddress.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="IocpCore.h">
-      <Filter>IOCP</Filter>
-    </ClInclude>
-    <ClInclude Include="IocpEvent.h">
-      <Filter>IOCP</Filter>
-    </ClInclude>
     <ClInclude Include="Session.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -129,7 +120,21 @@
     <ClInclude Include="AllocatorUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Job.h" />
+    <ClInclude Include="Job.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="JobQueue.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="JobScheduler.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpEvent.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpCore.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -159,12 +164,6 @@
     <ClCompile Include="Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="IocpCore.cpp">
-      <Filter>IOCP</Filter>
-    </ClCompile>
-    <ClCompile Include="IocpEvent.cpp">
-      <Filter>IOCP</Filter>
-    </ClCompile>
     <ClCompile Include="Listener.cpp">
       <Filter>Network</Filter>
     </ClCompile>
@@ -177,6 +176,17 @@
     <ClCompile Include="SendBufferAllocator.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Job.cpp" />
+    <ClCompile Include="JobQueue.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="JobScheduler.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpCore.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpEvent.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

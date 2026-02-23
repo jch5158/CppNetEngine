@@ -3,7 +3,7 @@
 #include "ISingleton.h"
 #include "ObjectPool.h"
 
-template <typename T, uint32 CHUNK_SIZE = 500>
+template <typename T, int32 CHUNK_SIZE = 500>
 class ObjectAllocator final : public ISingleton<ObjectAllocator<T, CHUNK_SIZE>>
 {
 public:

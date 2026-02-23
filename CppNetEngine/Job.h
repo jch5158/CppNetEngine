@@ -4,9 +4,9 @@
 class Job
 {
 public:
-	using JobFunc = std::function<void()>;
+	using CallbackType = std::function<void()>;
 
-	explicit Job(JobFunc&& func)
+	explicit Job(CallbackType&& func)
 		: mJobFunc(std::move(func))
 	{
 	}
@@ -14,9 +14,9 @@ public:
 	template<typename T, typename Ret, typename... Args>
 	Job(std::shared_ptr<T> owner, Ret(T::* memFunc)(Args...), Args&&... args)
 	{
-		mJobFunc = [owner, memFunc, args...]()
+		mJobFunc = [owner, memFunc, ...capArgs = std::forward<Args>(args)]()->void
 			{
-				(owner.get()->*memFunc)(args...);
+				(owner.get()->*memFunc)(std::forward<Args>(capArgs)...);
 			};
 	}
 
@@ -27,6 +27,6 @@ public:
 
 private:
 
-	JobFunc mJobFunc;
+	CallbackType mJobFunc;
 };
 

@@ -96,3 +96,9 @@ using ServerServiceConstRef = SharedPtr<const ServerService>;
 
 using ClientServiceRef = SharedPtr<class ClientService>;
 using ClientServiceConstRef = SharedPtr<const ClientService>;
+
+using JobRef = SharedPtr<class Job>;
+using JobConstRef = SharedPtr<const Job>;
+
+using JobQueueRef = SharedPtr<class JobQueue>;
+using JobQueueConstRef = SharedPtr<const JobQueue>;

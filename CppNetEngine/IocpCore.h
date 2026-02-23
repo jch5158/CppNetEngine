@@ -17,7 +17,7 @@ public:
 	virtual void Dispatch(class IocpEvent& iocpEvent, const int32 numOfBytes) = 0;
 };
 
-class IocpCore final
+class IocpCore
 {
 public:
 

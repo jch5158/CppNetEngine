@@ -8,6 +8,8 @@ class LockFreeQueue final
 {
 public:
 
+	static constexpr int32 DEFAULT_MAX_COUNT = 65535;
+
 	struct Node
 	{
 		T data;
@@ -31,7 +33,7 @@ public:
 	LockFreeQueue(LockFreeQueue&&) = delete;
 	LockFreeQueue& operator=(LockFreeQueue&&) = delete;
 
-	explicit LockFreeQueue(const int32 maxCount)
+	explicit LockFreeQueue(const int32 maxCount = DEFAULT_MAX_COUNT)
 		: mMaxCount(maxCount)
 		, mCount(0)
 		, mHead{}
@@ -45,14 +47,7 @@ public:
 
 	~LockFreeQueue()
 	{
-		Node* pNode = mHead.pNode;
-
-		while (pNode != nullptr)
-		{
-			Node* pNextNode = pNode->pNextNode;
-			NodeObjectAllocator::GetInstance().Free(pNode);
-			pNode = pNextNode;
-		}
+		Clear();
 	}
 
 	[[nodiscard]]
@@ -129,6 +124,18 @@ public:
 		NodeObjectAllocator::GetInstance().Free(expected.pNode);
 
 		return true;
+	}
+
+	void Clear()
+	{
+		Node* pNode = mHead.pNode;
+
+		while (pNode != nullptr)
+		{
+			Node* pNextNode = pNode->pNextNode;
+			NodeObjectAllocator::GetInstance().Free(pNode);
+			pNode = pNextNode;
+		}
 	}
 
 	bool IsEmpty() const
