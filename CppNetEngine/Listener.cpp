@@ -76,7 +76,7 @@ bool Listener::StartAccept(ServerServiceRef pServerService)
 	const int32 acceptEventCount = mpServerService->GetMaxSessionCount();
 	for (int i = 0; i < acceptEventCount; ++i)
 	{
-		auto pAcceptEvent = ObjectAllocator<IocpAcceptEvent>::GetInstance().Alloc();
+		auto pAcceptEvent = cpp_net_engine::NewObject<IocpAcceptEvent>();
 		pAcceptEvent->Init();
 		pAcceptEvent->SetIocpObjectRef(shared_from_this());
 		mAcceptEvents.emplace_back(pAcceptEvent);

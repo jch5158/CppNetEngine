@@ -14,6 +14,12 @@ namespace cpp_net_engine
 		return ObjectAllocator<T>::GetInstance().Alloc(std::forward<Args>(args)...);
 	}
 
+	template <typename T>
+	void DeleteObject(T* pData)
+	{
+		ObjectAllocator<T>::GetInstance().Free(pData);
+	}
+
 	inline void* RawAlloc(const int64 size)
 	{
 		return MemoryAllocator::GetInstance().Alloc(size);

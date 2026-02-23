@@ -18,8 +18,6 @@ public:
 
 private:
 
-	using NodeObjectAllocator = ObjectAllocator<Node, CHUNK_SIZE>;
-
 	struct Node16
 	{
 		Node* pNode;
@@ -39,7 +37,7 @@ public:
 		, mHead{}
 		, mTail{}
 	{
-		Node* pDummyNode = NodeObjectAllocator::GetInstance().Alloc();
+		Node* pDummyNode = cpp_net_engine::NewObject<Node>();
 		pDummyNode->pNextNode = nullptr;
 		mHead.pNode = pDummyNode;
 		mTail.pNode = pDummyNode;
@@ -58,7 +56,7 @@ public:
 			return false;
 		}
 
-		Node* pDesired = NodeObjectAllocator::GetInstance().Alloc();
+		Node* pDesired = cpp_net_engine::NewObject<Node>();
 		pDesired->data = data;
 		pDesired->pNextNode = nullptr;
 
@@ -121,7 +119,7 @@ public:
 
 		} while (atomicHead.compare_exchange_weak(expected, desired) == false);
 
-		NodeObjectAllocator::GetInstance().Free(expected.pNode);
+		cpp_net_engine::DeleteObject(expected.pNode);
 
 		return true;
 	}
@@ -133,7 +131,7 @@ public:
 		while (pNode != nullptr)
 		{
 			Node* pNextNode = pNode->pNextNode;
-			NodeObjectAllocator::GetInstance().Free(pNode);
+			cpp_net_engine::DeleteObject(pNode);
 			pNode = pNextNode;
 		}
 	}

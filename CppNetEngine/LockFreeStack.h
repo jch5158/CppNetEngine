@@ -16,8 +16,6 @@ public:
 
 private:
 
-	using NodeObjectAllocator = ObjectAllocator<Node, CHUNK_SIZE>;
-
 	struct Node16
 	{
 		Node* pNode;
@@ -36,7 +34,6 @@ public:
 		, mCount(0)
 		, mTopAlineNode16{}
 	{
-		NodeObjectAllocator::GetInstance();
 	}
 
 	~LockFreeStack()
@@ -47,7 +44,7 @@ public:
 		{
 			Node* pNextNode = pNode->pNextNode;
 			
-			NodeObjectAllocator::GetInstance().Free(pNode);
+			cpp_net_engine::DeleteObject(pNode);
 
 			pNode = pNextNode;
 		}
@@ -62,8 +59,7 @@ public:
 		}
 
 		Node* pExpected{};
-		Node* pDesired = NodeObjectAllocator::GetInstance().Alloc();
-
+		Node* pDesired = cpp_net_engine::NewObject<Node>();
 		pDesired->data = data;
 
 		std::atomic_ref<Node*> topNodePtr(mTopAlineNode16.pNode);
@@ -107,7 +103,7 @@ public:
 
 		outData = expected.pNode->data;
 
-		NodeObjectAllocator::GetInstance().Free(expected.pNode);
+		cpp_net_engine::DeleteObject(expected.pNode);
 
 		return true;
 	}
