@@ -5,8 +5,9 @@
 
 
 IocpCore::IocpCore()
-	:mIocpHandle(CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0))
+	:mIocpHandle(nullptr)
 {
+	mIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
 	if (mIocpHandle == nullptr)
 	{
 		CrashReporter::Crash();
@@ -15,7 +16,10 @@ IocpCore::IocpCore()
 
 IocpCore::~IocpCore()
 {
-	CloseHandle(mIocpHandle);
+	if (mIocpHandle != nullptr)
+	{
+		CloseHandle(mIocpHandle);
+	}
 }
 
 HANDLE IocpCore::GetHandle() const

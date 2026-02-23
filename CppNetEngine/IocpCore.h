@@ -40,6 +40,6 @@ public:
 
 private:
 
-	const HANDLE mIocpHandle;
+	HANDLE mIocpHandle;
 };
 

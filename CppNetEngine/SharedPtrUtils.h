@@ -102,3 +102,5 @@ using JobConstRef = SharedPtr<const Job>;
 
 using JobQueueRef = SharedPtr<class JobQueue>;
 using JobQueueConstRef = SharedPtr<const JobQueue>;
+using JobQueueWeak = WeakPtr<class JobQueue>;
+using JobQueueConstWeak = WeakPtr<const JobQueue>;
