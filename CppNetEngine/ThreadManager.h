@@ -6,8 +6,6 @@
 class ThreadManager final : public ISingleton<ThreadManager>
 {
 public:
-	static constexpr int64 DEFAULT_JOB_WORK_DURATION = 16;  // ms
-
 	friend class ISingleton<ThreadManager>;
 
 	ThreadManager(const ThreadManager&) = delete;
