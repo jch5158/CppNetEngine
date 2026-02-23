@@ -19,7 +19,7 @@ void JobQueue::Push(const JobRef& pJob)
 	JobScheduler::GetInstance().Push(shared_from_this());
 }
 
-void JobQueue::Execute()
+void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
 {
 	if (mIsExecuting.exchange(true) == true)
 	{
@@ -28,25 +28,26 @@ void JobQueue::Execute()
 	
 	spTlsJobQueue = shared_from_this();
 
-	const int32 jobCount = mJobQueue.Count();
-	for (int32 i = 0; i < jobCount; ++i)
+	while (!jobTimeBudget.IsExpired())
 	{
 		JobRef pJob;
 		if (mJobQueue.TryDequeue(pJob) == false)
 		{
-			ASSERT(false, "JobQueue::Execute - Failed to dequeue job.");
-			continue;
+			break;
 		}
 
 		pJob->Execute();
 	}
 	
-	spTlsJobQueue = nullptr;
-
 	mIsExecuting.store(false);
 }
 
 void JobQueue::Clear()
 {
 	mJobQueue.Clear();
+}
+
+int32 JobQueue::Count() const
+{
+	return mJobQueue.Count();
 }

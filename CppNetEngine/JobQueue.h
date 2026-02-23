@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "LockFreeQueue.h"
 #include "Job.h"
+#include "JobScheduler.h"
 
 class JobQueue : public std::enable_shared_from_this<JobQueue>
 {
@@ -23,8 +24,9 @@ public:
 	}
 
 	void Push(const JobRef& pJob);
-	void Execute();
+	void Execute(const JobTimeBudget& jobTimeBudget);
 	void Clear();
+	[[nodiscard]] int32 Count() const;
 
 private:
 	static thread_local JobQueueRef spTlsJobQueue;

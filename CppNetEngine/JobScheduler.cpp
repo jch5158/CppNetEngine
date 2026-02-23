@@ -46,14 +46,19 @@ void JobScheduler::Dispatch()
 	}
 
 	const auto jobTimeBudget = JobTimeBudget(std::chrono::milliseconds(JobTimeBudget::DEFAULT_TIME_SLICE_MS));
-	if (!jobTimeBudget.IsExpired())
+	while (!jobTimeBudget.IsExpired())
 	{
 		JobQueueRef pJobQueue = nullptr;
 		if (!mDispatchQueue.TryDequeue(pJobQueue))
 		{
-			return;
+			break;
 		}
 
-		pJobQueue->Execute();
+		pJobQueue->Execute(jobTimeBudget);
+
+		if (pJobQueue->Count() > 0)
+		{
+			Push(pJobQueue);
+		}
 	}
 }
