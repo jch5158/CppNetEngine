@@ -135,7 +135,9 @@
     <ClInclude Include="IocpCore.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="JobTimingWheel.h" />
+    <ClInclude Include="JobTimingWheel.h">
+      <Filter>Job</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -189,6 +191,8 @@
     <ClCompile Include="IocpEvent.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="JobTimingWheel.cpp" />
+    <ClCompile Include="JobTimingWheel.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,9 +1,10 @@
 ﻿#include "pch.h"
-#include "JobScheduler.h"
 #include "JobQueue.h"
+#include "JobScheduler.h"
 
 JobScheduler::JobScheduler()
 	:mJobIocpHandle(nullptr)
+	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
 	, mDispatchQueue()
 {
 	mJobIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
@@ -38,10 +39,10 @@ void JobScheduler::Push(const JobQueueRef& pJobQueue)
 void JobScheduler::Dispatch()
 {
 	DWORD bytesTransferred = 0;
-	ULONG_PTR completionKey = 0;
-	LPOVERLAPPED overlapped = nullptr;
+	ULONG_PTR pCompletionKey = 0;
+	OVERLAPPED* pOverlapped = nullptr;
 
-	if (!GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &completionKey, &overlapped, INFINITE))
+	if (!GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, &pOverlapped, INFINITE))
 	{
 		return;
 	}
@@ -62,4 +63,14 @@ void JobScheduler::Dispatch()
 			Push(pJobQueue);
 		}
 	}
+}
+
+void JobScheduler::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const int64 delayMs)
+{
+	mTimingWheel.Reserve(pJob, pOwnerQueue, delayMs);
+}
+
+void JobScheduler::Tick()
+{
+	mTimingWheel.Tick();
 }

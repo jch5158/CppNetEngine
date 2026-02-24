@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include <functional>
-#include "LockFreeQueue.h"
 
+#include "JobTimingWheel.h"
+#include "LockFreeQueue.h"
 
 class JobTimeBudget
 {
@@ -30,15 +31,21 @@ class JobScheduler : public ISingleton<JobScheduler>
 {
 public:
 
+	static constexpr int64 TICK_INTERVAL_MS = 10;
+	static constexpr int32 WHEEL_SIZE = 6000;
+
 	JobScheduler();
 	virtual ~JobScheduler() override;
 
 	void Push(const JobQueueRef& pJobQueue);
 	void Dispatch();
+	void Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const int64 delayMs);
+	void Tick();
 
 private:
 
 	HANDLE mJobIocpHandle;
+	JobTimingWheel mTimingWheel;
 	LockFreeQueue<JobQueueRef> mDispatchQueue;
 };
 

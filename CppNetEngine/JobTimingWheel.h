@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "JobQueue.h"
 
 class TimingJob
 {

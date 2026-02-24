@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "JobTimingWheel.h"
+#include "JobQueue.h"
 
 TimingJob::TimingJob(JobRef pJob, const JobQueueRef& pOwnerQueue)
 	: mJob(std::move(pJob))
