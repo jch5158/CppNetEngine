@@ -68,8 +68,8 @@ using WeakPtr = std::weak_ptr<T>;
 template <typename T>
 using SharedPtr = std::shared_ptr<T>;
 
-using ListenerRef = SharedPtr<class Listen>;
-using ListenerConstRef = SharedPtr<const Listen>;
+using ListenerRef = SharedPtr<class Listener>;
+using ListenerConstRef = SharedPtr<const Listener>;
 
 using SessionRef = SharedPtr<class Session>;
 using SessionConstRef = SharedPtr<const Session>;

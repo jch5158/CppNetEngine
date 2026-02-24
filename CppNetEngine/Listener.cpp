@@ -22,7 +22,7 @@ HANDLE Listener::GetHandle() const
 	return reinterpret_cast<HANDLE>(mSocket);  // NOLINT(performance-no-int-to-ptr)
 }
 
-void Listener::Dispatch(class IocpEvent& iocpEvent, int32 numOfBytes)
+void Listener::Dispatch(class IocpEvent& iocpEvent, uint32 numOfBytes)
 {
 	if (iocpEvent.GetEventType() != eIocpEventType::Accept)
 	{
@@ -45,6 +45,7 @@ bool Listener::StartAccept(ServerServiceRef pServerService)
 
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
+		uint32 errorCode = WSAGetLastError();
 		return false;
 	}
 

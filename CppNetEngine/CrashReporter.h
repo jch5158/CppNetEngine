@@ -1,11 +1,8 @@
 ﻿#pragma once
 
-namespace fs = std::filesystem;
-
 class CrashReporter final
 {
 public:
-
 	CrashReporter() = delete;
 	~CrashReporter() = delete;
 	CrashReporter(const CrashReporter&) = delete;
@@ -15,7 +12,7 @@ public:
 
 	static void Crash();
 	static void CrashIf(const bool bCrash);
-	static fs::path GetExeDirectory();
+	static std::filesystem::path GetExeDirectory();
 	static bool Init(const Wstring& appName, const Wstring& appVersion, const Wstring& url);
 
 private:

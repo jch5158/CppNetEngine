@@ -17,6 +17,7 @@ public:
 	explicit NetReceiveBuffer()
 		: mReadPos(0)
 		, mWritePos(0)
+		, mBuffer()
 	{
 		static_assert(BUFFER_SIZE <= MAX_BUFFER_SIZE, "BUFFER_SIZE is equal to or less than MAX_BUFFER_SIZE");
 	}

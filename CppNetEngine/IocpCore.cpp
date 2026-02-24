@@ -4,6 +4,17 @@
 #include "CrashReporter.h"
 
 
+IocpCore::IocpCore()
+	: mIocpHandle(nullptr)
+	, mpOnErrorHandler([](const uint32)->void {return; })
+{
+	mIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
+	if (mIocpHandle == nullptr)
+	{
+		CrashReporter::Crash();
+	}
+}
+
 IocpCore::IocpCore(std::function<void(const uint32)>& pOnErrorHandler)
 	: mIocpHandle(nullptr)
 	, mpOnErrorHandler(std::move(pOnErrorHandler))
@@ -46,7 +57,7 @@ void IocpCore::Dispatch(const uint32 timeout) const
 	const int32 gqcsRet = GetQueuedCompletionStatus(mIocpHandle, reinterpret_cast<LPDWORD>(&numOfBytes), reinterpret_cast<PULONG_PTR>(&pIocpObject), reinterpret_cast<LPOVERLAPPED*>(&pIocpEvent), timeout);
 	if (gqcsRet != 0)
 	{
-		pIocpObject->Dispatch(*pIocpEvent, static_cast<int32>(numOfBytes));
+		pIocpObject->Dispatch(*pIocpEvent, numOfBytes);
 	}
 	else
 	{

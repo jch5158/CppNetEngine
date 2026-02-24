@@ -42,10 +42,7 @@
     <ClInclude Include="Types.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="NetEngineTls.h">
-      <Filter>Main</Filter>
-    </ClInclude>
-    <ClInclude Include="NetEngineGlobal.h">
+    <ClInclude Include="NetEngineInit.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="NetEngineMacro.h">
@@ -143,10 +140,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="NetEngineGlobal.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
-    <ClCompile Include="NetEngineTls.cpp">
+    <ClCompile Include="NetEngineInit.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="ThreadManager.cpp">

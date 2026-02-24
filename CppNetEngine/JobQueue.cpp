@@ -62,3 +62,5 @@ int32 JobQueue::Count() const
 {
 	return mJobQueue.Count();
 }
+
+thread_local JobQueueRef JobQueue::spTlsJobQueue = nullptr;

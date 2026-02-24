@@ -29,7 +29,7 @@ HANDLE Session::GetHandle() const
 	return reinterpret_cast<HANDLE>(mSocket);  // NOLINT(performance-no-int-to-ptr)
 }
 
-void Session::Dispatch(IocpEvent& iocpEvent, const int32 numOfBytes)
+void Session::Dispatch(IocpEvent& iocpEvent, const uint32 numOfBytes)
 {
 	switch (iocpEvent.GetEventType())  // NOLINT(clang-diagnostic-switch-enum)
 	{
@@ -294,7 +294,7 @@ void Session::ProcessDisconnect()
 	GetService()->ReleaseSession(GetSessionRef());
 }
 
-void Session::ProcessSend(const int32 numOfBytes)
+void Session::ProcessSend(const uint32 numOfBytes)
 {
 	mSendEvent.ReleaseIocpObjectRef();
 	mSendEvent.GetSendPendingBuffer().clear();
@@ -305,7 +305,7 @@ void Session::ProcessSend(const int32 numOfBytes)
 		return;
 	}
 
-	OnSend(numOfBytes);
+	OnSend(static_cast<int32>(numOfBytes));
 
 	if (!mSendQueue.IsEmpty())
 	{
@@ -313,7 +313,7 @@ void Session::ProcessSend(const int32 numOfBytes)
 	}
 }
 
-void Session::ProcessReceive(const int32 numOfBytes)
+void Session::ProcessReceive(const uint32 numOfBytes)
 {
 	mReceiveEvent.ReleaseIocpObjectRef();
 
@@ -323,10 +323,10 @@ void Session::ProcessReceive(const int32 numOfBytes)
 		return;
 	}
 
-	mNetReceiveBuffer.MoveWritePos(numOfBytes);
+	mNetReceiveBuffer.MoveWritePos(static_cast<int32>(numOfBytes));
 
 	const int32 dataSize = mNetReceiveBuffer.GetUseSize();
-	const int32 processLen = OnReceive(mNetReceiveBuffer.GetReadPtr(), numOfBytes);
+	const int32 processLen = OnReceive(mNetReceiveBuffer.GetReadPtr(), static_cast<int32>(numOfBytes));
 	if (processLen < 0 || processLen > dataSize)
 	{
 		Disconnect();

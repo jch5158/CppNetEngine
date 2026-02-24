@@ -31,10 +31,9 @@
 
 #include "Types.h"
 #include "NetEngineMacro.h"
-#include "NetEngineTls.h"
-#include "NetEngineGlobal.h"
+#include "NetEngineInit.h"
 #include "StlTypes.h"
 #include "UniquePtrUtils.h"
 #include "SharedPtrUtils.h"
-#include "CrashReporter.h"
 #include "AllocatorUtils.h"
+#include "CrashReporter.h"

@@ -10,12 +10,12 @@ public:
 	IocpObject(IocpObject&&) = delete;
 	IocpObject& operator=(IocpObject&&) = delete;
 
-	IocpObject();
-	virtual ~IocpObject() = 0;
+	IocpObject() = default;
+	virtual ~IocpObject() = default;
 
 	[[nodiscard]]
 	virtual HANDLE GetHandle() const = 0;
-	virtual void Dispatch(class IocpEvent& iocpEvent, const int32 numOfBytes) = 0;
+	virtual void Dispatch(class IocpEvent& iocpEvent, const uint32 numOfBytes) = 0;
 };
 
 class IocpCore
@@ -27,7 +27,8 @@ public:
 	IocpCore(IocpCore&&) = delete;
 	IocpCore& operator=(IocpCore&&) = delete;
 
-	explicit IocpCore(std::function<void(uint32)>& pOnErrorHandler);
+	IocpCore();
+	explicit IocpCore(std::function<void(const uint32)>& pOnErrorHandler);
 	~IocpCore();
 
 	[[nodiscard]]

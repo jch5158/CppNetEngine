@@ -18,6 +18,6 @@ public:
 	PacketSessionRef GetPacketSessionRef();
 
 	virtual int32 OnReceive(byte* pBuffer, const int32 len) override final;
-	virtual void OnRecvPacket(byte* buffer, int32 len) = 0;
+	virtual void OnRecvPacket(byte* pBuffer, const int32 len) = 0;
 };
 

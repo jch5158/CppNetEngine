@@ -12,6 +12,8 @@ class GameServerLoginPacketHandler final : ISingleton<GameServerLoginPacketHandl
 {
 public:
 	
+    friend class ISingleton<GameServerLoginPacketHandler>;
+
 	using PacketHandle = std::function<bool(PacketSessionRef&, byte*, uint16)>;
 	
 	GameServerLoginPacketHandler()

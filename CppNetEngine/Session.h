@@ -23,12 +23,12 @@ public:
 
 	[[nodiscard]]
 	virtual HANDLE GetHandle() const override;
-	virtual void Dispatch(class IocpEvent& iocpEvent, const int32 numOfBytes) override;
+	virtual void Dispatch(class IocpEvent& iocpEvent, const uint32 numOfBytes) override;
 
 	virtual void OnConnected() {}
 	virtual void OnDisconnected() {}
 	virtual void OnSend(const int32 len) {}
-	virtual int32 OnReceive(byte* buffer, const int32 len) { return len; }
+	virtual int32 OnReceive(byte* pBuffer, const int32 len) { return len; }
 	virtual void OnError(const int32 errorCode) {}
 
 	void SetSessionIndex(const int32 sessionIndex);
@@ -54,8 +54,8 @@ public:
 
 	void ProcessConnect();
 	void ProcessDisconnect();
-	void ProcessSend(const int32 numOfBytes);
-	void ProcessReceive(const int32 numOfBytes);
+	void ProcessSend(const uint32 numOfBytes);
+	void ProcessReceive(const uint32 numOfBytes);
 
 private:
 

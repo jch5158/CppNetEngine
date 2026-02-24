@@ -12,6 +12,8 @@ class ClientLoginPacketHandler final : ISingleton<ClientLoginPacketHandler>
 {
 public:
 	
+    friend class ISingleton<ClientLoginPacketHandler>;
+
 	using PacketHandle = std::function<bool(PacketSessionRef&, byte*, uint16)>;
 	
 	ClientLoginPacketHandler()

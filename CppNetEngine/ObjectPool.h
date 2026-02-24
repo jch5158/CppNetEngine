@@ -118,7 +118,7 @@ public:
 		
 		Node* pExpected;
 		Node* pDesired = reinterpret_cast<Node*>(pData);
-		if (pDesired->checksum == CHECKSUM_CODE)
+		if (pDesired->checksum != CHECKSUM_CODE)
 		{
 			ASSERT(false, "ObjectPool::Free - Invalid object detected. Possible memory corruption.");
 			return;

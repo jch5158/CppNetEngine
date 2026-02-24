@@ -1,23 +1,25 @@
 ﻿#include "pch.h"
 #include "Service.h"
+#include "Listener.h"
+#include "Session.h"
 #include <utility>
 
-#include "Session.h"
-
-Service::Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, SessionFactory pSessionFactory, const int32 maxSessionCount)
+Service::Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore,
+                 JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount)
 	: mServiceType(serviceType)
 	, mMaxSessionCount(maxSessionCount)
 	, mNetAddress(netAddress)
 	, mpIocpCore(std::move(pIocpCore))
+	, mpScheduler(std::move(pScheduler))
+	, mpSessionFactory(std::move(pSessionFactory))
 	, mSessions(maxSessionCount, nullptr)
 	, mReleaseSessionIndexStack(maxSessionCount)
-	, mpSessionFactory(std::move(pSessionFactory))
 {
 	ASSERT(mpSessionFactory != nullptr, "Service - mSessionFactory is nullptr");
 
 	for (int32 i = 0; i < mMaxSessionCount; ++i)
 	{
-		ASSERT(mReleaseSessionIndexStack.TryPush(i) != true, "Service - mReleaseSessionIndexStack is full");
+		ASSERT(mReleaseSessionIndexStack.TryPush(i), "Service - mReleaseSessionIndexStack is full");
 	}
 }
 
@@ -83,6 +85,11 @@ IocpCoreRef Service::GetIocpCore() const
 	return mpIocpCore;
 }
 
+JobSchedulerRef Service::GetJobScheduler() const
+{
+	return mpScheduler;
+}
+
 int32 Service::GetCurrentSessionCount() const
 {
 	return mMaxSessionCount - mReleaseSessionIndexStack.Count();
@@ -93,12 +100,42 @@ int32 Service::GetMaxSessionCount() const
 	return mMaxSessionCount;
 }
 
-ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef core, SessionFactory factory, const int32 maxSessionCount)
-	: Service(eServiceType::Client, targetAddress, std::move(core), std::move(factory), maxSessionCount)
+ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount)
+	: Service(eServiceType::Client, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), maxSessionCount)
 {
 }
 
-ServerService::ServerService(const NetAddress& targetAddress, IocpCoreRef core, SessionFactory factory, const int32 maxSessionCount)
-	: Service(eServiceType::Server, targetAddress, std::move(core), std::move(factory), maxSessionCount)
+bool ClientService::Start()
+{
+	return true;
+}
+
+void ClientService::CloseService()
+{
+}
+
+ServerService::ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount)
+	: Service(eServiceType::Server, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), maxSessionCount)
+{
+}
+
+bool ServerService::Start()
+{
+	mListener = cpp_net_engine::MakeShared<Listener>();
+	if (mListener == nullptr)
+	{
+		return false;
+	}
+
+	const ServerServiceRef service = static_pointer_cast<ServerService>(shared_from_this());
+	if (mListener->StartAccept(service) == false)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ServerService::CloseService()
 {
 }

@@ -17,6 +17,8 @@ class {0}{1}PacketHandler final : ISingleton<{0}{1}PacketHandler>
 {{
 public:
 	
+    friend class ISingleton<{0}{1}PacketHandler>;
+
 	using PacketHandle = std::function<bool(PacketSessionRef&, byte*, uint16)>;
 	
 	{0}{1}PacketHandler()

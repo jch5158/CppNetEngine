@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <functional>
 
+#include "Job.h"
 #include "JobTimingWheel.h"
 #include "LockFreeQueue.h"
 

@@ -52,7 +52,7 @@ void SocketUtils::Clear()
 bool SocketUtils::CreateTcpSocket(SOCKET& outSocket)
 {
 	outSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, nullptr, 0, WSA_FLAG_OVERLAPPED);
-	if (std::cmp_equal(outSocket, INVALID_SOCKET))
+	if (INVALID_SOCKET == outSocket)
 	{
 		return false;
 	}
@@ -62,7 +62,7 @@ bool SocketUtils::CreateTcpSocket(SOCKET& outSocket)
 
 void SocketUtils::Close(SOCKET& socket)
 {
-	if (std::cmp_equal(socket, INVALID_SOCKET))
+	if (INVALID_SOCKET == socket)
 	{
 		closesocket(socket);
 	}

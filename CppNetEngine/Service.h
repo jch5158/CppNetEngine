@@ -22,7 +22,7 @@ public:
 	Service(Service&&) = delete;
 	Service& operator=(Service&&) = delete;
 
-	Service(eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, SessionFactory pSessionFactory, int32 maxSessionCount = 1);
+	Service(eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, int32 maxSessionCount = 1);
 	virtual ~Service() = default;
 
 	virtual bool Start() = 0;
@@ -35,6 +35,7 @@ public:
 	eServiceType GetServiceType() const;
 	NetAddress& GetNetAddress();
 	IocpCoreRef GetIocpCore() const;
+	JobSchedulerRef GetJobScheduler() const;
 	int32 GetCurrentSessionCount() const;
 	int32 GetMaxSessionCount() const;
 
@@ -44,24 +45,31 @@ private:
 	const int32	mMaxSessionCount;
 	NetAddress mNetAddress;
 	IocpCoreRef mpIocpCore;
+	JobSchedulerRef mpScheduler;
+	SessionFactory mpSessionFactory;
 
 	Vector<SessionRef> mSessions;
 	LockFreeStack<int32> mReleaseSessionIndexStack;
-	SessionFactory mpSessionFactory;
 };
 
 class ClientService : public Service
 {
 public:
-	ClientService(const NetAddress& targetAddress, IocpCoreRef core, SessionFactory factory, const int32 maxSessionCount = 1);
+	ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount = 1);
 	virtual ~ClientService() override = default;
+
+	virtual bool Start() override;
+	virtual void CloseService() override;
 };
 
 class ServerService : public Service
 {
 public:
-	ServerService(const NetAddress& targetAddress, IocpCoreRef core, SessionFactory factory, const int32 maxSessionCount = 1);
+	ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount = 1);
 	virtual ~ServerService() override = default;
+
+	virtual bool Start() override;
+	virtual void CloseService() override;
 
 private:
 	ListenerRef		mListener;
