@@ -8,7 +8,7 @@ JobQueue::JobQueue()
 {
 }
 
-void JobQueue::Push(const JobRef& pJob)
+void JobQueue::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
 {
 	if (mJobQueue.TryEnqueue(pJob) == false)
 	{
@@ -16,7 +16,7 @@ void JobQueue::Push(const JobRef& pJob)
 		return;
 	}
 
-	JobScheduler::GetInstance().Push(shared_from_this());
+	pScheduler->Push(shared_from_this());
 }
 
 void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
@@ -40,6 +40,17 @@ void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
 	}
 	
 	mIsExecuting.store(false);
+
+	spTlsJobQueue = nullptr;
+}
+
+void JobQueue::Flush()
+{
+	JobRef pJob;
+	while (mJobQueue.TryDequeue(pJob))
+	{
+		pJob->Execute();
+	}
 }
 
 void JobQueue::Clear()

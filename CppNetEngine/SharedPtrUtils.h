@@ -83,6 +83,9 @@ using INetBufferConstRef = SharedPtr<const INetBuffer>;
 using IocpCoreRef = SharedPtr<class IocpCore>;
 using IocpCoreConstRef = SharedPtr<const IocpCore>;
 
+using JobSchedulerRef = SharedPtr<class JobScheduler>;
+using JobSchedulerConstRef = SharedPtr<const JobScheduler>;
+
 using WeakServiceRef = WeakPtr<class Service>;
 using WeakServiceConstRef = WeakPtr<const Service>;
 using ServiceRef = SharedPtr<Service>;

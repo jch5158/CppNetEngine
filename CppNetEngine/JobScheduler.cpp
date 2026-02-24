@@ -3,7 +3,7 @@
 #include "JobScheduler.h"
 
 JobScheduler::JobScheduler()
-	:mJobIocpHandle(nullptr)
+	: mJobIocpHandle(nullptr)
 	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
 	, mDispatchQueue()
 {
@@ -42,27 +42,36 @@ void JobScheduler::Dispatch()
 	ULONG_PTR pCompletionKey = 0;
 	OVERLAPPED* pOverlapped = nullptr;
 
-	if (!GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, &pOverlapped, INFINITE))
+	const auto jobTimeBudget = JobTimeBudget(TIME_SLICE_MS);
+	if (!GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, &pOverlapped, static_cast<DWORD>(jobTimeBudget.RemainingTimeMs())))
 	{
-		return;
-	}
-
-	const auto jobTimeBudget = JobTimeBudget(std::chrono::milliseconds(JobTimeBudget::DEFAULT_TIME_SLICE_MS));
-	while (!jobTimeBudget.IsExpired())
-	{
-		JobQueueRef pJobQueue = nullptr;
-		if (!mDispatchQueue.TryDequeue(pJobQueue))
+		const uint32 errorCode = GetLastError();
+		if (errorCode != WAIT_TIMEOUT)
 		{
-			break;
-		}
-
-		pJobQueue->Execute(jobTimeBudget);
-
-		if (pJobQueue->Count() > 0)
-		{
-			Push(pJobQueue);
+			ASSERT(false, "JobScheduler::Dispatch - GetQueuedCompletionStatus is Failed");
+			return;
 		}
 	}
+	else
+	{
+		do
+		{
+			JobQueueRef pJobQueue = nullptr;
+			if (!mDispatchQueue.TryDequeue(pJobQueue))
+			{
+				break;
+			}
+
+			pJobQueue->Execute(jobTimeBudget);
+
+			if (pJobQueue->Count() > 0)
+			{
+				Push(pJobQueue);
+			}
+		} while (!jobTimeBudget.IsExpired());
+	}
+
+	mTimingWheel.Tick();
 }
 
 void JobScheduler::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const int64 delayMs)
@@ -70,7 +79,11 @@ void JobScheduler::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, c
 	mTimingWheel.Reserve(pJob, pOwnerQueue, delayMs);
 }
 
-void JobScheduler::Tick()
+void JobScheduler::Flush()
 {
-	mTimingWheel.Tick();
+	JobQueueRef pJobQueue = nullptr;
+	while (mDispatchQueue.TryDequeue(pJobQueue))
+	{
+		pJobQueue->Flush();
+	}
 }

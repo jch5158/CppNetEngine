@@ -4,8 +4,9 @@
 #include "CrashReporter.h"
 
 
-IocpCore::IocpCore()
-	:mIocpHandle(nullptr)
+IocpCore::IocpCore(std::function<void(const uint32)>& pOnErrorHandler)
+	: mIocpHandle(nullptr)
+	, mpOnErrorHandler(std::move(pOnErrorHandler))
 {
 	mIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
 	if (mIocpHandle == nullptr)
@@ -37,7 +38,7 @@ bool IocpCore::Register(const IocpObjectRef& iocpObject) const
 	return true;
 }
 
-bool IocpCore::Dispatch(int32& outErrorCode, const uint32 timeout) const
+void IocpCore::Dispatch(const uint32 timeout) const
 {
 	uint32 numOfBytes = 0;
 	IocpObject* pIocpObject = nullptr;
@@ -49,9 +50,7 @@ bool IocpCore::Dispatch(int32& outErrorCode, const uint32 timeout) const
 	}
 	else
 	{
-		outErrorCode = WSAGetLastError();
-		return false;
+		const uint32 errorCode = GetLastError();
+		mpOnErrorHandler(errorCode);
 	}
-
-	return true;
 }

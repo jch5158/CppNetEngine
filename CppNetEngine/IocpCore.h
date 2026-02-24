@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <functional>
 
 class IocpObject : public std::enable_shared_from_this<IocpObject>
 {
@@ -26,7 +27,7 @@ public:
 	IocpCore(IocpCore&&) = delete;
 	IocpCore& operator=(IocpCore&&) = delete;
 
-	explicit IocpCore();
+	explicit IocpCore(std::function<void(uint32)>& pOnErrorHandler);
 	~IocpCore();
 
 	[[nodiscard]]
@@ -35,11 +36,11 @@ public:
 	[[nodiscard]]
 	bool Register(const IocpObjectRef& iocpObject) const;
 
-	[[nodiscard]]
-	bool Dispatch(int32& outErrorCode, const uint32 timeout = INFINITE) const;
+	void Dispatch(const uint32 timeout = INFINITE) const;
 
 private:
 
 	HANDLE mIocpHandle;
+	std::function<void(const uint32)> mpOnErrorHandler;
 };
 

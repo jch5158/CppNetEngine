@@ -33,10 +33,11 @@ private:
 
 	const int64 mTickIntervalMs;
 	const int32 mWheelSize;
-	int32 mCurrentSlotIndex;
 	std::chrono::steady_clock::time_point mLastTickTime;
 
 	Mutex mWheelMutex;
+	std::atomic<bool> mIsTicking;
+	int32 mCurrentSlotIndex;
 	Vector<Vector<TimingJob>> mWheel;
 };
 
