@@ -34,7 +34,7 @@ private:
 	const std::chrono::steady_clock::time_point mStart;
 };
 
-class JobScheduler
+class JobScheduler : public std::enable_shared_from_this<JobScheduler>
 {
 public:
 

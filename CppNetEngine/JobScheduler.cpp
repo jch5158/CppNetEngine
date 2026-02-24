@@ -76,7 +76,7 @@ void JobScheduler::Dispatch()
 
 void JobScheduler::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const int64 delayMs)
 {
-	mTimingWheel.Reserve(pJob, pOwnerQueue, delayMs);
+	mTimingWheel.Reserve(pJob, pOwnerQueue, shared_from_this(), delayMs);
 }
 
 void JobScheduler::Flush()

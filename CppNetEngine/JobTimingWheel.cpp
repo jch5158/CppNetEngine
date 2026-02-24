@@ -2,17 +2,18 @@
 #include "JobTimingWheel.h"
 #include "JobQueue.h"
 
-TimingJob::TimingJob(JobRef pJob, const JobQueueRef& pOwnerQueue)
+TimingJob::TimingJob(JobRef pJob, const JobQueueRef& pOwnerQueue, JobSchedulerRef pScheduler)
 	: mJob(std::move(pJob))
-	, mOwnerQueue(pOwnerQueue)
+	, mpOwnerQueue(pOwnerQueue)
+	, mpScheduler(std::move(pScheduler))
 {
 }
 
 void TimingJob::Execute() const
 {
-	if (const auto ownerQueue = mOwnerQueue.lock())
+	if (const auto ownerQueue = mpOwnerQueue.lock())
 	{
-		ownerQueue->Push(mJob);
+		ownerQueue->Push(mJob, mpScheduler);
 	}
 }
 
@@ -26,7 +27,7 @@ JobTimingWheel::JobTimingWheel(const int64 tickIntervalMs, const int32 wheelSize
 {
 }
 
-void JobTimingWheel::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const int64 delayMs)
+void JobTimingWheel::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const JobSchedulerRef& pScheduler, const int64 delayMs)
 {
 	if (delayMs < 0 || delayMs >= mTickIntervalMs * mWheelSize)
 	{
@@ -44,7 +45,7 @@ void JobTimingWheel::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue,
 		
 		const int32 slotIndex = static_cast<int32>((mCurrentSlotIndex + ticks) % mWheelSize);
 
-		mWheel[slotIndex].emplace_back(pJob, pOwnerQueue);
+		mWheel[slotIndex].emplace_back(pJob, pOwnerQueue, pScheduler);
 	}
 }
 

@@ -17,7 +17,7 @@ public:
 	}
 
 	template<typename T, typename Ret, typename... Args>
-	void DoAsync(const JobSchedulerRef& pScheduler, Ret(T::* memFunc)(Args...), Args... args)
+	void DoAsync(const JobSchedulerRef& pScheduler, Ret(T::* memFunc)(Args...), Args&&... args)
 	{
 		auto pOwner = static_pointer_cast<T>(shared_from_this());
 		Push(cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<Args>(args)...), pScheduler);
@@ -30,7 +30,7 @@ public:
 	}
 
 	template<typename T, typename Ret, typename... Args>
-	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* memFunc)(Args...), Args... args)
+	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* memFunc)(Args...), Args&&... args)
 	{
 		auto pOwner = static_pointer_cast<T>(shared_from_this());
 		const JobRef pJob = cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<Args>(args)...);
