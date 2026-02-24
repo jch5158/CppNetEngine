@@ -135,6 +135,9 @@
     <ClInclude Include="JobTimingWheel.h">
       <Filter>Job</Filter>
     </ClInclude>
+    <ClInclude Include="NetEngineLogger.h">
+      <Filter>Main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -187,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="JobTimingWheel.cpp">
       <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="NetEngineLogger.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

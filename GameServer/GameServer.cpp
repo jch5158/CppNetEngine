@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 
+
 #include "GameSession.h"
 #include "IocpCore.h"
 #include "Service.h"
@@ -17,5 +18,7 @@ int main()
 		100);
 
 	service->Start();
+
+	NET_ENGINE_LOG_INFO("GameServer is started.");
 }
 
