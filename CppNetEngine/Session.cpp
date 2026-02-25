@@ -46,7 +46,7 @@ void Session::Dispatch(IocpEvent& iocpEvent, const uint32 numOfBytes)
 		ProcessReceive(numOfBytes);
 		break;
 	default:
-		NET_ENGINE_LOG_ERROR("Session::Dispatch - iocp event type is unmatched, iocpEvent.GetEventType() : {}", iocpEvent.GetEventType());
+		NET_ENGINE_LOG_ERROR("Session::Dispatch - iocp event type is unmatched, iocpEvent.GetEventType() : {}", static_cast<uint8>(iocpEvent.GetEventType()));
 		break;
 	}
 }
