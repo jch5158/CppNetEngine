@@ -39,3 +39,8 @@
 #include "AllocatorUtils.h"
 #include "CrashReporter.h"
 #include "NetEngineLogger.h"
+#include "IocpCore.h"
+#include "Job.h"
+#include "JobQueue.h"
+#include "JobTimingWheel.h"
+#include "JobScheduler.h"
