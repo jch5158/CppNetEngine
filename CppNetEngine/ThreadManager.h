@@ -21,7 +21,7 @@ public:
 
 	virtual ~ThreadManager() override;
 
-	void Launch(const std::function<void()>& callback);
+	void Launch(std::function<void()> callback);
 	void JoinWithClear();
 
 	static void InitTls();

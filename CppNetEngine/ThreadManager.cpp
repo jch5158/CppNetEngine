@@ -17,14 +17,14 @@ ThreadManager::~ThreadManager()
 	JoinWithClear();
 }
 
-void ThreadManager::Launch(const std::function<void()>& callback)
+void ThreadManager::Launch(std::function<void()> callback)
 {
 	LockGuard guard(mLock);
 
-	mThreads.emplace_back([&]()->void
+	mThreads.emplace_back([argCallback = std::move(callback)]()->void
 	{
 		ThreadManager::InitTls();
-		callback();
+		argCallback();
 		ThreadManager::DestroyTls();
 	});
 }

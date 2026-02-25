@@ -36,7 +36,6 @@ void Listener::Dispatch(class IocpEvent& iocpEvent, uint32 numOfBytes)
 
 bool Listener::StartAccept(ServerServiceRef pServerService)
 {
-
 	if (pServerService == nullptr)
 	{
 		NET_ENGINE_LOG_FATAL("pServerService is nullptr");

@@ -115,6 +115,16 @@ ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpC
 
 bool ClientService::Start()
 {
+	const int32 sessionCount = GetMaxSessionCount();
+	for (int32 i = 0; i < sessionCount; i++)
+	{
+		const SessionRef pSession = CreateSession();
+		if (pSession->Connect() == false)
+		{
+			return false;
+		}
+	}
+
 	return true;
 }
 

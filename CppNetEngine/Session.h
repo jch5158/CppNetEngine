@@ -25,11 +25,11 @@ public:
 	virtual HANDLE GetHandle() const override;
 	virtual void Dispatch(class IocpEvent& iocpEvent, const uint32 numOfBytes) override;
 
-	virtual void OnConnected() {}
-	virtual void OnDisconnected() {}
-	virtual void OnSend(const int32 len) {}
-	virtual int32 OnReceive(byte* pBuffer, const int32 len) { return len; }
-	virtual void OnError(const int32 errorCode) {}
+	virtual void OnConnected() = 0;
+	virtual void OnDisconnected() = 0;
+	virtual void OnSend(const int32 len) = 0;
+	virtual int32 OnReceive(byte* pBuffer, const int32 len) = 0;
+	virtual void OnError(const int32 errorCode) = 0;
 
 	void SetSessionIndex(const int32 sessionIndex);
 	void SetService(const ServiceRef& pService);

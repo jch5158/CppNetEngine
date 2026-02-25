@@ -307,6 +307,8 @@ void Session::ProcessSend(const uint32 numOfBytes)
 
 	OnSend(static_cast<int32>(numOfBytes));
 
+	mbSendRegistered.store(false);
+
 	if (!mSendQueue.IsEmpty())
 	{
 		RegisterSend();

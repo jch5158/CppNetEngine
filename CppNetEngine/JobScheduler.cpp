@@ -52,16 +52,8 @@ void JobScheduler::Dispatch()
 	OVERLAPPED* pOverlapped = nullptr;
 
 	const auto jobTimeBudget = JobTimeBudget(TIME_SLICE_MS);
-	if (!GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, &pOverlapped, static_cast<DWORD>(jobTimeBudget.RemainingTimeMs())))
-	{
-		const uint32 errorCode = GetLastError();
-		if (errorCode != WAIT_TIMEOUT)
-		{
-			mpOnErrorHandler(errorCode);
-			return;
-		}
-	}
-	else
+	const int32 gqcsRet = GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, &pOverlapped, static_cast<DWORD>(jobTimeBudget.RemainingTimeMs()));
+	if (gqcsRet != 0)
 	{
 		do
 		{
@@ -78,6 +70,15 @@ void JobScheduler::Dispatch()
 				Push(pJobQueue);
 			}
 		} while (!jobTimeBudget.IsExpired());
+	}
+	else
+	{
+		const uint32 errorCode = GetLastError();
+		if (errorCode != WAIT_TIMEOUT)
+		{
+			mpOnErrorHandler(errorCode);
+			return;
+		}
 	}
 
 	mTimingWheel.Tick();

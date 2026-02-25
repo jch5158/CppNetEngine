@@ -82,7 +82,7 @@ private:
 		header->id = packetId;
 		if (!packet.SerializeToArray(&header[1], dataSize))
 		{
-			NET_ENGINE_LOG_FATAL("LoginClientPacketHandler::MakeSendBuffer SerializeToArray is Failed, &header[1] : {}, packetId : {}, dataSize : {}", fmt::ptr(&header[1]), header->id, dataSize);
+			NET_ENGINE_LOG_FATAL("ClientLoginPacketHandler::MakeSendBuffer SerializeToArray is Failed, &header[1] : {}, packetId : {}, dataSize : {}", fmt::ptr(&header[1]), header->id, dataSize);
 			CrashReporter::Crash();
 	    }
 		

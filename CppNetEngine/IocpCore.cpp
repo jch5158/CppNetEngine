@@ -52,12 +52,13 @@ bool IocpCore::Register(const IocpObjectRef& iocpObject) const
 void IocpCore::Dispatch(const uint32 timeout) const
 {
 	uint32 numOfBytes = 0;
-	IocpObject* pIocpObject = nullptr;
+	ULONG_PTR key = 0;
 	IocpEvent* pIocpEvent = nullptr;
-	const int32 gqcsRet = GetQueuedCompletionStatus(mIocpHandle, reinterpret_cast<LPDWORD>(&numOfBytes), reinterpret_cast<PULONG_PTR>(&pIocpObject), reinterpret_cast<LPOVERLAPPED*>(&pIocpEvent), timeout);
-	if (gqcsRet != 0)
+	const int32 gqcsRet = GetQueuedCompletionStatus(mIocpHandle, reinterpret_cast<LPDWORD>(&numOfBytes), &key, reinterpret_cast<LPOVERLAPPED*>(&pIocpEvent), timeout);
+	if (gqcsRet != 0 && pIocpEvent != nullptr)
 	{
-		pIocpObject->Dispatch(*pIocpEvent, numOfBytes);
+		const IocpObjectRef pIocpObj = pIocpEvent->GetIocpObjectRef();
+		pIocpObj->Dispatch(*pIocpEvent, numOfBytes);
 	}
 	else
 	{

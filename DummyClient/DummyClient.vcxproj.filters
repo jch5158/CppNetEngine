@@ -21,6 +21,9 @@
     <Filter Include="PacketHandler">
       <UniqueIdentifier>{ed3c4da4-e562-47ba-a8ad-28d1f7c9538b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{ac53c275-028a-4ae7-a73a-0a17be54aca3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DummyClient.cpp">
@@ -44,6 +47,9 @@
     <ClCompile Include="GameServerLoginPacketHandler.cpp">
       <Filter>PacketHandler</Filter>
     </ClCompile>
+    <ClCompile Include="GameSession.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -63,6 +69,9 @@
     </ClInclude>
     <ClInclude Include="Generated\GameServerLoginPacketHandler.h">
       <Filter>PacketHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSession.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

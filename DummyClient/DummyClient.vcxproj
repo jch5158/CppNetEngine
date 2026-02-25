@@ -222,6 +222,7 @@
   <ItemGroup>
     <ClCompile Include="DummyClient.cpp" />
     <ClCompile Include="GameServerLoginPacketHandler.cpp" />
+    <ClCompile Include="GameSession.cpp" />
     <ClCompile Include="Generated\Enum.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -254,6 +255,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameSession.h" />
     <ClInclude Include="Generated\Enum.pb.h" />
     <ClInclude Include="Generated\GameServerLoginPacketHandler.h" />
     <ClInclude Include="Generated\Login.pb.h" />
