@@ -25,8 +25,8 @@ void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
 	{
 		return;
 	}
-	
-	while (!jobTimeBudget.IsExpired())
+
+	do
 	{
 		JobRef pJob;
 		if (mJobQueue.TryDequeue(pJob) == false)
@@ -36,6 +36,7 @@ void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
 
 		pJob->Execute();
 	}
+	while (!jobTimeBudget.IsExpired());
 
 	mIsExecuting.store(false);
 }
