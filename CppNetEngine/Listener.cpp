@@ -26,7 +26,7 @@ void Listener::Dispatch(class IocpEvent& iocpEvent, uint32 numOfBytes)
 {
 	if (iocpEvent.GetEventType() != eIocpEventType::Accept)
 	{
-		ASSERT(false, "Listener::Dispatch - eIocpEventType is not Accept");
+		NET_ASSERT(false, "Listener::Dispatch - eIocpEventType is not Accept");
 		return;
 	}
 
@@ -59,6 +59,12 @@ bool Listener::StartAccept(ServerServiceRef pServerService)
 	if (SocketUtils::SetReuseAddress(mSocket, true) == false)
 	{
 		NET_ENGINE_LOG_FATAL("SocketUtils::SetReuseAddress is failed - errorCode : {}", WSAGetLastError());
+		CrashReporter::Crash();
+	}
+
+	if (SocketUtils::SetKeepAlive(mSocket, 30000, 1000) == false)
+	{
+		NET_ENGINE_LOG_FATAL("SocketUtils::SetKeepAlive - errorCode : {}", WSAGetLastError());
 		CrashReporter::Crash();
 	}
 

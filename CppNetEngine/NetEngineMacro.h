@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#define ASSERT(exp, msg) assert((exp) && (msg))
+#define NET_ASSERT(exp, msg) assert((exp) && (msg))
 
 #define SIZE_OF_16(val) static_cast<int16>(sizeof(val))
 #define SIZE_OF_32(val) static_cast<int32>(sizeof(val))

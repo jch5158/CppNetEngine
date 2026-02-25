@@ -122,14 +122,14 @@ public:
 	{
 		if (pData == nullptr)
 		{
-			ASSERT(false, "MemoryPool::Free - pData is nullptr");
+			NET_ASSERT(false, "MemoryPool::Free - pData is nullptr");
 			return;
 		}
 
 		ChunkBlock* pChunkBlock = static_cast<ChunkBlock*>(pData);
 		if (!Chunk::IsValidChecksum(*pChunkBlock))
 		{
-			ASSERT(false, "MemoryPool::Free - Invalid checksum detected. Possible memory corruption.");
+			NET_ASSERT(false, "MemoryPool::Free - Invalid checksum detected. Possible memory corruption.");
 			return;
 		}
 

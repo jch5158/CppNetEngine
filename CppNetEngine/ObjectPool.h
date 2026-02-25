@@ -67,7 +67,7 @@ public:
 			mPoolingCount.fetch_sub(1);
 		}
 
-		ASSERT(mPoolingCount.load() == 0, "ObjectPool::~ObjectPool - Memory leak detected.");
+		NET_ASSERT(mPoolingCount.load() == 0, "ObjectPool::~ObjectPool - Memory leak detected.");
 	}
 
 
@@ -113,7 +113,7 @@ public:
 	{
 		if (pData == nullptr)
 		{
-			ASSERT(false, " ObjectPool::Free - pData is nullptr.");
+			NET_ASSERT(false, " ObjectPool::Free - pData is nullptr.");
 			return;
 		}
 		
@@ -121,7 +121,7 @@ public:
 		Node* pDesired = reinterpret_cast<Node*>(pData);
 		if (pDesired->checksum != CHECKSUM_CODE)
 		{
-			ASSERT(false, "ObjectPool::Free - Invalid object detected. Possible memory corruption.");
+			NET_ASSERT(false, "ObjectPool::Free - Invalid object detected. Possible memory corruption.");
 			return;
 		}
 
@@ -159,7 +159,7 @@ private:
 		Node* pNode = static_cast<Node*>(mi_malloc(sizeof(Node)));
 		if (pNode == nullptr)
 		{
-			ASSERT(false, "ObjectPool::allocNode - Memory allocation failed.");
+			NET_ASSERT(false, "ObjectPool::allocNode - Memory allocation failed.");
 			return nullptr;
 		}
 		
@@ -304,7 +304,7 @@ public:
 	{
 		if (pData == nullptr)
 		{
-			ASSERT(false, "TlsObjectPool::Free - pData is nullptr.");
+			NET_ASSERT(false, "TlsObjectPool::Free - pData is nullptr.");
 			return;
 		}
 

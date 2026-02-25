@@ -3,7 +3,7 @@
 
 void* MemoryAllocator::	Alloc(const int64 size)
 {
-	ASSERT(size > 0, "MemoryAllocator::Free - is is zero or negative");
+	NET_ASSERT(size > 0, "MemoryAllocator::Free - is is zero or negative");
 
 	if (size == 0)
 	{
@@ -40,7 +40,7 @@ void* MemoryAllocator::	Alloc(const int64 size)
 
 void MemoryAllocator::Free(void* pData, const int64 size)
 {
-	ASSERT(pData != nullptr, "MemoryAllocator::Free - pData is nullptr");
+	NET_ASSERT(pData != nullptr, "MemoryAllocator::Free - pData is nullptr");
 
 	if (pData == nullptr || size == 0)
 	{
@@ -67,7 +67,7 @@ void MemoryAllocator::Free(void* pData, const int64 size)
 	{
 		if (!isValidChecksum(pData, size))
 		{
-			ASSERT(false, "MemoryAllocator::Free - Invalid checksum detected. Possible memory corruption.");
+			NET_ASSERT(false, "MemoryAllocator::Free - Invalid checksum detected. Possible memory corruption.");
 
 			return;
 		}

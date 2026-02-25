@@ -83,6 +83,27 @@ bool SocketUtils::SetReuseAddress(const SOCKET socket, const bool flag)
 	return SetSockOpt(socket, SOL_SOCKET, SO_REUSEADDR, flag);
 }
 
+bool SocketUtils::SetKeepAlive(const SOCKET socket, const uint32 timeMs, const uint32 intervalMs)
+{
+	tcp_keepalive keepAliveOpts;
+	keepAliveOpts.onoff = 1;                    // 1: Keep-Alive 켜기, 0: 끄기
+	keepAliveOpts.keepalivetime = timeMs;       // 유휴 대기 시간 (예: 30000 = 30초)
+	keepAliveOpts.keepaliveinterval = intervalMs; // 응답 없을 시 재전송 간격 (예: 1000 = 1초)
+
+	DWORD bytesReturned = 0;
+
+	const int result = WSAIoctl(
+		socket,
+		SIO_KEEPALIVE_VALS,
+		&keepAliveOpts, sizeof(keepAliveOpts),
+		nullptr, 0,
+		&bytesReturned,
+		nullptr, nullptr
+	);
+
+	return result != SOCKET_ERROR;
+}
+
 bool SocketUtils::SetRecvBufferSize(const SOCKET socket, const int32 size)
 {
 	return SetSockOpt(socket, SOL_SOCKET, SO_RCVBUF, size);

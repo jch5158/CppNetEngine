@@ -16,10 +16,11 @@ public:
 	static bool CreateTcpSocket(SOCKET& outSocket);
 	static void Close(SOCKET& socket);
 	static bool SetLinger(const SOCKET socket, const uint16 onOff, const uint16 linger);
-	static bool SetReuseAddress(SOCKET socket, bool flag);
-	static bool SetRecvBufferSize(SOCKET socket, int32 size);
-	static bool SetSendBufferSize(SOCKET socket, int32 size);
-	static bool SetTcpNoDelay(SOCKET socket, bool flag);
+	static bool SetReuseAddress(const SOCKET socket, bool flag);
+	static bool SetKeepAlive(const SOCKET socket, const uint32 timeMs, const uint32 intervalMs);
+	static bool SetRecvBufferSize(const SOCKET socket, int32 size);
+	static bool SetSendBufferSize(const SOCKET socket, int32 size);
+	static bool SetTcpNoDelay(const SOCKET socket, bool flag);
 	static bool SetUpdateAcceptSocket(const SOCKET socket, const SOCKET listenSocket);
 	static bool Bind(const SOCKET socket, const SOCKADDR_IN& sockAddr);
 	static bool BindAnyAddress(const SOCKET socket, const uint16 port);

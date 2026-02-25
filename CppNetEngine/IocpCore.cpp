@@ -3,7 +3,6 @@
 #include "IocpCore.h"
 #include "CrashReporter.h"
 
-
 IocpCore::IocpCore()
 	: mIocpHandle(nullptr)
 	, mpOnErrorHandler([](const uint32)->void {return; })
@@ -55,14 +54,18 @@ void IocpCore::Dispatch(const uint32 timeout) const
 	ULONG_PTR key = 0;
 	IocpEvent* pIocpEvent = nullptr;
 	const int32 gqcsRet = GetQueuedCompletionStatus(mIocpHandle, reinterpret_cast<LPDWORD>(&numOfBytes), &key, reinterpret_cast<LPOVERLAPPED*>(&pIocpEvent), timeout);
-	if (gqcsRet != 0 && pIocpEvent != nullptr)
+	if (gqcsRet == 0)
+	{
+		const uint32 errorCode = GetLastError();
+		if (errorCode != WAIT_TIMEOUT)
+		{
+			mpOnErrorHandler(errorCode);
+		}
+	}
+
+	if (pIocpEvent != nullptr)
 	{
 		const IocpObjectRef pIocpObj = pIocpEvent->GetIocpObjectRef();
 		pIocpObj->Dispatch(*pIocpEvent, numOfBytes);
-	}
-	else
-	{
-		const uint32 errorCode = GetLastError();
-		mpOnErrorHandler(errorCode);
 	}
 }

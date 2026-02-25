@@ -18,6 +18,11 @@ void GameSession::OnConnected()
 	fmt::print(L"Client Connect\n");
 }
 
+void GameSession::OnDisconnecting(const eDisconnectReason reason)
+{
+	fmt::print(L"On Disconnecting : {}\n", static_cast<uint16>(reason));
+}
+
 void GameSession::OnDisconnected()
 {
 	fmt::print(L"Client Disconnect\n");

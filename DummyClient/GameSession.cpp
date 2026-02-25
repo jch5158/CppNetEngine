@@ -6,21 +6,22 @@ void GameSession::OnConnected()
 	fmt::print(L"Connected\n");
 }
 
+void GameSession::OnDisconnecting(const eDisconnectReason reason)
+{
+}
+
 void GameSession::OnDisconnected()
 {
 }
 
 void GameSession::OnSend(const int32 len)
 {
-	
 }
 
 void GameSession::OnRecvPacket(byte* pBuffer, const int32 len)
 {
-
 }
 
 void GameSession::OnError(const int32 errorCode)
 {
-	
 }

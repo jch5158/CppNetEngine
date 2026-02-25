@@ -108,6 +108,7 @@ bool Session::Connect()
 
 bool Session::Disconnect()
 {
+	OnDisconnecting(eDisconnectReason::Kicked);
 	return RegisterDisconnect();
 }
 
@@ -158,6 +159,7 @@ bool Session::RegisterConnect()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
+			Disconnect(eDisconnectReason::SocketError);
 			mConnectEvent.SetIocpObjectRef(nullptr);
 			return false;
 		}
@@ -226,6 +228,7 @@ void Session::RegisterSend()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
+			Disconnect(eDisconnectReason::SocketError);
 			mSendEvent.SetIocpObjectRef(nullptr);
 			mSendEvent.GetSendPendingBuffer().clear();
 			mbSendRegistered.store(false);
@@ -265,6 +268,7 @@ void Session::RegisterReceive()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
+			Disconnect(eDisconnectReason::SocketError);
 			mReceiveEvent.SetIocpObjectRef(nullptr);
 		}
 	}
@@ -321,7 +325,7 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 
 	if (numOfBytes == 0)
 	{
-		Disconnect();
+		Disconnect(eDisconnectReason::Kicked);
 		return;
 	}
 
@@ -331,11 +335,17 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 	const int32 processLen = OnReceive(mNetReceiveBuffer.GetReadPtr(), static_cast<int32>(numOfBytes));
 	if (processLen < 0 || processLen > dataSize)
 	{
-		Disconnect();
+		Disconnect(eDisconnectReason::Kicked);
 		return;
 	}
 
 	mNetReceiveBuffer.MoveReadPos(processLen);
 
 	RegisterReceive();
+}
+
+bool Session::Disconnect(const eDisconnectReason reason)
+{
+	OnDisconnecting(reason);
+	return RegisterDisconnect();
 }
