@@ -1,16 +1,11 @@
 ﻿#pragma once
 
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
-
 #include <spdlog/spdlog.h>
 #include <spdlog/logger.h>
 
 class NetEngineLogger
 {
 public:
-	static constexpr int64 MAX_FILE_SIZE = 50 * 1024 * 1024;
-	static constexpr int64 MAX_FILES = 100;
-
 	NetEngineLogger() = delete;
 	~NetEngineLogger() = delete;
 

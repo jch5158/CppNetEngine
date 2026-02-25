@@ -25,7 +25,7 @@ void NetEngineLogger::Init()
 		sinks.begin(),
 		sinks.end(),
 		spdlog::thread_pool(),
-		spdlog::async_overflow_policy::block // 서버 멈춤 방지
+		spdlog::async_overflow_policy::overrun_oldest // 서버 멈춤 방지
 	);
 
 #ifdef _DEBUG
