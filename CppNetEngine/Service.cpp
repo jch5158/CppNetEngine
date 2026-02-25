@@ -14,6 +14,7 @@ Service::Service(const eServiceType serviceType, const NetAddress& netAddress, I
 	, mpSessionFactory(std::move(pSessionFactory))
 	, mSessions(maxSessionCount, nullptr)
 	, mReleaseSessionIndexStack(maxSessionCount)
+	, mWaitQueueCount(0)
 	, mEnterWaitQueue(maxEnterWaitQueueCount)
 {
 	if (mpSessionFactory == nullptr)
@@ -50,55 +51,46 @@ SessionRef Service::CreateSession()
 	return session;
 }
 
-void Service::AddSession(const SessionRef& pSession)
+bool Service::AddSession(const SessionRef& pSession)
 {
 	int32 sessionIndex = -1;
 	if (mReleaseSessionIndexStack.TryPop(sessionIndex) == false)
 	{
-		if (EnterWaitQueue(pSession) == true)
-		{
-			pSession->OnEnterWaitQueue();
-		}
-		else
-		{
-			pSession->Disconnect(eDisconnectReason::ServerFull);
-		}
+		return false;
 	}
 
 	pSession->SetSessionIndex(sessionIndex);
 	mSessions[sessionIndex] = pSession;
 
-	pSession->OnConnected();
-	pSession->RegisterReceive();
-
-	return;
+	return true;
 }
 
-void Service::ReleaseSession(const SessionRef& pSession)
+int32 Service::ReleaseSession(const SessionRef& pSession)
 {
 	pSession->OnDisconnected();
 
 	const int32 sessionIndex = pSession->GetSessionIndex();
-	if (sessionIndex == -1)
-	{
-		return;
-	}
-
 	pSession->SetSessionIndex(-1);
 	mSessions[sessionIndex] = nullptr;
 
-	if (DequeueWaitQueue(sessionIndex) == false)
+	return sessionIndex;
+}
+
+void Service::ReleaseSessionIndex(const int32 index)
+{
+	if (mReleaseSessionIndexStack.TryPush(index) == false)
 	{
-		if (mReleaseSessionIndexStack.TryPush(sessionIndex) == false)
-		{
-			NET_ENGINE_LOG_FATAL("Service::ReleaseSession - mReleaseSessionIndexStack is full");
-		}
+		NET_ENGINE_LOG_FATAL("Service::ReleaseSession - mReleaseSessionIndexStack is full");
 	}
 }
 
 bool Service::EnterWaitQueue(const SessionRef& pSession)
 {
-	return  mEnterWaitQueue.TryEnqueue(pSession);
+	const int32 waitCount = mWaitQueueCount.fetch_add(1);
+
+	pSession->SetWaitTicket(waitCount);
+
+	return mEnterWaitQueue.TryEnqueue(pSession);
 }
 
 bool Service::DequeueWaitQueue(const int32 index)
@@ -113,9 +105,6 @@ bool Service::DequeueWaitQueue(const int32 index)
 			{
 				continue;
 			}
-
-			pSession->OnConnected();
-			pSession->RegisterReceive();
 
 			return true;
 		}

@@ -6,6 +6,14 @@
 #include "NetReceiveBuffer.h"
 #include "SharedPtrUtils.h"
 
+enum class eSessionState : uint8
+{
+	Connected,
+	Waiting,    // 대기열 상태
+	InGame,
+	Disconnected
+};
+
 // 1. 끊김 사유를 명확히 정의
 enum class eDisconnectReason : uint16  // NOLINT(performance-enum-size)
 {
@@ -49,6 +57,8 @@ public:
 	void SetSessionIndex(const int32 sessionIndex);
 	void SetService(const ServiceRef& pService);
 	void SetNetAddress(const NetAddress& address);
+	void SetWaitTicket(const int32 waitCount);
+	void SetSessionInGame();
 
 	int32 GetSessionIndex() const;
 	ServiceRef GetService() const;
@@ -56,6 +66,8 @@ public:
 	NetAddress& GetAddress();
 	NetReceiveBuffer<>& GetNetReceiveBuffer();
 	SessionRef GetSessionRef();
+	int32 GetWaitTicket() const;
+	bool IsSessionInGame() const;
 
 	bool IsConnected() const;
 	bool Connect();
@@ -85,7 +97,8 @@ private:
 	WeakServiceRef mpService;
 	SOCKET mSocket;
 	NetAddress mNetAddress;
-	std::atomic<bool> mbConnected;
+	std::atomic<int32> mWaitTicket;
+	std::atomic<eSessionState> mSessionState;
 	NetReceiveBuffer<> mNetReceiveBuffer;
 	std::atomic<bool> mbSendRegistered;
 	LockFreeQueue<INetBufferRef> mSendQueue;

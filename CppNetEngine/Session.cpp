@@ -14,7 +14,8 @@ Session::Session()
 	, mpService()
 	, mSocket(INVALID_SOCKET)
 	, mNetAddress()
-	, mbConnected(false)
+	, mWaitTicket(-1)
+	, mSessionState(eSessionState::Disconnected)
 	, mNetReceiveBuffer()
 	, mSendQueue(65535)
 {
@@ -66,6 +67,16 @@ void Session::SetNetAddress(const NetAddress& address)
 	mNetAddress = address;
 }
 
+void Session::SetWaitTicket(const int32 waitCount)
+{
+	mWaitTicket.store(waitCount);
+}
+
+void Session::SetSessionInGame()
+{
+	mSessionState.store(eSessionState::InGame);
+}
+
 int32 Session::GetSessionIndex() const
 {
 	return mSessionIndex;
@@ -96,9 +107,24 @@ SessionRef Session::GetSessionRef()
 	return std::static_pointer_cast<Session>(shared_from_this());
 }
 
+int32 Session::GetWaitTicket() const
+{
+	if (mSessionState.load() != eSessionState::Waiting)
+	{
+		return -1;
+	}
+
+	return mWaitTicket;
+}
+
+bool Session::IsSessionInGame() const
+{
+	return mSessionState.load() == eSessionState::InGame;
+}
+
 bool Session::IsConnected() const
 {
-	return mbConnected.load();
+	return mSessionState.load() == eSessionState::Connected;
 }
 
 bool Session::Connect()
@@ -170,7 +196,7 @@ bool Session::RegisterConnect()
 
 bool Session::RegisterDisconnect()
 {
-	if (mbConnected.exchange(false) == false)
+	if (mSessionState.exchange(eSessionState::Disconnected) == eSessionState::Disconnected)
 	{
 		return false;
 	}
@@ -278,16 +304,36 @@ void Session::ProcessConnect()
 {
 	mConnectEvent.ReleaseIocpObjectRef();
 
-	mbConnected.store(true);
+	if (GetService()->AddSession(GetSessionRef()) == true)
+	{
+		mSessionState.store(eSessionState::Connected);
+		OnConnected();
+	}
+	else if (GetService()->EnterWaitQueue(GetSessionRef()) == true)
+	{
+		mSessionState.store(eSessionState::Waiting);
+		OnEnterWaitQueue();
+	}
 
-	GetService()->AddSession(GetSessionRef());
+	RegisterReceive();
 }
 
 void Session::ProcessDisconnect()
 {
 	mDisconnectEvent.ReleaseIocpObjectRef();
 
-	GetService()->ReleaseSession(GetSessionRef());
+	const int32 index = GetService()->ReleaseSession(GetSessionRef());
+
+	if (GetService()->DequeueWaitQueue(index) == false)
+	{
+		GetService()->ReleaseSessionIndex(index);
+	}
+	else
+	{
+		SetWaitTicket(-1);
+		mSessionState.store(eSessionState::Connected);
+		OnConnected();
+	}
 }
 
 void Session::ProcessSend(const uint32 numOfBytes)

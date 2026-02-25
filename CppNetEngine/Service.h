@@ -29,8 +29,9 @@ public:
 	virtual void CloseService();
 
 	SessionRef CreateSession();
-	void AddSession(const SessionRef& pSession);
-	void ReleaseSession(const SessionRef& pSession);
+	bool AddSession(const SessionRef& pSession);
+	int32 ReleaseSession(const SessionRef& pSession);
+	void ReleaseSessionIndex(const int32 index);
 	bool EnterWaitQueue(const SessionRef& pSession);
 	bool DequeueWaitQueue(const int32 index);
 
@@ -52,6 +53,8 @@ private:
 
 	Vector<SessionRef> mSessions;
 	LockFreeStack<int32> mReleaseSessionIndexStack;
+
+	std::atomic<int32> mWaitQueueCount;
 	LockFreeQueue<WeakSessionRef> mEnterWaitQueue;
 };
 
