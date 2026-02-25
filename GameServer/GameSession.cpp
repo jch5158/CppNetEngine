@@ -38,10 +38,12 @@ void GameSession::OnSend(const int32 len)
 
 void GameSession::OnRecvPacket(byte* pBuffer, const int32 len)
 {
-	PacketSessionRef session = GetPacketSessionRef();
-	auto* header = reinterpret_cast<PacketHeader*>(pBuffer);
-
-	//ClientLoginPacketHandler::GetInstance().HandlePacket(session, pBuffer, static_cast<uint16>(len));
+	PacketSessionRef pSession = GetPacketSessionRef();
+	
+	if (ClientLoginPacketHandler::GetInstance().HandlePacket(pSession, pBuffer, static_cast<uint16>(len)) == false)
+	{
+		pSession->Disconnect();
+	}
 }
 
 void GameSession::OnError(const int32 errorCode)

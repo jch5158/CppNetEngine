@@ -280,29 +280,13 @@ void Session::ProcessConnect()
 
 	mbConnected.store(true);
 
-	if (GetService()->AddSession(GetSessionRef()) == false)
-	{
-		if (GetService()->EnterWaitQueue(GetSessionRef()) == true)
-		{
-			OnEnterWaitQueue();
-		}
-		else
-		{
-			Disconnect(eDisconnectReason::ServerFull);
-		}
-	}
-	else
-	{
-		OnConnected();
-		RegisterReceive();
-	}
+	GetService()->AddSession(GetSessionRef());
 }
 
 void Session::ProcessDisconnect()
 {
 	mDisconnectEvent.ReleaseIocpObjectRef();
 
-	OnDisconnected();
 	GetService()->ReleaseSession(GetSessionRef());
 }
 

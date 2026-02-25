@@ -26,10 +26,11 @@ namespace Protocol {
           string.Concat(
             "Cg5QYWNrZXRJZC5wcm90bxIIUHJvdG9jb2waIGdvb2dsZS9wcm90b2J1Zi9k",
             "ZXNjcmlwdG9yLnByb3RvKjMKBWVSb2xlEg0KCVJPTEVfTk9ORRAAEgoKBkNM",
-            "SUVOVBABEg8KC0dBTUVfU0VSVkVSEAIqdAoJZVBhY2tldElkEgsKB0lEX05P",
-            "TkUQABIVChBJRF9DMlNfTE9HSU5fUkVREOgHEhUKEElEX1MyQ19MT0dJTl9S",
-            "RVMQ6QcSGgoVSURfUzJDX0xPR0lOX1RFU1RfUkVTEOoHEhAKC0lEX0MyU19N",
-            "T1ZFENAPOkIKBnNlbmRlchIfLmdvb2dsZS5wcm90b2J1Zi5NZXNzYWdlT3B0",
+            "SUVOVBABEg8KC0dBTUVfU0VSVkVSEAIqoAEKCWVQYWNrZXRJZBILCgdJRF9O",
+            "T05FEAASFAoPSURfQzJTX0VDSE9fUkVREOgHEhQKD0lEX1MyQ19FQ0hPX1JF",
+            "UxDpBxIVChBJRF9DMlNfTE9HSU5fUkVRENAPEhUKEElEX1MyQ19MT0dJTl9S",
+            "RVMQ0Q8SGgoVSURfUzJDX0xPR0lOX1RFU1RfUkVTELgXEhAKC0lEX0MyU19N",
+            "T1ZFELkXOkIKBnNlbmRlchIfLmdvb2dsZS5wcm90b2J1Zi5NZXNzYWdlT3B0",
             "aW9ucxjQhgMgASgOMg8uUHJvdG9jb2wuZVJvbGU6RAoIcmVjZWl2ZXISHy5n",
             "b29nbGUucHJvdG9idWYuTWVzc2FnZU9wdGlvbnMY0YYDIAEoDjIPLlByb3Rv",
             "Y29sLmVSb2xlYgZwcm90bzM="));
@@ -57,10 +58,12 @@ namespace Protocol {
 
   public enum ePacketId {
     [pbr::OriginalName("ID_NONE")] IdNone = 0,
-    [pbr::OriginalName("ID_C2S_LOGIN_REQ")] IdC2SLoginReq = 1000,
-    [pbr::OriginalName("ID_S2C_LOGIN_RES")] IdS2CLoginRes = 1001,
-    [pbr::OriginalName("ID_S2C_LOGIN_TEST_RES")] IdS2CLoginTestRes = 1002,
-    [pbr::OriginalName("ID_C2S_MOVE")] IdC2SMove = 2000,
+    [pbr::OriginalName("ID_C2S_ECHO_REQ")] IdC2SEchoReq = 1000,
+    [pbr::OriginalName("ID_S2C_ECHO_RES")] IdS2CEchoRes = 1001,
+    [pbr::OriginalName("ID_C2S_LOGIN_REQ")] IdC2SLoginReq = 2000,
+    [pbr::OriginalName("ID_S2C_LOGIN_RES")] IdS2CLoginRes = 2001,
+    [pbr::OriginalName("ID_S2C_LOGIN_TEST_RES")] IdS2CLoginTestRes = 3000,
+    [pbr::OriginalName("ID_C2S_MOVE")] IdC2SMove = 3001,
   }
 
   #endregion

@@ -19,16 +19,14 @@ int32 PacketSession::OnReceive(byte* pBuffer, const int32 len)
 		}
 
 		auto [size, id] = *(reinterpret_cast<PacketHeader*>(&pBuffer[processLen]));
-
-		const int32 sizeWithHeader = size + SIZE_OF_16(PacketHeader);
-		if (std::cmp_less(dataSize, sizeWithHeader))
+		if (std::cmp_less(dataSize, size))
 		{
 			break;
 		}
 
-		OnRecvPacket(&pBuffer[processLen], sizeWithHeader);
+		OnRecvPacket(&pBuffer[processLen], size);
 
-		processLen += sizeWithHeader;
+		processLen += size;
 	}
 
 	return processLen;

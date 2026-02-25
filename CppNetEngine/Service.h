@@ -29,7 +29,7 @@ public:
 	virtual void CloseService();
 
 	SessionRef CreateSession();
-	bool AddSession(const SessionRef& pSession);
+	void AddSession(const SessionRef& pSession);
 	void ReleaseSession(const SessionRef& pSession);
 	bool EnterWaitQueue(const SessionRef& pSession);
 	bool DequeueWaitQueue(const int32 index);

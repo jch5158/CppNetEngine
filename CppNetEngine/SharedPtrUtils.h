@@ -79,6 +79,9 @@ using WeakSessionConstRef = WeakPtr<const Session>;
 using PacketSessionRef = SharedPtr<class PacketSession>;
 using PacketSessionConstRef = SharedPtr<const PacketSession>;
 
+using GameSessionRef = SharedPtr<class GameSession>;
+using GameSessionConstRef = SharedPtr<const GameSession>;
+
 using INetBufferRef = SharedPtr<class INetBuffer>;
 using INetBufferConstRef = SharedPtr<const INetBuffer>;
 

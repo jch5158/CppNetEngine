@@ -13,7 +13,7 @@
 #include ""PacketSession.h""
 #include <functional>
 
-class {0}{1}PacketHandler final : ISingleton<{0}{1}PacketHandler>
+class {0}{1}PacketHandler final : public ISingleton<{0}{1}PacketHandler>
 {{
 public:
 	
@@ -29,19 +29,19 @@ public:
 
 	virtual ~{0}{1}PacketHandler() override = default;
 
-	bool HandlePacket(PacketSessionRef& session, byte* pBuffer, const uint16 len) const
+	bool HandlePacket(PacketSessionRef& pSession, byte* pBuffer, const uint16 len) const
 	{{
 		const auto [size, id] = *(reinterpret_cast<PacketHeader*>(pBuffer));
 		const auto iter = mPacketHandleMap.find(id);
 		if (iter != mPacketHandleMap.end())
 		{{
-			return iter->second(session, pBuffer, len);
+			return iter->second(pSession, pBuffer, len);
 		}}
 
-		return HANDLE_PACKET_INVALID(session, pBuffer, len);
+		return HANDLE_PACKET_INVALID(pSession, pBuffer, len);
 	}}
 
-	static bool HANDLE_PACKET_INVALID(PacketSessionRef& session, byte* pBuffer, const uint16 len);
+	static bool HANDLE_PACKET_INVALID(PacketSessionRef& pSession, byte* pBuffer, const uint16 len);
     {3}
     
     {4}
@@ -49,7 +49,7 @@ public:
 private:
 
 	template<typename PACKET_TYPE, typename HANDLE>
-	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& session, byte* pBuffer, const uint16 len) const
+	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& pSession, byte* pBuffer, const uint16 len) const
 	{{
 		PACKET_TYPE packet{{}};
 		if (packet.ParseFromArray(pBuffer + SIZE_OF_16(PacketHeader), len - SIZE_OF_16(PacketHeader)) == false)
@@ -57,7 +57,7 @@ private:
 			return false;
 		}}
 
-		return handlePacket(session, packet);
+		return handlePacket(pSession, packet);
 	}}
 
     template<typename T>
@@ -94,15 +94,15 @@ private:
 
         public static readonly string INIT_FILE_FORMAT =
 @"
-		mPacketHandleMap[Protocol::ePacketId::{0}] = [this](PacketSessionRef& session, byte* pBuffer, const uint16 len)->bool
+		mPacketHandleMap[Protocol::ePacketId::{0}] = [this](PacketSessionRef& pSession, byte* pBuffer, const uint16 len)->bool
 		{{
-		    return HandlePacket<Protocol::{1}>(HANDLE_{1}, session, pBuffer, len);
+		    return HandlePacket<Protocol::{1}>(HANDLE_{1}, pSession, pBuffer, len);
 		}};
 		";
 
 
 		public static readonly string DECLARE_FILE_FORMAT =
-            @"static bool HANDLE_{0}(PacketSessionRef& session, const Protocol::{0}& packet);
+            @"static bool HANDLE_{0}(PacketSessionRef& pSession, const Protocol::{0}& packet);
     ";
 
         public static readonly string MAKE_SEND_BUFFER_FUNCTION_FORMAT =

@@ -15,7 +15,8 @@ int main()
 		cpp_net_engine::MakeShared<IocpCore>(),
 		cpp_net_engine::MakeShared<JobScheduler>(),
 		cpp_net_engine::MakeShared<GameSession>,
-		10);
+		0, 
+		1);
 
 	pService->Start();
 

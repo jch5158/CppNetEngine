@@ -14,8 +14,8 @@ int32 main()
 		NetAddress(L"127.0.0.1", 7777),
 		cpp_net_engine::MakeShared<IocpCore>(),
 		cpp_net_engine::MakeShared<JobScheduler>(),
-		cpp_net_engine::MakeShared<GameSession>, 
-		10);
+		cpp_net_engine::MakeShared<GameSession>,
+		0, 1);
 
 	NET_ASSERT(pService->Start(), "Connect Failed");
 

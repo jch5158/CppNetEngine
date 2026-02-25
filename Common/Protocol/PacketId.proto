@@ -19,8 +19,10 @@ extend google.protobuf.MessageOptions
 enum ePacketId 
 {
   ID_NONE = 0;
-  ID_C2S_LOGIN_REQ = 1000;
-  ID_S2C_LOGIN_RES = 1001;
-  ID_S2C_LOGIN_TEST_RES = 1002;
-  ID_C2S_MOVE = 2000;
+  ID_C2S_ECHO_REQ = 1000;
+  ID_S2C_ECHO_RES = 1001;
+  ID_C2S_LOGIN_REQ = 2000;
+  ID_S2C_LOGIN_RES = 2001;
+  ID_S2C_LOGIN_TEST_RES = 3000;
+  ID_C2S_MOVE = 3001;
 }

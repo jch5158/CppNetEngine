@@ -8,7 +8,7 @@
 #include "PacketSession.h"
 #include <functional>
 
-class ClientLoginPacketHandler final : ISingleton<ClientLoginPacketHandler>
+class ClientLoginPacketHandler final : public ISingleton<ClientLoginPacketHandler>
 {
 public:
 	
@@ -20,38 +20,46 @@ public:
 		:mPacketHandleMap()
 	{
 		
-		mPacketHandleMap[Protocol::ePacketId::ID_C2S_LOGIN_REQ] = [this](PacketSessionRef& session, byte* pBuffer, const uint16 len)->bool
+		mPacketHandleMap[Protocol::ePacketId::ID_C2S_ECHO_REQ] = [this](PacketSessionRef& pSession, byte* pBuffer, const uint16 len)->bool
 		{
-		    return HandlePacket<Protocol::C2S_LOGIN_REQ>(HANDLE_C2S_LOGIN_REQ, session, pBuffer, len);
+		    return HandlePacket<Protocol::C2S_ECHO_REQ>(HANDLE_C2S_ECHO_REQ, pSession, pBuffer, len);
+		};
+		
+		mPacketHandleMap[Protocol::ePacketId::ID_C2S_LOGIN_REQ] = [this](PacketSessionRef& pSession, byte* pBuffer, const uint16 len)->bool
+		{
+		    return HandlePacket<Protocol::C2S_LOGIN_REQ>(HANDLE_C2S_LOGIN_REQ, pSession, pBuffer, len);
 		};
 		
 	}
 
 	virtual ~ClientLoginPacketHandler() override = default;
 
-	bool HandlePacket(PacketSessionRef& session, byte* pBuffer, const uint16 len) const
+	bool HandlePacket(PacketSessionRef& pSession, byte* pBuffer, const uint16 len) const
 	{
 		const auto [size, id] = *(reinterpret_cast<PacketHeader*>(pBuffer));
 		const auto iter = mPacketHandleMap.find(id);
 		if (iter != mPacketHandleMap.end())
 		{
-			return iter->second(session, pBuffer, len);
+			return iter->second(pSession, pBuffer, len);
 		}
 
-		return HANDLE_PACKET_INVALID(session, pBuffer, len);
+		return HANDLE_PACKET_INVALID(pSession, pBuffer, len);
 	}
 
-	static bool HANDLE_PACKET_INVALID(PacketSessionRef& session, byte* pBuffer, const uint16 len);
-    static bool HANDLE_C2S_LOGIN_REQ(PacketSessionRef& session, const Protocol::C2S_LOGIN_REQ& packet);
+	static bool HANDLE_PACKET_INVALID(PacketSessionRef& pSession, byte* pBuffer, const uint16 len);
+    static bool HANDLE_C2S_ECHO_REQ(PacketSessionRef& pSession, const Protocol::C2S_ECHO_REQ& packet);
+    static bool HANDLE_C2S_LOGIN_REQ(PacketSessionRef& pSession, const Protocol::C2S_LOGIN_REQ& packet);
     
     
-    static INetBufferRef MakeSendBuffer(Protocol::C2S_LOGIN_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_C2S_LOGIN_REQ)); }
+    static INetBufferRef MakeSendBuffer(Protocol::S2C_ECHO_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_ECHO_RES)); }
+    static INetBufferRef MakeSendBuffer(Protocol::S2C_LOGIN_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_LOGIN_RES)); }
+    static INetBufferRef MakeSendBuffer(Protocol::S2C_LOGIN_TEST_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_LOGIN_TEST_RES)); }
     
 
 private:
 
 	template<typename PACKET_TYPE, typename HANDLE>
-	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& session, byte* pBuffer, const uint16 len) const
+	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& pSession, byte* pBuffer, const uint16 len) const
 	{
 		PACKET_TYPE packet{};
 		if (packet.ParseFromArray(pBuffer + SIZE_OF_16(PacketHeader), len - SIZE_OF_16(PacketHeader)) == false)
@@ -59,7 +67,7 @@ private:
 			return false;
 		}
 
-		return handlePacket(session, packet);
+		return handlePacket(pSession, packet);
 	}
 
     template<typename T>

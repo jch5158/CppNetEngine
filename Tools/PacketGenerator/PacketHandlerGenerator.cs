@@ -232,7 +232,7 @@ namespace PacketGenerator
                             continue;
                         }
 
-                        if (options.GetExtension(PacketIdExtensions.Receiver) != receiver && options.GetExtension(PacketIdExtensions.Sender) != sender)
+                        if (options.GetExtension(PacketIdExtensions.Receiver) != sender && options.GetExtension(PacketIdExtensions.Sender) != receiver)
                         {
                             continue;
                         }

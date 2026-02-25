@@ -29,6 +29,7 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/xchar.h>
+#include <fmt/std.h>
 
 #include "Types.h"
 #include "NetEngineMacro.h"

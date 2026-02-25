@@ -8,7 +8,7 @@
 #include "PacketSession.h"
 #include <functional>
 
-class GameServerLoginPacketHandler final : ISingleton<GameServerLoginPacketHandler>
+class GameServerLoginPacketHandler final : public ISingleton<GameServerLoginPacketHandler>
 {
 public:
 	
@@ -20,45 +20,51 @@ public:
 		:mPacketHandleMap()
 	{
 		
-		mPacketHandleMap[Protocol::ePacketId::ID_S2C_LOGIN_RES] = [this](PacketSessionRef& session, byte* pBuffer, const uint16 len)->bool
+		mPacketHandleMap[Protocol::ePacketId::ID_S2C_ECHO_RES] = [this](PacketSessionRef& pSession, byte* pBuffer, const uint16 len)->bool
 		{
-		    return HandlePacket<Protocol::S2C_LOGIN_RES>(HANDLE_S2C_LOGIN_RES, session, pBuffer, len);
+		    return HandlePacket<Protocol::S2C_ECHO_RES>(HANDLE_S2C_ECHO_RES, pSession, pBuffer, len);
 		};
 		
-		mPacketHandleMap[Protocol::ePacketId::ID_S2C_LOGIN_TEST_RES] = [this](PacketSessionRef& session, byte* pBuffer, const uint16 len)->bool
+		mPacketHandleMap[Protocol::ePacketId::ID_S2C_LOGIN_RES] = [this](PacketSessionRef& pSession, byte* pBuffer, const uint16 len)->bool
 		{
-		    return HandlePacket<Protocol::S2C_LOGIN_TEST_RES>(HANDLE_S2C_LOGIN_TEST_RES, session, pBuffer, len);
+		    return HandlePacket<Protocol::S2C_LOGIN_RES>(HANDLE_S2C_LOGIN_RES, pSession, pBuffer, len);
+		};
+		
+		mPacketHandleMap[Protocol::ePacketId::ID_S2C_LOGIN_TEST_RES] = [this](PacketSessionRef& pSession, byte* pBuffer, const uint16 len)->bool
+		{
+		    return HandlePacket<Protocol::S2C_LOGIN_TEST_RES>(HANDLE_S2C_LOGIN_TEST_RES, pSession, pBuffer, len);
 		};
 		
 	}
 
 	virtual ~GameServerLoginPacketHandler() override = default;
 
-	bool HandlePacket(PacketSessionRef& session, byte* pBuffer, const uint16 len) const
+	bool HandlePacket(PacketSessionRef& pSession, byte* pBuffer, const uint16 len) const
 	{
 		const auto [size, id] = *(reinterpret_cast<PacketHeader*>(pBuffer));
 		const auto iter = mPacketHandleMap.find(id);
 		if (iter != mPacketHandleMap.end())
 		{
-			return iter->second(session, pBuffer, len);
+			return iter->second(pSession, pBuffer, len);
 		}
 
-		return HANDLE_PACKET_INVALID(session, pBuffer, len);
+		return HANDLE_PACKET_INVALID(pSession, pBuffer, len);
 	}
 
-	static bool HANDLE_PACKET_INVALID(PacketSessionRef& session, byte* pBuffer, const uint16 len);
-    static bool HANDLE_S2C_LOGIN_RES(PacketSessionRef& session, const Protocol::S2C_LOGIN_RES& packet);
-    static bool HANDLE_S2C_LOGIN_TEST_RES(PacketSessionRef& session, const Protocol::S2C_LOGIN_TEST_RES& packet);
+	static bool HANDLE_PACKET_INVALID(PacketSessionRef& pSession, byte* pBuffer, const uint16 len);
+    static bool HANDLE_S2C_ECHO_RES(PacketSessionRef& pSession, const Protocol::S2C_ECHO_RES& packet);
+    static bool HANDLE_S2C_LOGIN_RES(PacketSessionRef& pSession, const Protocol::S2C_LOGIN_RES& packet);
+    static bool HANDLE_S2C_LOGIN_TEST_RES(PacketSessionRef& pSession, const Protocol::S2C_LOGIN_TEST_RES& packet);
     
     
-    static INetBufferRef MakeSendBuffer(Protocol::S2C_LOGIN_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_LOGIN_RES)); }
-    static INetBufferRef MakeSendBuffer(Protocol::S2C_LOGIN_TEST_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_LOGIN_TEST_RES)); }
+    static INetBufferRef MakeSendBuffer(Protocol::C2S_ECHO_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_C2S_ECHO_REQ)); }
+    static INetBufferRef MakeSendBuffer(Protocol::C2S_LOGIN_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_C2S_LOGIN_REQ)); }
     
 
 private:
 
 	template<typename PACKET_TYPE, typename HANDLE>
-	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& session, byte* pBuffer, const uint16 len) const
+	bool HandlePacket(HANDLE handlePacket, PacketSessionRef& pSession, byte* pBuffer, const uint16 len) const
 	{
 		PACKET_TYPE packet{};
 		if (packet.ParseFromArray(pBuffer + SIZE_OF_16(PacketHeader), len - SIZE_OF_16(PacketHeader)) == false)
@@ -66,7 +72,7 @@ private:
 			return false;
 		}
 
-		return handlePacket(session, packet);
+		return handlePacket(pSession, packet);
 	}
 
     template<typename T>

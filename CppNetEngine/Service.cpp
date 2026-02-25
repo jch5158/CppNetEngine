@@ -50,21 +50,34 @@ SessionRef Service::CreateSession()
 	return session;
 }
 
-bool Service::AddSession(const SessionRef& pSession)
+void Service::AddSession(const SessionRef& pSession)
 {
 	int32 sessionIndex = -1;
 	if (mReleaseSessionIndexStack.TryPop(sessionIndex) == false)
 	{
-		return false;
+		if (EnterWaitQueue(pSession) == true)
+		{
+			pSession->OnEnterWaitQueue();
+		}
+		else
+		{
+			pSession->Disconnect(eDisconnectReason::ServerFull);
+		}
 	}
 
 	pSession->SetSessionIndex(sessionIndex);
 	mSessions[sessionIndex] = pSession;
-	return true;
+
+	pSession->OnConnected();
+	pSession->RegisterReceive();
+
+	return;
 }
 
 void Service::ReleaseSession(const SessionRef& pSession)
 {
+	pSession->OnDisconnected();
+
 	const int32 sessionIndex = pSession->GetSessionIndex();
 	if (sessionIndex == -1)
 	{

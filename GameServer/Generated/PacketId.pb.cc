@@ -36,14 +36,15 @@ const char descriptor_table_protodef_PacketId_2eproto[] ABSL_ATTRIBUTE_SECTION_V
     protodesc_cold) = {
     "\n\016PacketId.proto\022\010Protocol\032 google/proto"
     "buf/descriptor.proto*3\n\005eRole\022\r\n\tROLE_NO"
-    "NE\020\000\022\n\n\006CLIENT\020\001\022\017\n\013GAME_SERVER\020\002*t\n\tePa"
-    "cketId\022\013\n\007ID_NONE\020\000\022\025\n\020ID_C2S_LOGIN_REQ\020"
-    "\350\007\022\025\n\020ID_S2C_LOGIN_RES\020\351\007\022\032\n\025ID_S2C_LOGI"
-    "N_TEST_RES\020\352\007\022\020\n\013ID_C2S_MOVE\020\320\017:B\n\006sende"
-    "r\022\037.google.protobuf.MessageOptions\030\320\206\003 \001"
-    "(\0162\017.Protocol.eRole:D\n\010receiver\022\037.google"
-    ".protobuf.MessageOptions\030\321\206\003 \001(\0162\017.Proto"
-    "col.eRoleb\006proto3"
+    "NE\020\000\022\n\n\006CLIENT\020\001\022\017\n\013GAME_SERVER\020\002*\240\001\n\teP"
+    "acketId\022\013\n\007ID_NONE\020\000\022\024\n\017ID_C2S_ECHO_REQ\020"
+    "\350\007\022\024\n\017ID_S2C_ECHO_RES\020\351\007\022\025\n\020ID_C2S_LOGIN"
+    "_REQ\020\320\017\022\025\n\020ID_S2C_LOGIN_RES\020\321\017\022\032\n\025ID_S2C"
+    "_LOGIN_TEST_RES\020\270\027\022\020\n\013ID_C2S_MOVE\020\271\027:B\n\006"
+    "sender\022\037.google.protobuf.MessageOptions\030"
+    "\320\206\003 \001(\0162\017.Protocol.eRole:D\n\010receiver\022\037.g"
+    "oogle.protobuf.MessageOptions\030\321\206\003 \001(\0162\017."
+    "Protocol.eRoleb\006proto3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_PacketId_2eproto_deps[1] =
     {
@@ -53,7 +54,7 @@ static ::absl::once_flag descriptor_table_PacketId_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_PacketId_2eproto = {
     false,
     false,
-    377,
+    422,
     descriptor_table_protodef_PacketId_2eproto,
     "PacketId.proto",
     &descriptor_table_PacketId_2eproto_once,
@@ -81,7 +82,7 @@ const ::google::protobuf::EnumDescriptor* ePacketId_descriptor() {
   return file_level_enum_descriptors_PacketId_2eproto[1];
 }
 PROTOBUF_CONSTINIT const uint32_t ePacketId_internal_data_[] = {
-    65536u, 262144u, 1002u, 1001u, 2000u, 1000u, };
+    65536u, 393216u, 2001u, 1001u, 3001u, 1000u, 2000u, 3000u, };
 bool ePacketId_IsValid(int value) {
   return ::_pbi::ValidateEnum(value, ePacketId_internal_data_);
 }

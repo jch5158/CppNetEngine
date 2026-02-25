@@ -92,10 +92,12 @@ inline bool eRole_Parse(absl::string_view name, eRole* value) {
 }
 enum ePacketId : int {
   ID_NONE = 0,
-  ID_C2S_LOGIN_REQ = 1000,
-  ID_S2C_LOGIN_RES = 1001,
-  ID_S2C_LOGIN_TEST_RES = 1002,
-  ID_C2S_MOVE = 2000,
+  ID_C2S_ECHO_REQ = 1000,
+  ID_S2C_ECHO_RES = 1001,
+  ID_C2S_LOGIN_REQ = 2000,
+  ID_S2C_LOGIN_RES = 2001,
+  ID_S2C_LOGIN_TEST_RES = 3000,
+  ID_C2S_MOVE = 3001,
   ePacketId_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
   ePacketId_INT_MAX_SENTINEL_DO_NOT_USE_ =
@@ -105,8 +107,8 @@ enum ePacketId : int {
 bool ePacketId_IsValid(int value);
 extern const uint32_t ePacketId_internal_data_[];
 constexpr ePacketId ePacketId_MIN = static_cast<ePacketId>(0);
-constexpr ePacketId ePacketId_MAX = static_cast<ePacketId>(2000);
-constexpr int ePacketId_ARRAYSIZE = 2000 + 1;
+constexpr ePacketId ePacketId_MAX = static_cast<ePacketId>(3001);
+constexpr int ePacketId_ARRAYSIZE = 3001 + 1;
 const ::google::protobuf::EnumDescriptor*
 ePacketId_descriptor();
 template <typename T>
