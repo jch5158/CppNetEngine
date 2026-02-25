@@ -12,6 +12,7 @@ enum class eDisconnectReason : uint16  // NOLINT(performance-enum-size)
 	ClientRequest,  // 클라이언트가 정상 종료
 	Timeout,        // 하트비트 응답 없음
 	Kicked,         // 서버에서 강퇴
+	ServerFull,		// 대기큐마저 꽉 찼을 때
 	ServerShutdown, // 서버 종료
 	SocketError     // 네트워크 에러
 };
@@ -19,6 +20,8 @@ enum class eDisconnectReason : uint16  // NOLINT(performance-enum-size)
 class Session : public IocpObject
 {
 public:
+
+	friend class Service;
 
 	static constexpr int32 MAX_SEND_WSABUF_SIZE = 64;
 	static constexpr int32 MAX_RECEIVE_WSABUF_SIZE = 2;
@@ -36,6 +39,7 @@ public:
 	virtual void Dispatch(class IocpEvent& iocpEvent, const uint32 numOfBytes) override;
 
 	virtual void OnConnected() = 0;
+	virtual void OnEnterWaitQueue() = 0;
 	virtual void OnDisconnecting(const eDisconnectReason reason) = 0;
 	virtual void OnDisconnected() = 0;
 	virtual void OnSend(const int32 len) = 0;

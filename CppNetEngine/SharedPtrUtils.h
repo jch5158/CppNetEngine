@@ -73,6 +73,8 @@ using ListenerConstRef = SharedPtr<const Listener>;
 
 using SessionRef = SharedPtr<class Session>;
 using SessionConstRef = SharedPtr<const Session>;
+using WeakSessionRef = WeakPtr<Session>;
+using WeakSessionConstRef = WeakPtr<const Session>;
 
 using PacketSessionRef = SharedPtr<class PacketSession>;
 using PacketSessionConstRef = SharedPtr<const PacketSession>;

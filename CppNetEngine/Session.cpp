@@ -282,12 +282,20 @@ void Session::ProcessConnect()
 
 	if (GetService()->AddSession(GetSessionRef()) == false)
 	{
-		Disconnect();
+		if (GetService()->EnterWaitQueue(GetSessionRef()) == true)
+		{
+			OnEnterWaitQueue();
+		}
+		else
+		{
+			Disconnect(eDisconnectReason::ServerFull);
+		}
 	}
-
-	OnConnected();
-
-	RegisterReceive();
+	else
+	{
+		OnConnected();
+		RegisterReceive();
+	}
 }
 
 void Session::ProcessDisconnect()

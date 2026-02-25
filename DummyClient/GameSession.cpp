@@ -6,6 +6,10 @@ void GameSession::OnConnected()
 	fmt::print(L"Connected\n");
 }
 
+void GameSession::OnEnterWaitQueue()
+{
+}
+
 void GameSession::OnDisconnecting(const eDisconnectReason reason)
 {
 }

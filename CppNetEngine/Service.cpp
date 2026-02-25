@@ -5,7 +5,7 @@
 #include <utility>
 
 Service::Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore,
-                 JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount)
+                 JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxEnterWaitQueueCount, const int32 maxSessionCount)
 	: mServiceType(serviceType)
 	, mMaxSessionCount(maxSessionCount)
 	, mNetAddress(netAddress)
@@ -14,6 +14,7 @@ Service::Service(const eServiceType serviceType, const NetAddress& netAddress, I
 	, mpSessionFactory(std::move(pSessionFactory))
 	, mSessions(maxSessionCount, nullptr)
 	, mReleaseSessionIndexStack(maxSessionCount)
+	, mEnterWaitQueue(maxEnterWaitQueueCount)
 {
 	if (mpSessionFactory == nullptr)
 	{
@@ -72,10 +73,42 @@ void Service::ReleaseSession(const SessionRef& pSession)
 
 	pSession->SetSessionIndex(-1);
 	mSessions[sessionIndex] = nullptr;
-	if (mReleaseSessionIndexStack.TryPush(sessionIndex) == false)
+
+	if (DequeueWaitQueue(sessionIndex) == false)
 	{
-		NET_ENGINE_LOG_FATAL("Service::ReleaseSession - mReleaseSessionIndexStack is full");
+		if (mReleaseSessionIndexStack.TryPush(sessionIndex) == false)
+		{
+			NET_ENGINE_LOG_FATAL("Service::ReleaseSession - mReleaseSessionIndexStack is full");
+		}
 	}
+}
+
+bool Service::EnterWaitQueue(const SessionRef& pSession)
+{
+	return  mEnterWaitQueue.TryEnqueue(pSession);
+}
+
+bool Service::DequeueWaitQueue(const int32 index)
+{
+	while (!mEnterWaitQueue.IsEmpty())
+	{
+		WeakSessionRef pWeakSession;
+		if (mEnterWaitQueue.TryDequeue(pWeakSession) == true)
+		{
+			SessionRef pSession = pWeakSession.lock();
+			if (pSession == nullptr)
+			{
+				continue;
+			}
+
+			pSession->OnConnected();
+			pSession->RegisterReceive();
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 eServiceType Service::GetServiceType() const
@@ -108,8 +141,8 @@ int32 Service::GetMaxSessionCount() const
 	return mMaxSessionCount;
 }
 
-ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount)
-	: Service(eServiceType::Client, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), maxSessionCount)
+ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxEnterWaitQueueCount, const int32 maxSessionCount)
+	: Service(eServiceType::Client, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), maxEnterWaitQueueCount, maxSessionCount)
 {
 }
 
@@ -132,8 +165,8 @@ void ClientService::CloseService()
 {
 }
 
-ServerService::ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxSessionCount)
-	: Service(eServiceType::Server, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), maxSessionCount)
+ServerService::ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxEnterWaitQueueCount, const int32 maxSessionCount)
+	: Service(eServiceType::Server, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), maxEnterWaitQueueCount, maxSessionCount)
 {
 }
 

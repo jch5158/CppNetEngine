@@ -9,6 +9,7 @@ public:
 	virtual ~GameSession() override;
 
 	virtual void OnConnected() override;
+	virtual void OnEnterWaitQueue() override;
 	virtual void OnDisconnecting(const eDisconnectReason reason) override;
 	virtual void OnDisconnected() override;
 	virtual void OnSend(const int32 len) override;
