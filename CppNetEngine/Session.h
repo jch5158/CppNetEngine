@@ -58,7 +58,7 @@ public:
 	void SetService(const ServiceRef& pService);
 	void SetNetAddress(const NetAddress& address);
 	void SetWaitTicket(const int32 waitCount);
-	void SetSessionInGame();
+	bool SetSessionInGame();
 
 	int32 GetSessionIndex() const;
 	ServiceRef GetService() const;

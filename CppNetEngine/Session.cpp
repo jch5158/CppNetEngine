@@ -72,9 +72,11 @@ void Session::SetWaitTicket(const int32 waitCount)
 	mWaitTicket.store(waitCount);
 }
 
-void Session::SetSessionInGame()
+bool Session::SetSessionInGame()
 {
-	mSessionState.store(eSessionState::InGame);
+	auto expected = eSessionState::Connected;
+
+	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
 }
 
 int32 Session::GetSessionIndex() const
