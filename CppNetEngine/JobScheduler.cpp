@@ -6,12 +6,21 @@ JobScheduler::JobScheduler()
 	: mJobIocpHandle(nullptr)
 	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
 	, mDispatchQueue()
+	, mpOnErrorHandler([](const uint32)->void {})
 {
 	mJobIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
 	if (mJobIocpHandle == nullptr)
 	{
 		CrashReporter::Crash();
 	}
+}
+
+JobScheduler::JobScheduler(std::function<void(const uint32)> pOnErrorHandler)
+	: mJobIocpHandle(nullptr)
+	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
+	, mDispatchQueue()
+	, mpOnErrorHandler(std::move(pOnErrorHandler))
+{
 }
 
 JobScheduler::~JobScheduler()
@@ -26,13 +35,13 @@ void JobScheduler::Push(const JobQueueRef& pJobQueue)
 {
 	if (mDispatchQueue.TryEnqueue(pJobQueue) == false)
 	{
-		ASSERT(false, "JobScheduler::Push - Job queue manager is full. Failed to push job queue.");
+		NET_ENGINE_LOG_ERROR("JobScheduler::Push - mDispatchQueue.TryEnqueue is failed, mDispatchQueue.Count() : {}", mDispatchQueue.Count());
 		return;
 	}
 
 	if (PostQueuedCompletionStatus(mJobIocpHandle, 0, 0, nullptr) == false)
 	{
-		ASSERT(false, "JobScheduler::Push - PostQueuedCompletionStatus is Failed");
+		NET_ENGINE_LOG_ERROR("JobScheduler::Push - PostQueuedCompletionStatus is Failed, errorCode : {}", GetLastError());
 	}
 }
 
@@ -48,7 +57,7 @@ void JobScheduler::Dispatch()
 		const uint32 errorCode = GetLastError();
 		if (errorCode != WAIT_TIMEOUT)
 		{
-			ASSERT(false, "JobScheduler::Dispatch - GetQueuedCompletionStatus is Failed");
+			mpOnErrorHandler(errorCode);
 			return;
 		}
 	}

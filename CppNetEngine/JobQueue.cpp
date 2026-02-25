@@ -12,7 +12,7 @@ void JobQueue::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
 {
 	if (mJobQueue.TryEnqueue(pJob) == false)
 	{
-		ASSERT(false, "JobQueue::Push - Job queue is full. Failed to push job.");
+		NET_ENGINE_LOG_ERROR("JobQueue::Push - mJobQueue.TryEnqueue is failed, mJobQueue.Count() : {}", mJobQueue.Count());
 		return;
 	}
 

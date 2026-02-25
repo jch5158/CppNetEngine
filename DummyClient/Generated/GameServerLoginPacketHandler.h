@@ -1,12 +1,12 @@
 // ReSharper disable CppInconsistentNaming
 #pragma once
-#include <functional>
 #include "PacketId.pb.h"
 #include "Enum.pb.h"
 #include "Struct.pb.h"
 #include "Login.pb.h"
 #include "StlTypes.h"
 #include "PacketSession.h"
+#include <functional>
 
 class GameServerLoginPacketHandler final : ISingleton<GameServerLoginPacketHandler>
 {
@@ -78,11 +78,20 @@ private:
 		auto sendBuffer = cpp_net_engine::MakeSendBuffer(packetSize);
 
 		byte* pBuffer = sendBuffer->Reserve(packetSize);
+		if (pBuffer == nullptr)
+		{
+			NET_ENGINE_LOG_FATAL("MakeSendBuffer sendBuffer->Reserve(packetSize) is failed");
+			CrashReporter::Crash();
+		}
 
 		auto* header = reinterpret_cast<PacketHeader*>(pBuffer);
 		header->size = packetSize;
 		header->id = packetId;
-		ASSERT(packet.SerializeToArray(&header[1], dataSize), "LoginGameServerPacketHandler::MakeSendBuffer SerializeToArray is Failed");
+		if (!packet.SerializeToArray(&header[1], dataSize))
+		{
+			NET_ENGINE_LOG_FATAL("LoginGameServerPacketHandler::MakeSendBuffer SerializeToArray is Failed, &header[1] : {}, packetId : {}, dataSize : {}", fmt::ptr(&header[1]), header->id, dataSize);
+			CrashReporter::Crash();
+	    }
 		
         sendBuffer->Commit(packetSize);
 		

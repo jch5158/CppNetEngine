@@ -15,11 +15,19 @@ Service::Service(const eServiceType serviceType, const NetAddress& netAddress, I
 	, mSessions(maxSessionCount, nullptr)
 	, mReleaseSessionIndexStack(maxSessionCount)
 {
-	ASSERT(mpSessionFactory != nullptr, "Service - mSessionFactory is nullptr");
+	if (mpSessionFactory == nullptr)
+	{
+		NET_ENGINE_LOG_FATAL("Service::Service - mSessionFactory is nullptr");
+		CrashReporter::Crash();
+	}
 
 	for (int32 i = 0; i < mMaxSessionCount; ++i)
 	{
-		ASSERT(mReleaseSessionIndexStack.TryPush(i), "Service - mReleaseSessionIndexStack is full");
+		if (!mReleaseSessionIndexStack.TryPush(i))
+		{
+			NET_ENGINE_LOG_FATAL("Service::Service - mReleaseSessionIndexStack is full");
+			CrashReporter::Crash();
+		}
 	}
 }
 
@@ -66,7 +74,7 @@ void Service::ReleaseSession(const SessionRef& pSession)
 	mSessions[sessionIndex] = nullptr;
 	if (mReleaseSessionIndexStack.TryPush(sessionIndex) == false)
 	{
-		ASSERT(false, "Service::ReleaseSession - mReleaseSessionIndexStack is full");
+		NET_ENGINE_LOG_FATAL("Service::ReleaseSession - mReleaseSessionIndexStack is full");
 	}
 }
 

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "NetEngineLogger.h"
 
 template <typename T>
 class ObjectPool final
@@ -310,7 +311,7 @@ public:
 		ChunkBlock* pChunkBlock = reinterpret_cast<ChunkBlock*>(pData);
 		if (!Chunk::IsValidChecksum(*pChunkBlock))
 		{
-			ASSERT(false, "TlsObjectPool::Free - Invalid object detected. Possible memory corruption.");
+			NET_ENGINE_LOG_ERROR("TlsObjectPool::Free - Invalid object detected. Possible memory corruption. checksum : {}", pChunkBlock->checksum);
 			return;
 		}
 

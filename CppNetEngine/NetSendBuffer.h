@@ -19,7 +19,7 @@ public:
 		, mWritePos(0)
 		, mBuffer()
 	{
-		ASSERT(BUFFER_SIZE <= MAX_BUFFER_SIZE, "BUFFER_SIZE is equal to or less than MAX_BUFFER_SIZE");
+		static_assert(BUFFER_SIZE <= MAX_BUFFER_SIZE, "BUFFER_SIZE is equal to or less than MAX_BUFFER_SIZE");
 	}
 
 	virtual ~NetSendBuffer() override = default;

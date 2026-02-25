@@ -46,7 +46,7 @@ void Session::Dispatch(IocpEvent& iocpEvent, const uint32 numOfBytes)
 		ProcessReceive(numOfBytes);
 		break;
 	default:
-		ASSERT(false, "Session::Dispatch - iocp event type is unmatched");
+		NET_ENGINE_LOG_ERROR("Session::Dispatch - iocp event type is unmatched, iocpEvent.GetEventType() : {}", iocpEvent.GetEventType());
 		break;
 	}
 }
@@ -120,7 +120,7 @@ void Session::Send(const INetBufferRef& pSendBuffer)
 
 	if (mSendQueue.TryEnqueue(pSendBuffer) == false)
 	{
-		ASSERT(false, "Session::Send - TryEnqueue is Failed");
+		NET_ENGINE_LOG_FATAL("Session::Send - TryEnqueue is Failed, mSendQueue.Count() : {}", mSendQueue.Count());
 		return;
 	}
 
