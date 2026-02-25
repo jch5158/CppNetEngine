@@ -44,8 +44,6 @@ public:
 	[[nodiscard]] int32 Count() const;
 
 private:
-	static thread_local JobQueueRef spTlsJobQueue;
-
 	LockFreeQueue<JobRef> mJobQueue;
 	std::atomic<bool> mIsExecuting;
 };

@@ -8,10 +8,10 @@ class Listener : public IocpObject
 {
 public:
 
-	//Listener(const Listener&) = delete;
-	//Listener& operator=(const Listener&) = delete;
-	//Listener(Listener&&) = delete;
-	//Listener& operator=(Listener&&) = delete;
+	Listener(const Listener&) = delete;
+	Listener& operator=(const Listener&) = delete;
+	Listener(Listener&&) = delete;
+	Listener& operator=(Listener&&) = delete;
 
 	explicit Listener();
 	virtual ~Listener() override;

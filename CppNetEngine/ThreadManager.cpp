@@ -53,25 +53,6 @@ void ThreadManager::DestroyTls()
 	sTlsThreadId = 0;
 }
 
-//void ThreadManager::ExecuteJob()
-//{
-//	while (true)
-//	{
-//		auto now = std::chrono::steady_clock::now();
-//
-//		if (std::chrono::duration_cast<std::chrono::milliseconds>(now - sTlsJobWorkEndTime).count() < DEFAULT_JOB_WORK_DURATION)
-//		{
-//			const JobQueueRef pJobQueue = JobScheduler::GetInstance().Pop();
-//			pJobQueue->Execute();
-//		}
-//		else
-//		{
-//			sTlsJobWorkEndTime = now;
-//			break;
-//		}
-//	}
-//}
-
 uint32 ThreadManager::GetThreadId()
 {
 	if (sTlsThreadId == 0)

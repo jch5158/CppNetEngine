@@ -26,8 +26,6 @@ void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
 		return;
 	}
 	
-	spTlsJobQueue = shared_from_this();
-
 	while (!jobTimeBudget.IsExpired())
 	{
 		JobRef pJob;
@@ -38,10 +36,8 @@ void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
 
 		pJob->Execute();
 	}
-	
-	mIsExecuting.store(false);
 
-	spTlsJobQueue = nullptr;
+	mIsExecuting.store(false);
 }
 
 void JobQueue::Flush()
@@ -62,5 +58,3 @@ int32 JobQueue::Count() const
 {
 	return mJobQueue.Count();
 }
-
-thread_local JobQueueRef JobQueue::spTlsJobQueue = nullptr;

@@ -26,7 +26,6 @@ public:
 
 	static void InitTls();
 	static void DestroyTls();
-	//static void ExecuteJob();
 
 	[[nodiscard]]
 	static uint32 GetThreadId();

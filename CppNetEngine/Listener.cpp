@@ -36,46 +36,53 @@ void Listener::Dispatch(class IocpEvent& iocpEvent, uint32 numOfBytes)
 
 bool Listener::StartAccept(ServerServiceRef pServerService)
 {
+
 	if (pServerService == nullptr)
 	{
-		return false;
+		NET_ENGINE_LOG_FATAL("pServerService is nullptr");
+		CrashReporter::Crash();
 	}
 
 	mpServerService = std::move(pServerService);
 
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
-		uint32 errorCode = WSAGetLastError();
-		return false;
+		NET_ENGINE_LOG_FATAL("SocketUtils::CreateTcpSocket is failed - errorCode : {}", WSAGetLastError());
+		CrashReporter::Crash();
 	}
 
 	if (mpServerService->GetIocpCore()->Register(shared_from_this()) == false)
 	{
-		return false;
+		NET_ENGINE_LOG_FATAL("mpServerService->GetIocpCore()->Register is failed - errorCode : {}", WSAGetLastError());
+		CrashReporter::Crash();
 	}
 
 	if (SocketUtils::SetReuseAddress(mSocket, true) == false)
 	{
-		return false;
+		NET_ENGINE_LOG_FATAL("SocketUtils::SetReuseAddress is failed - errorCode : {}", WSAGetLastError());
+		CrashReporter::Crash();
 	}
 
 	if (SocketUtils::SetLinger(mSocket, 1, 0) == false)
 	{
-		return false;
+		NET_ENGINE_LOG_FATAL("SocketUtils::SetLinger is failed - errorCode : {}", WSAGetLastError());
+		CrashReporter::Crash();
 	}
 
 	if (SocketUtils::Bind(mSocket, mpServerService->GetNetAddress().GetSockAddr()) == false)
 	{
-		return false;
+		NET_ENGINE_LOG_FATAL("SocketUtils::Bind is failed - errorCode : {}", WSAGetLastError());
+		CrashReporter::Crash();
 	}
 
 	if (SocketUtils::Listen(mSocket, SOMAXCONN_HINT(65535)) == false)
 	{
-		return false;
+		NET_ENGINE_LOG_FATAL("SocketUtils::Listen is failed - errorCode : {}", WSAGetLastError());
+		CrashReporter::Crash();
 	}
 	
 	const int32 acceptEventCount = mpServerService->GetMaxSessionCount();
-	for (int i = 0; i < acceptEventCount; ++i)
+	for (int32 i = 0; i < acceptEventCount; ++i)
 	{
 		auto pAcceptEvent = cpp_net_engine::NewObject<IocpAcceptEvent>();
 		pAcceptEvent->Init();
