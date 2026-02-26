@@ -48,6 +48,6 @@ private:
 	static std::atomic<int64> sSeedBase;
 
 	const int64 mSeed;
+	std::atomic<bool> mbAcquire;
 	LockFreeQueue<JobRef> mJobQueue;
-	std::atomic<bool> mIsExecuting;
 };

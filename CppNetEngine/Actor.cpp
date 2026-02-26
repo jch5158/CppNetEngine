@@ -4,8 +4,8 @@
 
 Actor::Actor()
 	: mSeed(sSeedBase.fetch_add(1))
+	, mbAcquire(false)
 	, mJobQueue()
-	, mIsExecuting(false)
 {
 }
 
@@ -22,11 +22,12 @@ void Actor::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
 
 void Actor::Execute(const JobTimeBudget& jobTimeBudget)
 {
-	if (mIsExecuting.exchange(true) == true)
+	if (mbAcquire.exchange(true) == true)
 	{
 		return;
 	}
 
+	int32 count = mJobQueue.Count();
 	do
 	{
 		JobRef pJob;
@@ -37,9 +38,9 @@ void Actor::Execute(const JobTimeBudget& jobTimeBudget)
 
 		pJob->Execute();
 	}
-	while (!jobTimeBudget.IsExpired());
+	while (!jobTimeBudget.IsExpired() && --count != 0);
 
-	mIsExecuting.store(false);
+	mbAcquire.store(false);
 }
 
 void Actor::Flush()
