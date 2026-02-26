@@ -6,7 +6,7 @@ JobScheduler::JobScheduler()
 	: mJobIocpHandle(nullptr)
 	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
 	, mDispatchQueue()
-	, mpOnErrorHandler([](const uint32)->void {})
+	, mpOnHandleError([](const uint32)->void {})
 {
 	mJobIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
 	if (mJobIocpHandle == nullptr)
@@ -15,11 +15,11 @@ JobScheduler::JobScheduler()
 	}
 }
 
-JobScheduler::JobScheduler(std::function<void(const uint32)> pOnErrorHandler)
+JobScheduler::JobScheduler(std::function<void(const uint32)> pOnHandleError)
 	: mJobIocpHandle(nullptr)
 	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
 	, mDispatchQueue()
-	, mpOnErrorHandler(std::move(pOnErrorHandler))
+	, mpOnHandleError(std::move(pOnHandleError))
 {
 }
 
@@ -76,7 +76,7 @@ void JobScheduler::Dispatch()
 		const uint32 errorCode = GetLastError();
 		if (errorCode != WAIT_TIMEOUT)
 		{
-			mpOnErrorHandler(errorCode);
+			mpOnHandleError(errorCode);
 			return;
 		}
 	}

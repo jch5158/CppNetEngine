@@ -163,7 +163,7 @@ void Session::Send(const INetBufferRef& pSendBuffer)
 
 bool Session::RegisterConnect()
 {
-	if (IsConnected())
+	if (!IsDisconnected())
 	{
 		return false;
 	}

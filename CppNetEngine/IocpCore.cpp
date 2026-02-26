@@ -5,7 +5,7 @@
 
 IocpCore::IocpCore()
 	: mIocpHandle(nullptr)
-	, mpOnErrorHandler([](const uint32)->void {return; })
+	, mpOnHandleError([](const uint32)->void {return; })
 {
 	mIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
 	if (mIocpHandle == nullptr)
@@ -14,9 +14,9 @@ IocpCore::IocpCore()
 	}
 }
 
-IocpCore::IocpCore(std::function<void(const uint32)>& pOnErrorHandler)
+IocpCore::IocpCore(std::function<void(const uint32)> pOnHandleError)
 	: mIocpHandle(nullptr)
-	, mpOnErrorHandler(std::move(pOnErrorHandler))
+	, mpOnHandleError(std::move(pOnHandleError))
 {
 	mIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
 	if (mIocpHandle == nullptr)
@@ -59,7 +59,7 @@ void IocpCore::Dispatch(const uint32 timeout) const
 		const uint32 errorCode = GetLastError();
 		if (errorCode != WAIT_TIMEOUT)
 		{
-			mpOnErrorHandler(errorCode);
+			mpOnHandleError(errorCode);
 		}
 	}
 

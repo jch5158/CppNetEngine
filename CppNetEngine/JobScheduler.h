@@ -49,7 +49,7 @@ public:
 	JobScheduler& operator=(JobScheduler&&) = delete;
 
 	explicit JobScheduler();
-	explicit JobScheduler(std::function<void(const uint32)> pOnErrorHandler);
+	explicit JobScheduler(std::function<void(const uint32)> pOnHandleError);
 	~JobScheduler();
 
 	void Push(const JobQueueRef& pJobQueue);
@@ -62,5 +62,5 @@ private:
 	HANDLE mJobIocpHandle;
 	JobTimingWheel mTimingWheel;
 	LockFreeQueue<JobQueueRef> mDispatchQueue;
-	std::function<void(const uint32)> mpOnErrorHandler;
+	std::function<void(const uint32)> mpOnHandleError;
 };

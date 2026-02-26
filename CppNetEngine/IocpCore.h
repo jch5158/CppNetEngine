@@ -28,7 +28,7 @@ public:
 	IocpCore& operator=(IocpCore&&) = delete;
 
 	IocpCore();
-	explicit IocpCore(std::function<void(const uint32)>& pOnErrorHandler);
+	explicit IocpCore(std::function<void(const uint32)> pOnHandleError);
 	~IocpCore();
 
 	[[nodiscard]]
@@ -42,6 +42,6 @@ public:
 private:
 
 	HANDLE mIocpHandle;
-	std::function<void(const uint32)> mpOnErrorHandler;
+	std::function<void(const uint32)> mpOnHandleError;
 };
 
