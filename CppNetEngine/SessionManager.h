@@ -13,15 +13,16 @@ public:
 	~SessionManager() = default;
 
 	bool AddSession(const SessionRef& pSession);
-	void ReleaseSession(const int32 sessionIndex);
-	void ReleaseSessionIndex(const int32 sessionIndex);
+	void ReleaseSession(const SessionRef& pSession);
 
+	int32 GetMaxSessionCount() const;
 	int32 GetCurrentSessionCount() const;
 
 private:
 
 	const int32 mMaxSessionCount;
-	Vector<SessionRef> mSessions;
-	LockFreeStack<int32> mReleaseSessionIndexStack;
-};
+	std::atomic<int32> mCurrentSessionCount;
 
+	Mutex mLock;
+	Set<SessionRef> mSessions;
+};

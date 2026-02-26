@@ -24,18 +24,17 @@ public:
 	Service(Service&&) = delete;
 	Service& operator=(Service&&) = delete;
 
-	Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxEnterWaitQueueCount, const int32 maxSessionCount = 1);
+	Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, WaitQueueManagerRef pWaitQueueManager);
 	virtual ~Service() = default;
 
 	virtual bool Start() = 0;
 	virtual void CloseService();
 
 	SessionRef CreateSession();
-	bool AddSession(const SessionRef& pSession);
-	int32 ReleaseSession(const SessionRef& pSession);
-	void ReleaseSessionIndex(const int32 index);
-	int32 EnterWaitQueue(const SessionRef& pSession);
-	SessionRef DequeueWaitQueue();
+	bool AddSession(const SessionRef& pSession) const;
+	void ReleaseSession(const SessionRef& pSession) const;
+	int32 EnterWaitQueue(const SessionRef& pSession) const;
+	SessionRef DequeueWaitQueue() const;
 
 	eServiceType GetServiceType() const;
 	NetAddress& GetNetAddress();
@@ -53,14 +52,14 @@ private:
 	IocpCoreRef mpIocpCore;
 	JobSchedulerRef mpScheduler;
 	SessionFactory mpSessionFactory;
-	SessionManager mSessionManager;
-	WaitQueueManager mWaitQueueManager;
+	SessionManagerRef mpSessionManager;
+	WaitQueueManagerRef mpWaitQueueManager;
 };
 
 class ClientService : public Service
 {
 public:
-	ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxEnterWaitQueueCount, const int32 maxSessionCount = 1);
+	ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager);
 	virtual ~ClientService() override = default;
 
 	virtual bool Start() override;
@@ -70,12 +69,12 @@ public:
 class ServerService : public Service
 {
 public:
-	ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxEnterWaitQueueCount, const int32 maxSessionCount = 1);
+	ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, WaitQueueManagerRef pWaitQueueManager);
 	virtual ~ServerService() override = default;
 
 	virtual bool Start() override;
 	virtual void CloseService() override;
 
 private:
-	ListenerRef		mListener;
+	ListenerRef mListener;
 };

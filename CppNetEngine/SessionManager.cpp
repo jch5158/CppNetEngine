@@ -3,48 +3,43 @@
 #include "Session.h"
 
 SessionManager::SessionManager(const int32 maxSessionCount)
-	:mMaxSessionCount(maxSessionCount)
-	, mSessions(maxSessionCount, nullptr)
-	, mReleaseSessionIndexStack(maxSessionCount)
+	: mMaxSessionCount(maxSessionCount)
+	, mCurrentSessionCount(0)
+	, mSessions()
 {
-	for (int32 i = 0; i < maxSessionCount; ++i)
-	{
-		if (!mReleaseSessionIndexStack.TryPush(i))
-		{
-			NET_ENGINE_LOG_FATAL("Service::Service - mReleaseSessionIndexStack is full");
-			CrashReporter::Crash();
-		}
-	}
 }
 
 bool SessionManager::AddSession(const SessionRef& pSession)
 {
-	int32 sessionIndex = -1;
-	if (mReleaseSessionIndexStack.TryPop(sessionIndex) == false)
+	if (pSession == nullptr)
 	{
 		return false;
 	}
 
-	pSession->setSessionIndex(sessionIndex);
-	mSessions[sessionIndex] = pSession;
-
-	return true;
-}
-
-void SessionManager::ReleaseSession(const int32 sessionIndex)
-{
-	mSessions[sessionIndex] = nullptr;
-}
-
-void SessionManager::ReleaseSessionIndex(const int32 sessionIndex)
-{
-	if (mReleaseSessionIndexStack.TryPush(sessionIndex) == false)
+	if (mCurrentSessionCount.fetch_add(1) >= mMaxSessionCount)
 	{
-		NET_ENGINE_LOG_ERROR("SessionManager::ReleaseSessionIndex - TryPush is failed, count : {}", mReleaseSessionIndexStack.Count());
+		mCurrentSessionCount.fetch_sub(1);
+		return false;
 	}
+
+	UniqueLock lock(mLock);
+	return mSessions.emplace(pSession).second;
+}
+
+void SessionManager::ReleaseSession(const SessionRef& pSession)
+{
+	mCurrentSessionCount.fetch_sub(1);
+
+	UniqueLock lock(mLock);
+	mSessions.erase(pSession);
+}
+
+int32 SessionManager::GetMaxSessionCount() const
+{
+	return mMaxSessionCount;
 }
 
 int32 SessionManager::GetCurrentSessionCount() const
 {
-	return mMaxSessionCount - mReleaseSessionIndexStack.Count();
+	return mCurrentSessionCount.load();
 }

@@ -91,6 +91,12 @@ using IocpCoreConstRef = SharedPtr<const IocpCore>;
 using JobSchedulerRef = SharedPtr<class JobScheduler>;
 using JobSchedulerConstRef = SharedPtr<const JobScheduler>;
 
+using SessionManagerRef = SharedPtr<class SessionManager>;
+using SessionManagerConstRef = SharedPtr<const SessionManager>;
+
+using WaitQueueManagerRef = SharedPtr<class WaitQueueManager>;
+using WaitQueueManagerConstRef = SharedPtr<const WaitQueueManager>;
+
 using WeakServiceRef = WeakPtr<class Service>;
 using WeakServiceConstRef = WeakPtr<const Service>;
 using ServiceRef = SharedPtr<Service>;

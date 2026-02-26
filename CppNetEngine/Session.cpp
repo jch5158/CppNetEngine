@@ -6,17 +6,16 @@
 #include "NetSendBuffer.h"
 
 Session::Session()
-	: mSessionIndex(-1)
-	  , mConnectEvent()
-	  , mDisconnectEvent()
-	  , mReceiveEvent()
-	  , mSendEvent()
-	  , mpService()
-	  , mSocket(INVALID_SOCKET)
-	  , mNetAddress()
-	  , mSessionState(eSessionState::Disconnected)
-	  , mNetReceiveBuffer()
-	  , mSendQueue(65535)
+	: mConnectEvent()
+	, mDisconnectEvent()
+	, mReceiveEvent()
+	, mSendEvent()
+	, mpService()
+	, mSocket(INVALID_SOCKET)
+	, mNetAddress()
+	, mSessionState(eSessionState::Disconnected)
+	, mNetReceiveBuffer()
+	, mSendQueue(65535)
 {
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
@@ -49,11 +48,6 @@ void Session::Dispatch(IocpEvent& iocpEvent, const uint32 numOfBytes)
 		NET_ENGINE_LOG_ERROR("Session::Dispatch - iocp event type is unmatched, iocpEvent.GetEventType() : {}", static_cast<uint8>(iocpEvent.GetEventType()));
 		break;
 	}
-}
-
-int32 Session::GetSessionIndex() const
-{
-	return mSessionIndex;
 }
 
 ServiceRef Session::GetService() const
@@ -298,13 +292,10 @@ void Session::ProcessDisconnect()
 {
 	mDisconnectEvent.ReleaseIocpObjectRef();
 
-	const int32 index = GetService()->ReleaseSession(GetSessionRef());
+	GetService()->ReleaseSession(GetSessionRef());
+
 	const SessionRef pWaitSession = GetService()->DequeueWaitQueue();
-	if (pWaitSession == nullptr)
-	{
-		GetService()->ReleaseSessionIndex(index);
-	}
-	else
+	if (pWaitSession != nullptr)
 	{
 		pWaitSession->setWaitingToConnected();
 		pWaitSession->OnConnected();
@@ -365,11 +356,6 @@ void Session::setService(const ServiceRef& pService)
 void Session::setNetAddress(const NetAddress& address)
 {
 	mNetAddress = address;
-}
-
-void Session::setSessionIndex(const int32 sessionIndex)
-{
-	mSessionIndex = sessionIndex;
 }
 
 bool Session::setSessionWaiting()

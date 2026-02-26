@@ -56,7 +56,6 @@ public:
 	virtual int32 OnReceive(byte* pBuffer, const int32 len) = 0;
 	virtual void OnError(const int32 errorCode) = 0;
 
-	int32 GetSessionIndex() const;
 	ServiceRef GetService() const;
 	SOCKET GetSocket() const;
 	NetAddress& GetAddress();
@@ -84,7 +83,6 @@ private:
 
 	void setService(const ServiceRef& pService);
 	void setNetAddress(const NetAddress& address);
-	void setSessionIndex(const int32 sessionIndex);
 	bool setSessionWaiting();
 	bool setWaitingToConnected();
 	bool setSessionConnected();
@@ -92,7 +90,6 @@ private:
 	bool setSessionDisconnected();
 	bool disconnect(const eDisconnectReason reason);
 
-	int32 mSessionIndex;
 	IocpConnectEvent mConnectEvent;
 	IocpDisconnectEvent mDisconnectEvent;
 	IocpReceiveEvent mReceiveEvent;

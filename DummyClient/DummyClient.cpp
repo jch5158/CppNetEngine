@@ -15,7 +15,8 @@ int32 main()
 		cpp_net_engine::MakeShared<IocpCore>(),
 		cpp_net_engine::MakeShared<JobScheduler>(),
 		cpp_net_engine::MakeShared<GameSession>,
-		0, 1);
+		cpp_net_engine::MakeShared<SessionManager>(1)
+	);
 
 	NET_ASSERT(pService->Start(), "Connect Failed");
 
