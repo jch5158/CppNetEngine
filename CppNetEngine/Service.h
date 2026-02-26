@@ -4,6 +4,7 @@
 
 #include "NetAddress.h"
 #include "LockFreeStack.h"
+#include "SessionManager.h"
 #include "WaitQueueManager.h"
 
 enum class eServiceType : uint8
@@ -52,8 +53,7 @@ private:
 	IocpCoreRef mpIocpCore;
 	JobSchedulerRef mpScheduler;
 	SessionFactory mpSessionFactory;
-	Vector<SessionRef> mSessions;
-	LockFreeStack<int32> mReleaseSessionIndexStack;
+	SessionManager mSessionManager;
 	WaitQueueManager mWaitQueueManager;
 };
 

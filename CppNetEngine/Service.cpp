@@ -12,23 +12,13 @@ Service::Service(const eServiceType serviceType, const NetAddress& netAddress, I
 	, mpIocpCore(std::move(pIocpCore))
 	, mpScheduler(std::move(pScheduler))
 	, mpSessionFactory(std::move(pSessionFactory))
-	, mSessions(maxSessionCount, nullptr)
-	, mReleaseSessionIndexStack(maxSessionCount)
+	, mSessionManager(maxSessionCount)
 	, mWaitQueueManager(maxEnterWaitQueueCount)
 {
 	if (mpSessionFactory == nullptr)
 	{
 		NET_ENGINE_LOG_FATAL("Service::Service - mSessionFactory is nullptr");
 		CrashReporter::Crash();
-	}
-
-	for (int32 i = 0; i < mMaxSessionCount; ++i)
-	{
-		if (!mReleaseSessionIndexStack.TryPush(i))
-		{
-			NET_ENGINE_LOG_FATAL("Service::Service - mReleaseSessionIndexStack is full");
-			CrashReporter::Crash();
-		}
 	}
 }
 
@@ -52,16 +42,7 @@ SessionRef Service::CreateSession()
 
 bool Service::AddSession(const SessionRef& pSession)
 {
-	int32 sessionIndex = -1;
-	if (mReleaseSessionIndexStack.TryPop(sessionIndex) == false)
-	{
-		return false;
-	}
-
-	pSession->setSessionIndex(sessionIndex);
-	mSessions[sessionIndex] = pSession;
-
-	return true;
+	return mSessionManager.AddSession(pSession);
 }
 
 int32 Service::ReleaseSession(const SessionRef& pSession)
@@ -70,17 +51,14 @@ int32 Service::ReleaseSession(const SessionRef& pSession)
 
 	const int32 sessionIndex = pSession->GetSessionIndex();
 	pSession->setSessionIndex(-1);
-	mSessions[sessionIndex] = nullptr;
+	mSessionManager.ReleaseSession(sessionIndex);
 
 	return sessionIndex;
 }
 
 void Service::ReleaseSessionIndex(const int32 index)
 {
-	if (mReleaseSessionIndexStack.TryPush(index) == false)
-	{
-		NET_ENGINE_LOG_FATAL("Service::ReleaseSession - mReleaseSessionIndexStack is full");
-	}
+	mSessionManager.ReleaseSessionIndex(index);
 }
 
 int32 Service::EnterWaitQueue(const SessionRef& pSession)
@@ -115,7 +93,7 @@ JobSchedulerRef Service::GetJobScheduler() const
 
 int32 Service::GetCurrentSessionCount() const
 {
-	return mMaxSessionCount - mReleaseSessionIndexStack.Count();
+	return mSessionManager.GetCurrentSessionCount();
 }
 
 int32 Service::GetMaxSessionCount() const

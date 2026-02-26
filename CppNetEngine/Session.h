@@ -31,6 +31,7 @@ public:
 
 	friend class Listener;
 	friend class Service;
+	friend class SessionManager;
 
 	static constexpr int32 MAX_SEND_WSABUF_SIZE = 64;
 	static constexpr int32 MAX_RECEIVE_WSABUF_SIZE = 2;

@@ -141,6 +141,9 @@
     <ClInclude Include="WaitQueueManager.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -198,6 +201,9 @@
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="WaitQueueManager.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
