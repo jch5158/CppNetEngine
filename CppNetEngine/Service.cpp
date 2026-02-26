@@ -41,7 +41,7 @@ void Service::CloseService()
 SessionRef Service::CreateSession()
 {
 	SessionRef session = mpSessionFactory();
-	session->SetService(shared_from_this());
+	session->setService(shared_from_this());
 
 	if (mpIocpCore->Register(session) == false)
 	{
@@ -59,7 +59,7 @@ bool Service::AddSession(const SessionRef& pSession)
 		return false;
 	}
 
-	pSession->SetSessionIndex(sessionIndex);
+	pSession->setSessionIndex(sessionIndex);
 	mSessions[sessionIndex] = pSession;
 
 	return true;
@@ -70,7 +70,7 @@ int32 Service::ReleaseSession(const SessionRef& pSession)
 	pSession->OnDisconnected();
 
 	const int32 sessionIndex = pSession->GetSessionIndex();
-	pSession->SetSessionIndex(-1);
+	pSession->setSessionIndex(-1);
 	mSessions[sessionIndex] = nullptr;
 
 	return sessionIndex;
@@ -90,7 +90,7 @@ bool Service::EnterWaitQueue(const SessionRef& pSession)
 	{
 		const int32 waitCount = mWaitQueueCount.fetch_add(1);
 
-		pSession->SetWaitTicket(waitCount);
+		pSession->setWaitTicket(waitCount);
 
 		return true;
 	}

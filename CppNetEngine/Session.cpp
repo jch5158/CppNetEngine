@@ -52,34 +52,34 @@ void Session::Dispatch(IocpEvent& iocpEvent, const uint32 numOfBytes)
 	}
 }
 
-void Session::SetSessionIndex(const int32 sessionIndex)
+void Session::setSessionIndex(const int32 sessionIndex)
 {
 	mSessionIndex = sessionIndex;
 }
 
-void Session::SetService(const ServiceRef& pService)
+void Session::setService(const ServiceRef& pService)
 {
 	mpService = pService;
 }
 
-void Session::SetNetAddress(const NetAddress& address)
+void Session::setNetAddress(const NetAddress& address)
 {
 	mNetAddress = address;
 }
 
-void Session::SetWaitTicket(const int32 waitCount)
+void Session::setWaitTicket(const int32 waitCount)
 {
 	mWaitTicket.store(waitCount);
 }
 
-bool Session::SetSessionWaiting()
+bool Session::setSessionWaiting()
 {
 	auto expected = eSessionState::Disconnected;
 
 	return mSessionState.compare_exchange_weak(expected, eSessionState::Disconnected);
 }
 
-bool Session::SetWaitingToConnected()
+bool Session::setWaitingToConnected()
 {
 	mWaitTicket.store(-1);
 
@@ -87,20 +87,20 @@ bool Session::SetWaitingToConnected()
 	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
 }
 
-bool Session::SetSessionConnected()
+bool Session::setSessionConnected()
 {
 	auto expected = eSessionState::Disconnected;
 	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
 }
 
-bool Session::SetSessionInGame()
+bool Session::setSessionInGame()
 {
 	auto expected = eSessionState::Connected;
 
 	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
 }
 
-bool Session::SetSessionDisconnected()
+bool Session::setSessionDisconnected()
 {
 	return mSessionState.exchange(eSessionState::Disconnected) != eSessionState::Disconnected;
 }
@@ -218,7 +218,7 @@ bool Session::RegisterConnect()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
-			Disconnect(eDisconnectReason::SocketError);
+			disconnect(eDisconnectReason::SocketError);
 			mConnectEvent.SetIocpObjectRef(nullptr);
 			return false;
 		}
@@ -229,7 +229,7 @@ bool Session::RegisterConnect()
 
 bool Session::RegisterDisconnect()
 {
-	if (!SetSessionDisconnected())
+	if (!setSessionDisconnected())
 	{
 		return false;
 	}
@@ -287,7 +287,7 @@ void Session::RegisterSend()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
-			Disconnect(eDisconnectReason::SocketError);
+			disconnect(eDisconnectReason::SocketError);
 			mSendEvent.SetIocpObjectRef(nullptr);
 			mSendEvent.GetSendPendingBuffer().clear();
 			mbSendRegistered.store(false);
@@ -327,7 +327,7 @@ void Session::RegisterReceive()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
-			Disconnect(eDisconnectReason::SocketError);
+			disconnect(eDisconnectReason::SocketError);
 			mReceiveEvent.SetIocpObjectRef(nullptr);
 		}
 	}
@@ -339,12 +339,12 @@ void Session::ProcessConnect()
 
 	if (GetService()->AddSession(GetSessionRef()) == true)
 	{
-		SetSessionConnected();
+		setSessionConnected();
 		OnConnected();
 	}
 	else if (GetService()->EnterWaitQueue(GetSessionRef()) == true)
 	{
-		SetSessionWaiting();
+		setSessionWaiting();
 		OnEnterWaitQueue();
 	}
 
@@ -364,7 +364,7 @@ void Session::ProcessDisconnect()
 	}
 	else
 	{
-		pWaitSession->SetWaitingToConnected();
+		pWaitSession->setWaitingToConnected();
 		pWaitSession->OnConnected();
 	}
 }
@@ -396,7 +396,7 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 
 	if (numOfBytes == 0)
 	{
-		Disconnect(eDisconnectReason::Kicked);
+		disconnect(eDisconnectReason::Kicked);
 		return;
 	}
 
@@ -406,7 +406,7 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 	const int32 processLen = OnReceive(mNetReceiveBuffer.GetReadPtr(), static_cast<int32>(numOfBytes));
 	if (processLen < 0 || processLen > dataSize)
 	{
-		Disconnect(eDisconnectReason::Kicked);
+		disconnect(eDisconnectReason::Kicked);
 		return;
 	}
 
@@ -415,7 +415,7 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 	RegisterReceive();
 }
 
-bool Session::Disconnect(const eDisconnectReason reason)
+bool Session::disconnect(const eDisconnectReason reason)
 {
 	OnDisconnecting(reason);
 	return RegisterDisconnect();

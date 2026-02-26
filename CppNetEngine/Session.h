@@ -29,6 +29,7 @@ class Session : public IocpObject
 {
 public:
 
+	friend class Listener;
 	friend class Service;
 
 	static constexpr int32 MAX_SEND_WSABUF_SIZE = 64;
@@ -53,16 +54,6 @@ public:
 	virtual void OnSend(const int32 len) = 0;
 	virtual int32 OnReceive(byte* pBuffer, const int32 len) = 0;
 	virtual void OnError(const int32 errorCode) = 0;
-
-	void SetSessionIndex(const int32 sessionIndex);
-	void SetService(const ServiceRef& pService);
-	void SetNetAddress(const NetAddress& address);
-	void SetWaitTicket(const int32 waitCount);
-	bool SetSessionWaiting();
-	bool SetWaitingToConnected();
-	bool SetSessionConnected();
-	bool SetSessionInGame();
-	bool SetSessionDisconnected();
 
 	int32 GetSessionIndex() const;
 	ServiceRef GetService() const;
@@ -91,7 +82,16 @@ public:
 
 private:
 
-	bool Disconnect(const eDisconnectReason reason);
+	void setService(const ServiceRef& pService);
+	void setNetAddress(const NetAddress& address);
+	void setSessionIndex(const int32 sessionIndex);
+	void setWaitTicket(const int32 waitCount);
+	bool setSessionWaiting();
+	bool setWaitingToConnected();
+	bool setSessionConnected();
+	bool setSessionInGame();
+	bool setSessionDisconnected();
+	bool disconnect(const eDisconnectReason reason);
 
 	int32 mSessionIndex;
 	IocpConnectEvent mConnectEvent;
