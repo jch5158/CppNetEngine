@@ -86,31 +86,38 @@ void Service::ReleaseSessionIndex(const int32 index)
 
 bool Service::EnterWaitQueue(const SessionRef& pSession)
 {
-	const int32 waitCount = mWaitQueueCount.fetch_add(1);
+	if (mEnterWaitQueue.TryEnqueue(pSession))
+	{
+		const int32 waitCount = mWaitQueueCount.fetch_add(1);
 
-	pSession->SetWaitTicket(waitCount);
+		pSession->SetWaitTicket(waitCount);
 
-	return mEnterWaitQueue.TryEnqueue(pSession);
+		return true;
+	}
+
+	return false;
 }
 
-bool Service::DequeueWaitQueue(const int32 index)
+SessionRef Service::DequeueWaitQueue(const int32 index)
 {
 	while (!mEnterWaitQueue.IsEmpty())
 	{
 		WeakSessionRef pWeakSession;
 		if (mEnterWaitQueue.TryDequeue(pWeakSession) == true)
 		{
+			mWaitQueueCount.fetch_sub(1);
+
 			SessionRef pSession = pWeakSession.lock();
 			if (pSession == nullptr)
 			{
 				continue;
 			}
 
-			return true;
+			return pSession;
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
 eServiceType Service::GetServiceType() const

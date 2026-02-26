@@ -72,11 +72,37 @@ void Session::SetWaitTicket(const int32 waitCount)
 	mWaitTicket.store(waitCount);
 }
 
+bool Session::SetSessionWaiting()
+{
+	auto expected = eSessionState::Disconnected;
+
+	return mSessionState.compare_exchange_weak(expected, eSessionState::Disconnected);
+}
+
+bool Session::SetWaitingToConnected()
+{
+	mWaitTicket.store(-1);
+
+	auto expected = eSessionState::Waiting;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
+}
+
+bool Session::SetSessionConnected()
+{
+	auto expected = eSessionState::Disconnected;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
+}
+
 bool Session::SetSessionInGame()
 {
 	auto expected = eSessionState::Connected;
 
 	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
+}
+
+bool Session::SetSessionDisconnected()
+{
+	return mSessionState.exchange(eSessionState::Disconnected) != eSessionState::Disconnected;
 }
 
 int32 Session::GetSessionIndex() const
@@ -203,7 +229,7 @@ bool Session::RegisterConnect()
 
 bool Session::RegisterDisconnect()
 {
-	if (mSessionState.exchange(eSessionState::Disconnected) == eSessionState::Disconnected)
+	if (!SetSessionDisconnected())
 	{
 		return false;
 	}
@@ -313,12 +339,12 @@ void Session::ProcessConnect()
 
 	if (GetService()->AddSession(GetSessionRef()) == true)
 	{
-		mSessionState.store(eSessionState::Connected);
+		SetSessionConnected();
 		OnConnected();
 	}
 	else if (GetService()->EnterWaitQueue(GetSessionRef()) == true)
 	{
-		mSessionState.store(eSessionState::Waiting);
+		SetSessionWaiting();
 		OnEnterWaitQueue();
 	}
 
@@ -331,15 +357,15 @@ void Session::ProcessDisconnect()
 
 	const int32 index = GetService()->ReleaseSession(GetSessionRef());
 
-	if (GetService()->DequeueWaitQueue(index) == false)
+	const SessionRef pWaitSession = GetService()->DequeueWaitQueue(index);
+	if (pWaitSession == nullptr)
 	{
 		GetService()->ReleaseSessionIndex(index);
 	}
 	else
 	{
-		SetWaitTicket(-1);
-		mSessionState.store(eSessionState::Connected);
-		OnConnected();
+		pWaitSession->SetWaitingToConnected();
+		pWaitSession->OnConnected();
 	}
 }
 

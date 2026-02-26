@@ -33,7 +33,7 @@ public:
 	int32 ReleaseSession(const SessionRef& pSession);
 	void ReleaseSessionIndex(const int32 index);
 	bool EnterWaitQueue(const SessionRef& pSession);
-	bool DequeueWaitQueue(const int32 index);
+	SessionRef DequeueWaitQueue(const int32 index);
 
 	eServiceType GetServiceType() const;
 	NetAddress& GetNetAddress();

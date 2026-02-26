@@ -58,7 +58,11 @@ public:
 	void SetService(const ServiceRef& pService);
 	void SetNetAddress(const NetAddress& address);
 	void SetWaitTicket(const int32 waitCount);
+	bool SetSessionWaiting();
+	bool SetWaitingToConnected();
+	bool SetSessionConnected();
 	bool SetSessionInGame();
+	bool SetSessionDisconnected();
 
 	int32 GetSessionIndex() const;
 	ServiceRef GetService() const;
@@ -67,8 +71,8 @@ public:
 	NetReceiveBuffer<>& GetNetReceiveBuffer();
 	SessionRef GetSessionRef();
 	int32 GetWaitTicket() const;
-	bool IsSessionInGame() const;
 
+	bool IsSessionInGame() const;
 	bool IsConnected() const;
 	bool IsDisconnected() const;
 	bool Connect();
