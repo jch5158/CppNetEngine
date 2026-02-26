@@ -14,8 +14,7 @@ Service::Service(const eServiceType serviceType, const NetAddress& netAddress, I
 	, mpSessionFactory(std::move(pSessionFactory))
 	, mSessions(maxSessionCount, nullptr)
 	, mReleaseSessionIndexStack(maxSessionCount)
-	, mWaitQueueCount(0)
-	, mEnterWaitQueue(maxEnterWaitQueueCount)
+	, mWaitQueueManager(maxEnterWaitQueueCount)
 {
 	if (mpSessionFactory == nullptr)
 	{
@@ -84,40 +83,14 @@ void Service::ReleaseSessionIndex(const int32 index)
 	}
 }
 
-bool Service::EnterWaitQueue(const SessionRef& pSession)
+int32 Service::EnterWaitQueue(const SessionRef& pSession)
 {
-	if (mEnterWaitQueue.TryEnqueue(pSession))
-	{
-		const int32 waitCount = mWaitQueueCount.fetch_add(1);
-
-		pSession->setWaitTicket(waitCount);
-
-		return true;
-	}
-
-	return false;
+	return mWaitQueueManager.EnterWaitQueue(pSession);
 }
 
-SessionRef Service::DequeueWaitQueue(const int32 index)
+SessionRef Service::DequeueWaitQueue()
 {
-	while (!mEnterWaitQueue.IsEmpty())
-	{
-		WeakSessionRef pWeakSession;
-		if (mEnterWaitQueue.TryDequeue(pWeakSession) == true)
-		{
-			mWaitQueueCount.fetch_sub(1);
-
-			SessionRef pSession = pWeakSession.lock();
-			if (pSession == nullptr)
-			{
-				continue;
-			}
-
-			return pSession;
-		}
-	}
-
-	return nullptr;
+	return mWaitQueueManager.DequeueWaitQueue();
 }
 
 eServiceType Service::GetServiceType() const
@@ -148,6 +121,11 @@ int32 Service::GetCurrentSessionCount() const
 int32 Service::GetMaxSessionCount() const
 {
 	return mMaxSessionCount;
+}
+
+int32 Service::GetWaitCount(const int32 myWaitTicket) const
+{
+	return mWaitQueueManager.GetWaitCount(myWaitTicket);
 }
 
 ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, const int32 maxEnterWaitQueueCount, const int32 maxSessionCount)

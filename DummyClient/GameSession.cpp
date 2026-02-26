@@ -11,7 +11,7 @@ void GameSession::OnConnected()
 	Send(pSendBuffer);
 }
 
-void GameSession::OnEnterWaitQueue()
+void GameSession::OnEnterWaitQueue(const int32 waitTicket)
 {
 }
 

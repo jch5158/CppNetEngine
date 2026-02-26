@@ -4,6 +4,7 @@
 
 #include "NetAddress.h"
 #include "LockFreeStack.h"
+#include "WaitQueueManager.h"
 
 enum class eServiceType : uint8
 {
@@ -32,8 +33,8 @@ public:
 	bool AddSession(const SessionRef& pSession);
 	int32 ReleaseSession(const SessionRef& pSession);
 	void ReleaseSessionIndex(const int32 index);
-	bool EnterWaitQueue(const SessionRef& pSession);
-	SessionRef DequeueWaitQueue(const int32 index);
+	int32 EnterWaitQueue(const SessionRef& pSession);
+	SessionRef DequeueWaitQueue();
 
 	eServiceType GetServiceType() const;
 	NetAddress& GetNetAddress();
@@ -41,6 +42,7 @@ public:
 	JobSchedulerRef GetJobScheduler() const;
 	int32 GetCurrentSessionCount() const;
 	int32 GetMaxSessionCount() const;
+	int32 GetWaitCount(const int32 myWaitTicket) const;
 
 private:
 
@@ -50,12 +52,9 @@ private:
 	IocpCoreRef mpIocpCore;
 	JobSchedulerRef mpScheduler;
 	SessionFactory mpSessionFactory;
-
 	Vector<SessionRef> mSessions;
 	LockFreeStack<int32> mReleaseSessionIndexStack;
-
-	std::atomic<int32> mWaitQueueCount;
-	LockFreeQueue<WeakSessionRef> mEnterWaitQueue;
+	WaitQueueManager mWaitQueueManager;
 };
 
 class ClientService : public Service

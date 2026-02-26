@@ -1,0 +1,65 @@
+﻿#include "pch.h"
+#include "WaitQueueManager.h"
+
+WaitQueueManager::WaitQueueManager(const int32 waitQueueSize)
+	: mWaitQueueTicket{}
+	, mEnterWaitQueue(waitQueueSize)
+{
+}
+
+int32 WaitQueueManager::EnterWaitQueue(const SessionRef& pSession)
+{
+	if (mEnterWaitQueue.TryEnqueue(pSession))
+	{
+		const std::atomic_ref<int32> waitTicket(mWaitQueueTicket.waitTicket);
+		const int32 retTicket = waitTicket.fetch_add(1);
+		return retTicket;
+	}
+
+	return -1;
+}
+
+SessionRef WaitQueueManager::DequeueWaitQueue()
+{
+	const std::atomic_ref<int32> enterTicket(mWaitQueueTicket.enterTicket);
+	while (!mEnterWaitQueue.IsEmpty())
+	{
+		WeakSessionRef pWeakSession;
+		if (mEnterWaitQueue.TryDequeue(pWeakSession) == true)
+		{
+			// ReSharper disable once CppExpressionWithoutSideEffects
+			enterTicket.fetch_add(1);
+
+			SessionRef pSession = pWeakSession.lock();
+			if (pSession == nullptr)
+			{
+				continue;
+			}
+
+			return pSession;
+		}
+	}
+
+	TicketInfo expected{};
+	const std::atomic_ref<TicketInfo> ticketInfo(mWaitQueueTicket);
+	do
+	{
+		expected.waitTicket = mWaitQueueTicket.enterTicket;
+		expected.enterTicket = mWaitQueueTicket.enterTicket;
+
+	} while (ticketInfo.compare_exchange_weak(expected, { 0,0 }));
+
+	return nullptr;
+}
+
+int32 WaitQueueManager::GetWaitCount(const int32 myTicket) const
+{
+	const int32 enterTicket = mWaitQueueTicket.enterTicket;
+
+	if (enterTicket > myTicket)
+	{
+		return enterTicket - myTicket;
+	}
+
+	return 0;
+}

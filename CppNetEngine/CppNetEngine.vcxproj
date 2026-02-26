@@ -230,6 +230,7 @@
     <ClInclude Include="ThreadManager.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniquePtrUtils.h" />
+    <ClInclude Include="WaitQueueManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CrashReporter.cpp" />
@@ -255,6 +256,7 @@
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SocketUtils.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
+    <ClCompile Include="WaitQueueManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

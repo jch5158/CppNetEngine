@@ -18,7 +18,7 @@ void GameSession::OnConnected()
 	fmt::print(L"Client Connect\n");
 }
 
-void GameSession::OnEnterWaitQueue()
+void GameSession::OnEnterWaitQueue(const int32 waitTicket)
 {
 }
 

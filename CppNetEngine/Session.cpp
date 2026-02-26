@@ -7,17 +7,16 @@
 
 Session::Session()
 	: mSessionIndex(-1)
-	, mConnectEvent()
-	, mDisconnectEvent()
-	, mReceiveEvent()
-	, mSendEvent()
-	, mpService()
-	, mSocket(INVALID_SOCKET)
-	, mNetAddress()
-	, mWaitTicket(-1)
-	, mSessionState(eSessionState::Disconnected)
-	, mNetReceiveBuffer()
-	, mSendQueue(65535)
+	  , mConnectEvent()
+	  , mDisconnectEvent()
+	  , mReceiveEvent()
+	  , mSendEvent()
+	  , mpService()
+	  , mSocket(INVALID_SOCKET)
+	  , mNetAddress()
+	  , mSessionState(eSessionState::Disconnected)
+	  , mNetReceiveBuffer()
+	  , mSendQueue(65535)
 {
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
@@ -52,59 +51,6 @@ void Session::Dispatch(IocpEvent& iocpEvent, const uint32 numOfBytes)
 	}
 }
 
-void Session::setSessionIndex(const int32 sessionIndex)
-{
-	mSessionIndex = sessionIndex;
-}
-
-void Session::setService(const ServiceRef& pService)
-{
-	mpService = pService;
-}
-
-void Session::setNetAddress(const NetAddress& address)
-{
-	mNetAddress = address;
-}
-
-void Session::setWaitTicket(const int32 waitCount)
-{
-	mWaitTicket.store(waitCount);
-}
-
-bool Session::setSessionWaiting()
-{
-	auto expected = eSessionState::Disconnected;
-
-	return mSessionState.compare_exchange_weak(expected, eSessionState::Disconnected);
-}
-
-bool Session::setWaitingToConnected()
-{
-	mWaitTicket.store(-1);
-
-	auto expected = eSessionState::Waiting;
-	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
-}
-
-bool Session::setSessionConnected()
-{
-	auto expected = eSessionState::Disconnected;
-	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
-}
-
-bool Session::setSessionInGame()
-{
-	auto expected = eSessionState::Connected;
-
-	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
-}
-
-bool Session::setSessionDisconnected()
-{
-	return mSessionState.exchange(eSessionState::Disconnected) != eSessionState::Disconnected;
-}
-
 int32 Session::GetSessionIndex() const
 {
 	return mSessionIndex;
@@ -133,16 +79,6 @@ NetReceiveBuffer<>& Session::GetNetReceiveBuffer()
 SessionRef Session::GetSessionRef()
 {
 	return std::static_pointer_cast<Session>(shared_from_this());
-}
-
-int32 Session::GetWaitTicket() const
-{
-	if (mSessionState.load() != eSessionState::Waiting)
-	{
-		return -1;
-	}
-
-	return mWaitTicket;
 }
 
 bool Session::IsSessionInGame() const
@@ -342,10 +278,17 @@ void Session::ProcessConnect()
 		setSessionConnected();
 		OnConnected();
 	}
-	else if (GetService()->EnterWaitQueue(GetSessionRef()) == true)
+	else
 	{
+		const int32 waitTicket = GetService()->EnterWaitQueue(GetSessionRef());
+		if (waitTicket == -1)
+		{
+			disconnect(eDisconnectReason::ServerFull);
+			return;
+		}
+
 		setSessionWaiting();
-		OnEnterWaitQueue();
+		OnEnterWaitQueue(waitTicket);
 	}
 
 	RegisterReceive();
@@ -356,8 +299,7 @@ void Session::ProcessDisconnect()
 	mDisconnectEvent.ReleaseIocpObjectRef();
 
 	const int32 index = GetService()->ReleaseSession(GetSessionRef());
-
-	const SessionRef pWaitSession = GetService()->DequeueWaitQueue(index);
+	const SessionRef pWaitSession = GetService()->DequeueWaitQueue();
 	if (pWaitSession == nullptr)
 	{
 		GetService()->ReleaseSessionIndex(index);
@@ -413,6 +355,50 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 	mNetReceiveBuffer.MoveReadPos(processLen);
 
 	RegisterReceive();
+}
+
+void Session::setService(const ServiceRef& pService)
+{
+	mpService = pService;
+}
+
+void Session::setNetAddress(const NetAddress& address)
+{
+	mNetAddress = address;
+}
+
+void Session::setSessionIndex(const int32 sessionIndex)
+{
+	mSessionIndex = sessionIndex;
+}
+
+bool Session::setSessionWaiting()
+{
+	auto expected = eSessionState::Disconnected;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::Disconnected);
+}
+
+bool Session::setWaitingToConnected()
+{
+	auto expected = eSessionState::Waiting;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
+}
+
+bool Session::setSessionConnected()
+{
+	auto expected = eSessionState::Disconnected;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
+}
+
+bool Session::setSessionInGame()
+{
+	auto expected = eSessionState::Connected;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
+}
+
+bool Session::setSessionDisconnected()
+{
+	return mSessionState.exchange(eSessionState::Disconnected) != eSessionState::Disconnected;
 }
 
 bool Session::disconnect(const eDisconnectReason reason)

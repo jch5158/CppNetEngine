@@ -48,7 +48,7 @@ public:
 	virtual void Dispatch(class IocpEvent& iocpEvent, const uint32 numOfBytes) override;
 
 	virtual void OnConnected() = 0;
-	virtual void OnEnterWaitQueue() = 0;
+	virtual void OnEnterWaitQueue(const int32 waitTicket) = 0;
 	virtual void OnDisconnecting(const eDisconnectReason reason) = 0;
 	virtual void OnDisconnected() = 0;
 	virtual void OnSend(const int32 len) = 0;
@@ -61,8 +61,7 @@ public:
 	NetAddress& GetAddress();
 	NetReceiveBuffer<>& GetNetReceiveBuffer();
 	SessionRef GetSessionRef();
-	int32 GetWaitTicket() const;
-
+	
 	bool IsSessionInGame() const;
 	bool IsConnected() const;
 	bool IsDisconnected() const;
@@ -85,7 +84,6 @@ private:
 	void setService(const ServiceRef& pService);
 	void setNetAddress(const NetAddress& address);
 	void setSessionIndex(const int32 sessionIndex);
-	void setWaitTicket(const int32 waitCount);
 	bool setSessionWaiting();
 	bool setWaitingToConnected();
 	bool setSessionConnected();
@@ -102,7 +100,6 @@ private:
 	WeakServiceRef mpService;
 	SOCKET mSocket;
 	NetAddress mNetAddress;
-	std::atomic<int32> mWaitTicket;
 	std::atomic<eSessionState> mSessionState;
 	NetReceiveBuffer<> mNetReceiveBuffer;
 	std::atomic<bool> mbSendRegistered;

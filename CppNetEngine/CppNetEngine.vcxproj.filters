@@ -138,6 +138,9 @@
     <ClInclude Include="NetEngineLogger.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="WaitQueueManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -193,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="NetEngineLogger.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="WaitQueueManager.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
