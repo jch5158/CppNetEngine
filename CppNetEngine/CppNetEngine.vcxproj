@@ -203,7 +203,7 @@
     <ClInclude Include="IocpEvent.h" />
     <ClInclude Include="ISingleton.h" />
     <ClInclude Include="Job.h" />
-    <ClInclude Include="JobQueue.h" />
+    <ClInclude Include="Actor.h" />
     <ClInclude Include="JobScheduler.h" />
     <ClInclude Include="JobTimingWheel.h" />
     <ClInclude Include="Listener.h" />
@@ -225,6 +225,7 @@
     <ClInclude Include="Service.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="SessionReaper.h" />
     <ClInclude Include="SharedPtrUtils.h" />
     <ClInclude Include="SocketUtils.h" />
     <ClInclude Include="StlTypes.h" />
@@ -237,7 +238,7 @@
     <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="IocpCore.cpp" />
     <ClCompile Include="IocpEvent.cpp" />
-    <ClCompile Include="JobQueue.cpp" />
+    <ClCompile Include="Actor.cpp" />
     <ClCompile Include="JobScheduler.cpp" />
     <ClCompile Include="JobTimingWheel.cpp" />
     <ClCompile Include="Listener.cpp" />
@@ -256,6 +257,7 @@
     <ClCompile Include="Service.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SessionManager.cpp" />
+    <ClCompile Include="SessionReaper.cpp" />
     <ClCompile Include="SocketUtils.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
     <ClCompile Include="WaitQueueManager.cpp" />

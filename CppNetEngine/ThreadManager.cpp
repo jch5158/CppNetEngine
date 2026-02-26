@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "ThreadManager.h"
 
-#include "JobQueue.h"
+#include "Actor.h"
 #include "JobScheduler.h"
 
 ThreadManager::ThreadManager()

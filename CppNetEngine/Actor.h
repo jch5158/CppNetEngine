@@ -3,13 +3,14 @@
 #include "Job.h"
 #include "JobScheduler.h"
 
-class JobQueue : public std::enable_shared_from_this<JobQueue>
+class Actor : public std::enable_shared_from_this<Actor>
 {
 public:
 
 	using CallbackType = std::function<void()>;
 
-	explicit JobQueue();
+	explicit Actor();
+	virtual ~Actor() = default;
 
 	void DoAsync(const JobSchedulerRef& pScheduler, CallbackType&& callback)
 	{
@@ -44,6 +45,9 @@ public:
 	[[nodiscard]] int32 Count() const;
 
 private:
+	static std::atomic<int64> sSeedBase;
+
+	const int64 mSeed;
 	LockFreeQueue<JobRef> mJobQueue;
 	std::atomic<bool> mIsExecuting;
 };

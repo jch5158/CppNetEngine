@@ -42,6 +42,6 @@
 #include "NetEngineLogger.h"
 #include "IocpCore.h"
 #include "Job.h"
-#include "JobQueue.h"
+#include "Actor.h"
 #include "JobTimingWheel.h"
 #include "JobScheduler.h"

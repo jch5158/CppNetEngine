@@ -1,11 +1,11 @@
 ﻿#include "pch.h"
-#include "JobQueue.h"
+#include "Actor.h"
 #include "JobScheduler.h"
 
 JobScheduler::JobScheduler()
 	: mJobIocpHandle(nullptr)
 	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
-	, mDispatchQueue()
+	, mActorQueue()
 	, mpOnHandleError([](const uint32)->void {})
 {
 	mJobIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
@@ -18,7 +18,7 @@ JobScheduler::JobScheduler()
 JobScheduler::JobScheduler(std::function<void(const uint32)> pOnHandleError)
 	: mJobIocpHandle(nullptr)
 	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
-	, mDispatchQueue()
+	, mActorQueue()
 	, mpOnHandleError(std::move(pOnHandleError))
 {
 }
@@ -31,11 +31,11 @@ JobScheduler::~JobScheduler()
 	}
 }
 
-void JobScheduler::Push(const JobQueueRef& pJobQueue)
+void JobScheduler::Push(const ActorRef& pActor)
 {
-	if (mDispatchQueue.TryEnqueue(pJobQueue) == false)
+	if (mActorQueue.TryEnqueue(pActor) == false)
 	{
-		NET_ENGINE_LOG_ERROR("JobScheduler::Push - mDispatchQueue.TryEnqueue is failed, mDispatchQueue.Count() : {}", mDispatchQueue.Count());
+		NET_ENGINE_LOG_ERROR("JobScheduler::Push - mActorQueue.TryEnqueue is failed, mActorQueue.Count() : {}", mActorQueue.Count());
 		return;
 	}
 
@@ -57,17 +57,17 @@ void JobScheduler::Dispatch()
 	{
 		do
 		{
-			JobQueueRef pJobQueue = nullptr;
-			if (!mDispatchQueue.TryDequeue(pJobQueue))
+			ActorRef pActor = nullptr;
+			if (!mActorQueue.TryDequeue(pActor))
 			{
 				break;
 			}
 
-			pJobQueue->Execute(jobTimeBudget);
+			pActor->Execute(jobTimeBudget);
 
-			if (pJobQueue->Count() > 0)
+			if (pActor->Count() > 0)
 			{
-				Push(pJobQueue);
+				Push(pActor);
 			}
 		} while (!jobTimeBudget.IsExpired());
 	}
@@ -84,16 +84,16 @@ void JobScheduler::Dispatch()
 	mTimingWheel.Tick();
 }
 
-void JobScheduler::Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const int64 delayMs)
+void JobScheduler::Reserve(const JobRef& pJob, const ActorRef& pOwner, const int64 delayMs)
 {
-	mTimingWheel.Reserve(pJob, pOwnerQueue, shared_from_this(), delayMs);
+	mTimingWheel.Reserve(pJob, pOwner, shared_from_this(), delayMs);
 }
 
 void JobScheduler::Flush()
 {
-	JobQueueRef pJobQueue = nullptr;
-	while (mDispatchQueue.TryDequeue(pJobQueue))
+	ActorRef pActor = nullptr;
+	while (mActorQueue.TryDequeue(pActor))
 	{
-		pJobQueue->Flush();
+		pActor->Flush();
 	}
 }

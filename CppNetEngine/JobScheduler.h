@@ -52,15 +52,15 @@ public:
 	explicit JobScheduler(std::function<void(const uint32)> pOnHandleError);
 	~JobScheduler();
 
-	void Push(const JobQueueRef& pJobQueue);
+	void Push(const ActorRef& pActor);
 	void Dispatch();
-	void Reserve(const JobRef& pJob, const JobQueueRef& pOwnerQueue, const int64 delayMs);
+	void Reserve(const JobRef& pJob, const ActorRef& pOwner, const int64 delayMs);
 	void Flush();
 	
 private:
 
 	HANDLE mJobIocpHandle;
 	JobTimingWheel mTimingWheel;
-	LockFreeQueue<JobQueueRef> mDispatchQueue;
+	LockFreeQueue<ActorRef> mActorQueue;
 	std::function<void(const uint32)> mpOnHandleError;
 };

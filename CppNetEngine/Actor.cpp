@@ -1,14 +1,15 @@
 ﻿#include "pch.h"
-#include "JobQueue.h"
+#include "Actor.h"
 #include "JobScheduler.h"
 
-JobQueue::JobQueue()
-	: mJobQueue()
+Actor::Actor()
+	: mSeed(sSeedBase.fetch_add(1))
+	, mJobQueue()
 	, mIsExecuting(false)
 {
 }
 
-void JobQueue::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
+void Actor::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
 {
 	if (mJobQueue.TryEnqueue(pJob) == false)
 	{
@@ -19,7 +20,7 @@ void JobQueue::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
 	pScheduler->Push(shared_from_this());
 }
 
-void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
+void Actor::Execute(const JobTimeBudget& jobTimeBudget)
 {
 	if (mIsExecuting.exchange(true) == true)
 	{
@@ -41,7 +42,7 @@ void JobQueue::Execute(const JobTimeBudget& jobTimeBudget)
 	mIsExecuting.store(false);
 }
 
-void JobQueue::Flush()
+void Actor::Flush()
 {
 	JobRef pJob;
 	while (mJobQueue.TryDequeue(pJob))
@@ -50,12 +51,14 @@ void JobQueue::Flush()
 	}
 }
 
-void JobQueue::Clear()
+void Actor::Clear()
 {
 	mJobQueue.Clear();
 }
 
-int32 JobQueue::Count() const
+int32 Actor::Count() const
 {
 	return mJobQueue.Count();
 }
+
+std::atomic<int64> Actor::sSeedBase = 0;

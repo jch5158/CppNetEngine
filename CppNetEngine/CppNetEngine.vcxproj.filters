@@ -120,7 +120,7 @@
     <ClInclude Include="Job.h">
       <Filter>Job</Filter>
     </ClInclude>
-    <ClInclude Include="JobQueue.h">
+    <ClInclude Include="Actor.h">
       <Filter>Job</Filter>
     </ClInclude>
     <ClInclude Include="JobScheduler.h">
@@ -142,6 +142,9 @@
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="SessionManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionReaper.h">
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
@@ -182,7 +185,7 @@
     <ClCompile Include="SendBufferAllocator.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="JobQueue.cpp">
+    <ClCompile Include="Actor.cpp">
       <Filter>Job</Filter>
     </ClCompile>
     <ClCompile Include="JobScheduler.cpp">
@@ -204,6 +207,9 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="SessionManager.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionReaper.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

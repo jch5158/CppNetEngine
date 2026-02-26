@@ -114,7 +114,7 @@ using ClientServiceConstRef = SharedPtr<const ClientService>;
 using JobRef = SharedPtr<class Job>;
 using JobConstRef = SharedPtr<const Job>;
 
-using JobQueueRef = SharedPtr<class JobQueue>;
-using JobQueueConstRef = SharedPtr<const JobQueue>;
-using JobQueueWeak = WeakPtr<class JobQueue>;
-using JobQueueConstWeak = WeakPtr<const JobQueue>;
+using ActorRef = SharedPtr<class Actor>;
+using ActorConstRef = SharedPtr<const Actor>;
+using ActorWeak = WeakPtr<Actor>;
+using ActorConstWeak = WeakPtr<const Actor>;
