@@ -70,6 +70,7 @@ public:
 	bool IsSessionInGame() const;
 
 	bool IsConnected() const;
+	bool IsDisconnected() const;
 	bool Connect();
 	bool Disconnect();
 	void Send(const INetBufferRef& pSendBuffer);

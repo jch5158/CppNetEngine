@@ -129,6 +129,11 @@ bool Session::IsConnected() const
 	return mSessionState.load() == eSessionState::Connected;
 }
 
+bool Session::IsDisconnected() const
+{
+	return mSessionState.load() == eSessionState::Disconnected;
+}
+
 bool Session::Connect()
 {
 	return RegisterConnect();
@@ -142,7 +147,7 @@ bool Session::Disconnect()
 
 void Session::Send(const INetBufferRef& pSendBuffer)
 {
-	if (!IsConnected())
+	if (IsDisconnected())
 	{
 		return;
 	}
@@ -222,7 +227,7 @@ bool Session::RegisterDisconnect()
 
 void Session::RegisterSend()
 {
-	if (!IsConnected())
+	if (IsDisconnected())
 	{
 		return;
 	}
@@ -266,7 +271,7 @@ void Session::RegisterSend()
 
 void Session::RegisterReceive()
 {
-	if (IsConnected() == false)
+	if (IsDisconnected())
 	{
 		return;
 	}
