@@ -1,6 +1,11 @@
 ﻿#include "pch.h"
 #include "PacketSession.h"
 
+PacketSession::PacketSession()
+	:mTimeoutTracker()
+{
+}
+
 PacketSessionRef PacketSession::GetPacketSessionRef()
 {
 	return static_pointer_cast<PacketSession>(shared_from_this());
@@ -19,11 +24,17 @@ int32 PacketSession::OnReceive(byte* pBuffer, const int32 len)
 		}
 
 		auto [size, id] = *(reinterpret_cast<PacketHeader*>(&pBuffer[processLen]));
+		if (std::cmp_less(size, SIZE_OF_16(PacketHeader)) || std::cmp_less(INetBuffer::MAX_BUFFER_SIZE - 1, size))
+		{
+			return -1;
+		}
+
 		if (std::cmp_less(dataSize, size))
 		{
 			break;
 		}
 
+		mTimeoutTracker.UpdateActivity();
 		OnRecvPacket(&pBuffer[processLen], size);
 
 		processLen += size;

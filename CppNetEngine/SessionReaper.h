@@ -7,8 +7,6 @@ public:
 	SessionReaper();
 	virtual ~SessionReaper() override = default;
 
-private:
-
-	PriorityQueue<WeakSessionRef> mExpiredQueue;
+	void ReapSession(const WeakSessionRef& pWeakSession);
 };
 
