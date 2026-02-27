@@ -26,17 +26,20 @@ namespace Protocol {
           string.Concat(
             "Cg5QYWNrZXRJZC5wcm90bxIIUHJvdG9jb2waIGdvb2dsZS9wcm90b2J1Zi9k",
             "ZXNjcmlwdG9yLnByb3RvKjMKBWVSb2xlEg0KCVJPTEVfTk9ORRAAEgoKBkNM",
-            "SUVOVBABEg8KC0dBTUVfU0VSVkVSEAIqoAEKCWVQYWNrZXRJZBILCgdJRF9O",
-            "T05FEAASFAoPSURfQzJTX0VDSE9fUkVREOgHEhQKD0lEX1MyQ19FQ0hPX1JF",
-            "UxDpBxIVChBJRF9DMlNfTE9HSU5fUkVRENAPEhUKEElEX1MyQ19MT0dJTl9S",
-            "RVMQ0Q8SGgoVSURfUzJDX0xPR0lOX1RFU1RfUkVTELgXEhAKC0lEX0MyU19N",
-            "T1ZFELkXOkIKBnNlbmRlchIfLmdvb2dsZS5wcm90b2J1Zi5NZXNzYWdlT3B0",
-            "aW9ucxjQhgMgASgOMg8uUHJvdG9jb2wuZVJvbGU6RAoIcmVjZWl2ZXISHy5n",
-            "b29nbGUucHJvdG9idWYuTWVzc2FnZU9wdGlvbnMY0YYDIAEoDjIPLlByb3Rv",
-            "Y29sLmVSb2xlYgZwcm90bzM="));
+            "SUVOVBABEg8KC0dBTUVfU0VSVkVSEAIqVQoMZVNlcnZpY2VUeXBlEhUKEVNF",
+            "UlZJQ0VfVFlQRV9OT05FEAASLgoSU0VSVklDRV9UWVBFX0xPR0lOEAEaFpK1",
+            "GBJMb2dpblBhY2tldEhhbmRsZXIqiAEKCWVQYWNrZXRJZBILCgdJRF9OT05F",
+            "EAASFQoPSURfQzJTX0VDSE9fUkVREIGABBIVCg9JRF9TMkNfRUNIT19SRVMQ",
+            "goAEEhYKEElEX0MyU19MT0dJTl9SRVEQg4AEEhYKEElEX1MyQ19MT0dJTl9S",
+            "RVMQhIAEEhAKC0lEX0MyU19NT1ZFEIEEOkIKBnNlbmRlchIfLmdvb2dsZS5w",
+            "cm90b2J1Zi5NZXNzYWdlT3B0aW9ucxjQhgMgASgOMg8uUHJvdG9jb2wuZVJv",
+            "bGU6RAoIcmVjZWl2ZXISHy5nb29nbGUucHJvdG9idWYuTWVzc2FnZU9wdGlv",
+            "bnMY0YYDIAEoDjIPLlByb3RvY29sLmVSb2xlOjkKDGhhbmRsZXJfbmFtZRIh",
+            "Lmdvb2dsZS5wcm90b2J1Zi5FbnVtVmFsdWVPcHRpb25zGNKGAyABKAliBnBy",
+            "b3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Reflection.DescriptorReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Protocol.eRole), typeof(global::Protocol.ePacketId), }, new pb::Extension[] { PacketIdExtensions.Sender, PacketIdExtensions.Receiver }, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Protocol.eRole), typeof(global::Protocol.eServiceType), typeof(global::Protocol.ePacketId), }, new pb::Extension[] { PacketIdExtensions.Sender, PacketIdExtensions.Receiver, PacketIdExtensions.HandlerName }, null));
     }
     #endregion
 
@@ -47,6 +50,8 @@ namespace Protocol {
       new pb::Extension<global::Google.Protobuf.Reflection.MessageOptions, global::Protocol.eRole>(50000, pb::FieldCodec.ForEnum(400000, x => (int) x, x => (global::Protocol.eRole) x, global::Protocol.eRole.RoleNone));
     public static readonly pb::Extension<global::Google.Protobuf.Reflection.MessageOptions, global::Protocol.eRole> Receiver =
       new pb::Extension<global::Google.Protobuf.Reflection.MessageOptions, global::Protocol.eRole>(50001, pb::FieldCodec.ForEnum(400008, x => (int) x, x => (global::Protocol.eRole) x, global::Protocol.eRole.RoleNone));
+    public static readonly pb::Extension<global::Google.Protobuf.Reflection.EnumValueOptions, string> HandlerName =
+      new pb::Extension<global::Google.Protobuf.Reflection.EnumValueOptions, string>(50002, pb::FieldCodec.ForString(400018, ""));
   }
 
   #region Enums
@@ -56,14 +61,18 @@ namespace Protocol {
     [pbr::OriginalName("GAME_SERVER")] GameServer = 2,
   }
 
+  public enum eServiceType {
+    [pbr::OriginalName("SERVICE_TYPE_NONE")] ServiceTypeNone = 0,
+    [pbr::OriginalName("SERVICE_TYPE_LOGIN")] ServiceTypeLogin = 1,
+  }
+
   public enum ePacketId {
     [pbr::OriginalName("ID_NONE")] IdNone = 0,
-    [pbr::OriginalName("ID_C2S_ECHO_REQ")] IdC2SEchoReq = 1000,
-    [pbr::OriginalName("ID_S2C_ECHO_RES")] IdS2CEchoRes = 1001,
-    [pbr::OriginalName("ID_C2S_LOGIN_REQ")] IdC2SLoginReq = 2000,
-    [pbr::OriginalName("ID_S2C_LOGIN_RES")] IdS2CLoginRes = 2001,
-    [pbr::OriginalName("ID_S2C_LOGIN_TEST_RES")] IdS2CLoginTestRes = 3000,
-    [pbr::OriginalName("ID_C2S_MOVE")] IdC2SMove = 3001,
+    [pbr::OriginalName("ID_C2S_ECHO_REQ")] IdC2SEchoReq = 65537,
+    [pbr::OriginalName("ID_S2C_ECHO_RES")] IdS2CEchoRes = 65538,
+    [pbr::OriginalName("ID_C2S_LOGIN_REQ")] IdC2SLoginReq = 65539,
+    [pbr::OriginalName("ID_S2C_LOGIN_RES")] IdS2CLoginRes = 65540,
+    [pbr::OriginalName("ID_C2S_MOVE")] IdC2SMove = 513,
   }
 
   #endregion

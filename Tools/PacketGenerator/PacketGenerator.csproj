@@ -2,14 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net10.0-windows8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishAot>False</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<OutputPath>Binary\$(Configuration)\</OutputPath>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PlatformTarget>x64</PlatformTarget>
+	<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+	<BaseOutputPath>..\Binaries\PacketGenerator</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +25,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command=":: protoc 실행 파일 경로&#xD;&#xA;set &quot;PROTOC_PATH=$(PkgGoogle_Protobuf_Tools)\tools\windows_x64&quot;&#xD;&#xA;&#xD;&#xA;:: 구글 표준 proto 파일들(descriptor.proto 등)이 위치한 tools 폴더 경로 추가&#xD;&#xA;set &quot;GOOGLE_INC=$(PkgGoogle_Protobuf_Tools)\tools&quot;&#xD;&#xA;&#xD;&#xA;set &quot;PROTO_DIR=$(SolutionDir)Common\Protocol&quot;&#xD;&#xA;set &quot;OUT_DIR=$(ProjectDir)Generated&quot;&#xD;&#xA;&#xD;&#xA;if not exist &quot;%25OUT_DIR%25&quot; mkdir &quot;%25OUT_DIR%25&quot;&#xD;&#xA;&#xD;&#xA;:: -I=&quot;%25GOOGLE_INC%25&quot; 가 추가됨&#xD;&#xA;for %25%25f in (&quot;%25PROTO_DIR%25\*.proto&quot;) do (&#xD;&#xA;    &quot;%25PROTOC_PATH%25\protoc.exe&quot; -I=&quot;%25PROTO_DIR%25&quot; -I=&quot;%25GOOGLE_INC%25&quot; --csharp_out=&quot;%25OUT_DIR%25&quot; &quot;%25%25f&quot;&#xD;&#xA;)" />
+    <Exec Command=":: protoc 실행 파일 경로&#xD;&#xA;set &quot;PROTOC_PATH=$(PkgGoogle_Protobuf_Tools)\tools\windows_x64&quot;&#xD;&#xA;&#xD;&#xA;:: 구글 표준 proto 파일들(descriptor.proto 등)이 위치한 tools 폴더 경로 추가&#xD;&#xA;set &quot;GOOGLE_INC=$(PkgGoogle_Protobuf_Tools)\tools&quot;&#xD;&#xA;&#xD;&#xA;set &quot;PROTO_DIR=$(SolutionDir)Common\Protocol&quot;&#xD;&#xA;set &quot;OUT_DIR=$(ProjectDir)Generated&quot;&#xD;&#xA;&#xD;&#xA;if not exist &quot;%25OUT_DIR%25&quot; mkdir &quot;%25OUT_DIR%25&quot;&#xD;&#xA;&#xD;&#xA;:: -I=&quot;%25GOOGLE_INC%25&quot; 가 추가됨&#xD;&#xA;for %25%25f in (&quot;%25PROTO_DIR%25\*.proto&quot;) do (&#xD;&#xA;    &quot;%25PROTOC_PATH%25\protoc.exe&quot; -I=&quot;%25PROTO_DIR%25&quot; -I=&quot;%25GOOGLE_INC%25&quot; --csharp_out=&quot;%25OUT_DIR%25&quot; --descriptor_set_out=&quot;%25PROTO_DIR%25\%25%25~nf.desc&quot; --include_imports &quot;%25%25f&quot;&#xD;&#xA;)" />
   </Target>
 
 </Project>

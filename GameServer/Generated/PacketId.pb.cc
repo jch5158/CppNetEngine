@@ -26,7 +26,7 @@ namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 namespace Protocol {
 }  // namespace Protocol
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_PacketId_2eproto[2];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_PacketId_2eproto[3];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_PacketId_2eproto = nullptr;
 const ::uint32_t TableStruct_PacketId_2eproto::offsets[1] = {};
@@ -36,15 +36,16 @@ const char descriptor_table_protodef_PacketId_2eproto[] ABSL_ATTRIBUTE_SECTION_V
     protodesc_cold) = {
     "\n\016PacketId.proto\022\010Protocol\032 google/proto"
     "buf/descriptor.proto*3\n\005eRole\022\r\n\tROLE_NO"
-    "NE\020\000\022\n\n\006CLIENT\020\001\022\017\n\013GAME_SERVER\020\002*\240\001\n\teP"
-    "acketId\022\013\n\007ID_NONE\020\000\022\024\n\017ID_C2S_ECHO_REQ\020"
-    "\350\007\022\024\n\017ID_S2C_ECHO_RES\020\351\007\022\025\n\020ID_C2S_LOGIN"
-    "_REQ\020\320\017\022\025\n\020ID_S2C_LOGIN_RES\020\321\017\022\032\n\025ID_S2C"
-    "_LOGIN_TEST_RES\020\270\027\022\020\n\013ID_C2S_MOVE\020\271\027:B\n\006"
-    "sender\022\037.google.protobuf.MessageOptions\030"
-    "\320\206\003 \001(\0162\017.Protocol.eRole:D\n\010receiver\022\037.g"
-    "oogle.protobuf.MessageOptions\030\321\206\003 \001(\0162\017."
-    "Protocol.eRoleb\006proto3"
+    "NE\020\000\022\n\n\006CLIENT\020\001\022\017\n\013GAME_SERVER\020\002*=\n\014eSe"
+    "rviceType\022\025\n\021SERVICE_TYPE_NONE\020\000\022\026\n\022SERV"
+    "ICE_TYPE_LOGIN\020\001*\210\001\n\tePacketId\022\013\n\007ID_NON"
+    "E\020\000\022\025\n\017ID_C2S_ECHO_REQ\020\201\200\004\022\025\n\017ID_S2C_ECH"
+    "O_RES\020\202\200\004\022\026\n\020ID_C2S_LOGIN_REQ\020\203\200\004\022\026\n\020ID_"
+    "S2C_LOGIN_RES\020\204\200\004\022\020\n\013ID_C2S_MOVE\020\201\004:B\n\006s"
+    "ender\022\037.google.protobuf.MessageOptions\030\320"
+    "\206\003 \001(\0162\017.Protocol.eRole:D\n\010receiver\022\037.go"
+    "ogle.protobuf.MessageOptions\030\321\206\003 \001(\0162\017.P"
+    "rotocol.eRoleb\006proto3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_PacketId_2eproto_deps[1] =
     {
@@ -54,7 +55,7 @@ static ::absl::once_flag descriptor_table_PacketId_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_PacketId_2eproto = {
     false,
     false,
-    422,
+    461,
     descriptor_table_protodef_PacketId_2eproto,
     "PacketId.proto",
     &descriptor_table_PacketId_2eproto_once,
@@ -77,12 +78,21 @@ PROTOBUF_CONSTINIT const uint32_t eRole_internal_data_[] = {
 bool eRole_IsValid(int value) {
   return 0 <= value && value <= 2;
 }
-const ::google::protobuf::EnumDescriptor* ePacketId_descriptor() {
+const ::google::protobuf::EnumDescriptor* eServiceType_descriptor() {
   ::google::protobuf::internal::AssignDescriptors(&descriptor_table_PacketId_2eproto);
   return file_level_enum_descriptors_PacketId_2eproto[1];
 }
+PROTOBUF_CONSTINIT const uint32_t eServiceType_internal_data_[] = {
+    131072u, 0u, };
+bool eServiceType_IsValid(int value) {
+  return 0 <= value && value <= 1;
+}
+const ::google::protobuf::EnumDescriptor* ePacketId_descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_PacketId_2eproto);
+  return file_level_enum_descriptors_PacketId_2eproto[2];
+}
 PROTOBUF_CONSTINIT const uint32_t ePacketId_internal_data_[] = {
-    65536u, 393216u, 2001u, 1001u, 3001u, 1000u, 2000u, 3000u, };
+    65536u, 327680u, 65539u, 65537u, 65540u, 513u, 65538u, };
 bool ePacketId_IsValid(int value) {
   return ::_pbi::ValidateEnum(value, ePacketId_internal_data_);
 }

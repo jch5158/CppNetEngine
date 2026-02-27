@@ -4,7 +4,9 @@ using Protocol;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
+using static Google.Protobuf.Reflection.FeatureSet.Types;
 
 namespace PacketGenerator
 {
@@ -24,14 +26,21 @@ namespace PacketGenerator
                     if (!Enum.TryParse<eRole>(projectReceiver.Role, true, out var receiver) || !Enum.TryParse<eRole>(projectSender.Role, true, out var sender))
                     {
                         Console.WriteLine($"[Error] 프로젝트 '{projectReceiver.Name}'의 역할 '{projectReceiver.Role}'이(가) 유효하지 않습니다.");
-                        continue;
+                        return false;
                     }
 
                     var protoPath = Path.Combine(baseDirPath, @"..\..\..\..\Common\Protocol");
                     var outputPath = Path.Combine(baseDirPath, @$"..\..\..\..\{projectReceiver.Name}\Generated");
-                    if (!GenerateFile(receiver, sender, projectReceiver.Name, projectSender.Name, protoPath, outputPath))
+                    if (!GenerateHandlerFile(receiver, sender, protoPath, outputPath))
                     {
                         Console.WriteLine("GenerateFile is Failed");
+                        return false;
+                    }
+
+                    if (!GenerateServiceTypeHandlerFile(receiver, sender, protoPath, outputPath))
+                    {
+                        Console.WriteLine("GenerateFile is Failed");
+                        return false;
                     }
                 }
             }
@@ -39,8 +48,131 @@ namespace PacketGenerator
             return true;
         }
 
-        public static bool GenerateFile(eRole receiver, eRole sender, string prjReceiverName, string prjSenderName,
-            string protoDirPath, string outputDirPath)
+
+        public static bool GenerateServiceTypeHandlerFile(eRole receiver, eRole sender, string protoDirPath, string outputDirPath)
+        {
+            var descFiles = Directory.GetFiles(protoDirPath, "*.desc");
+            if (descFiles.Length == 0)
+            {
+                Console.WriteLine($"[Error] '{protoDirPath}' 경로에서 .desc 파일을 찾을 수 없습니다.");
+                return false;
+            }
+
+            const string fileName = "PacketServiceTypeHandler.h";
+            var outputFilePath = Path.Combine(outputDirPath, fileName);
+
+            var includeString = string.Empty;
+            var initHandlerString = string.Empty;
+            var handleInitString = string.Empty;
+
+            foreach (var protoFilePath in descFiles)
+            {
+                var protoName = Path.GetFileNameWithoutExtension(protoFilePath);
+                if (protoName is "Enum" or "Struct")
+                {
+                    continue;
+                }
+
+                if (protoName is "PacketId")
+                {
+                    if (GenerateHandleInitString(protoFilePath, ref handleInitString) == false)
+                    {
+                        Console.WriteLine("GenerateFile is Failed");
+                        return false;
+                    }
+                }
+                else
+                {
+                    GenerateIncludeString(protoName, ref includeString);
+
+                    GenerateServiceTypeInitString(protoName, ref initHandlerString);
+                }
+            }
+
+            var serviceTypeHandlerContent = string.Format(PacketFormatter.HANDLE_SERVICE_TYPE_FILE_FORMAT,
+                includeString,
+                initHandlerString,
+                handleInitString);
+
+            try
+            {
+                var directoryPath = Path.GetDirectoryName(outputFilePath);
+
+                if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                File.WriteAllText(outputFilePath, serviceTypeHandlerContent);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[GenerateServiceTypeHandlerFile] 패킷 핸들러 생성 중 오류 발생: {e.Message}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static void GenerateIncludeString(string protoName, ref string includeString)
+        {
+            includeString += string.Format(PacketFormatter.SERVICE_TYPE_INCLUDE_FORMAT, protoName);
+        }
+
+        public static void GenerateServiceTypeInitString(string protoName, ref string initHandlerString)
+        {
+            initHandlerString += string.Format(PacketFormatter.SERVICE_TYPE_INIT_FORMAT, protoName);
+        }
+
+        public static bool GenerateHandleInitString(string filePath, ref string handleInitString)
+        {
+            try
+            {
+                // 1. 레지스트리 생성 및 등록 (이 코드가 없으면 무조건 Unknown으로 빠집니다!)
+                var registry = new ExtensionRegistry
+                {
+                    PacketIdExtensions.Sender,
+                    PacketIdExtensions.Receiver,
+                    PacketIdExtensions.HandlerName
+                };
+
+                using var stream = File.OpenRead(filePath);
+                var descriptorSet = FileDescriptorSet.Parser.WithExtensionRegistry(registry).ParseFrom(stream);
+                foreach (var fileProto in descriptorSet.File)
+                {
+                    foreach (var enumType in fileProto.EnumType)
+                    {
+                        foreach (var enumValue in enumType.Value)
+                        {
+                            var options = enumValue.Options;
+                            if (options != null && options.HasExtension(PacketIdExtensions.HandlerName))
+                            {
+                                // ToString() 없이 식별자 자체를 전달
+                                string handlerName = options.GetExtension(PacketIdExtensions.HandlerName);
+                                string enumName = enumValue.Name; // 예: SERVICE_TYPE_LOGIN
+
+                                // 추출한 데이터를 바탕으로 핸들러 초기화 문자열 구성
+                                handleInitString += string.Format(
+                                    PacketFormatter.SERVICE_TYPE_HANDLE_INIT_FORMAT,
+                                    enumName,
+                                    handlerName
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[GenerateInitHandleString] 패킷 핸들러 생성 중 오류 발생: {e.Message}");
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool GenerateHandlerFile(eRole receiver, eRole sender, string protoDirPath, string outputDirPath)
         {
             var descFiles = Directory.GetFiles(protoDirPath, "*.desc");
             if (descFiles.Length == 0)
@@ -57,7 +189,7 @@ namespace PacketGenerator
                     continue;
                 }
 
-                var fileName = $"{sender.ToString()}{protoName.ToString()}PacketHandler.h";
+                var fileName = $"{protoName.ToString()}PacketHandler.h";
                 var outputFilePath = Path.Combine(outputDirPath, fileName);
 
                 if (!GenerateInitHandleString(receiver, sender, $"{protoName}.proto", protoFilePath, out var initHandleString))
@@ -77,7 +209,7 @@ namespace PacketGenerator
                     return false;
                 }
 
-                var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, sender.ToString(), protoName,
+                var handleFileContent = string.Format(PacketFormatter.HANDLE_FILE_FORMAT, protoName,
                     initHandleString,
                     handleFunctionDeclareString,
                     makeSendBufferFunctionString);
@@ -140,7 +272,7 @@ namespace PacketGenerator
                         }
 
                         var packetName = msg.Name;
-                        initHandleString += string.Format(PacketFormatter.INIT_FILE_FORMAT, "ID_" + packetName,
+                        initHandleString += string.Format(PacketFormatter.HANDLE_INIT_FORMAT, "ID_" + packetName,
                             packetName);
                     }
                 }
@@ -188,7 +320,7 @@ namespace PacketGenerator
                         }
 
                         var packetName = msg.Name;
-                        handleFunctionDeclareString += string.Format(PacketFormatter.DECLARE_FILE_FORMAT, packetName);
+                        handleFunctionDeclareString += string.Format(PacketFormatter.HANDLE_DECLARE_FORMAT, packetName);
                     }
                 }
             }
@@ -238,7 +370,7 @@ namespace PacketGenerator
                         }
 
                         var packetName = msg.Name;
-                        makeSendBufferFunctionString += string.Format(PacketFormatter.MAKE_SEND_BUFFER_FUNCTION_FORMAT,
+                        makeSendBufferFunctionString += string.Format(PacketFormatter.MAKE_SEND_BUFFER_FORMAT,
                             packetName, $"ID_{packetName}");
                     }
                 }

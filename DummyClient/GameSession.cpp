@@ -1,13 +1,15 @@
 ﻿#include "pch.h"
 #include "GameSession.h"
 
-#include "Generated/GameServerLoginPacketHandler.h"
+#include "PacketServiceTypeHandler.h"
+
+#include "Generated/LoginPacketHandler.h"
 
 void GameSession::OnConnected()
 {
 	Protocol::C2S_ECHO_REQ packet;
 	packet.set_ehcomsg("Hello World\n");
-	const auto pSendBuffer = GameServerLoginPacketHandler::MakeSendBuffer(packet);
+	const auto pSendBuffer = LoginPacketHandler::MakeSendBuffer(packet);
 	Send(pSendBuffer);
 }
 
@@ -31,7 +33,7 @@ void GameSession::OnRecvPacket(byte* pBuffer, const int32 len)
 {
 	PacketSessionRef pSession = GetPacketSessionRef();
 
-	if (GameServerLoginPacketHandler::GetInstance().HandlePacket(pSession, pBuffer, static_cast<uint16>(len)) == false)
+	if (PacketServiceTypeHandler::HandlePacketServiceType(static_cast<uint16>(len), pBuffer, pSession) == false)
 	{
 		pSession->Disconnect(eDisconnectReason::Kicked);
 	}

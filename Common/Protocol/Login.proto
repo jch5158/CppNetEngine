@@ -37,11 +37,3 @@ message S2C_LOGIN_RES
 
 	bool result = 1;
 }
-
-message S2C_LOGIN_TEST_RES
-{
-    option (sender) = GAME_SERVER;
-    option (receiver) = CLIENT;
-
-	bool result = 1;
-}

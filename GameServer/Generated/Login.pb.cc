@@ -26,31 +26,6 @@ namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 namespace Protocol {
 
-inline constexpr S2C_LOGIN_TEST_RES::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : result_{false},
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR S2C_LOGIN_TEST_RES::S2C_LOGIN_TEST_RES(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(::_pbi::ConstantInitialized()) {
-}
-struct S2C_LOGIN_TEST_RESDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR S2C_LOGIN_TEST_RESDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~S2C_LOGIN_TEST_RESDefaultTypeInternal() {}
-  union {
-    S2C_LOGIN_TEST_RES _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S2C_LOGIN_TEST_RESDefaultTypeInternal _S2C_LOGIN_TEST_RES_default_instance_;
-
 inline constexpr S2C_LOGIN_RES::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : result_{false},
@@ -204,15 +179,6 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::Protocol::S2C_LOGIN_RES, _impl_.result_),
-        ~0u,  // no _has_bits_
-        PROTOBUF_FIELD_OFFSET(::Protocol::S2C_LOGIN_TEST_RES, _internal_metadata_),
-        ~0u,  // no _extensions_
-        ~0u,  // no _oneof_case_
-        ~0u,  // no _weak_field_map_
-        ~0u,  // no _inlined_string_donated_
-        ~0u,  // no _split_
-        ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::Protocol::S2C_LOGIN_TEST_RES, _impl_.result_),
 };
 
 static const ::_pbi::MigrationSchema
@@ -221,14 +187,12 @@ static const ::_pbi::MigrationSchema
         {9, -1, -1, sizeof(::Protocol::S2C_ECHO_RES)},
         {18, -1, -1, sizeof(::Protocol::C2S_LOGIN_REQ)},
         {30, -1, -1, sizeof(::Protocol::S2C_LOGIN_RES)},
-        {39, -1, -1, sizeof(::Protocol::S2C_LOGIN_TEST_RES)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::Protocol::_C2S_ECHO_REQ_default_instance_._instance,
     &::Protocol::_S2C_ECHO_RES_default_instance_._instance,
     &::Protocol::_C2S_LOGIN_REQ_default_instance_._instance,
     &::Protocol::_S2C_LOGIN_RES_default_instance_._instance,
-    &::Protocol::_S2C_LOGIN_TEST_RES_default_instance_._instance,
 };
 const char descriptor_table_protodef_Login_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
@@ -238,8 +202,7 @@ const char descriptor_table_protodef_Login_2eproto[] ABSL_ATTRIBUTE_SECTION_VARI
     "\002\210\265\030\001\"O\n\rC2S_LOGIN_REQ\022\n\n\002id\030\001 \001(\004\022\n\n\002hp"
     "\030\002 \001(\r\022\016\n\006attack\030\003 \001(\r\022\014\n\004test\030\004 \001(\r:\010\200\265"
     "\030\001\210\265\030\002\")\n\rS2C_LOGIN_RES\022\016\n\006result\030\001 \001(\010:"
-    "\010\200\265\030\002\210\265\030\001\".\n\022S2C_LOGIN_TEST_RES\022\016\n\006resul"
-    "t\030\001 \001(\010:\010\200\265\030\002\210\265\030\001b\006proto3"
+    "\010\200\265\030\002\210\265\030\001b\006proto3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_Login_2eproto_deps[1] =
     {
@@ -249,13 +212,13 @@ static ::absl::once_flag descriptor_table_Login_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_Login_2eproto = {
     false,
     false,
-    305,
+    257,
     descriptor_table_protodef_Login_2eproto,
     "Login.proto",
     &descriptor_table_Login_2eproto_once,
     descriptor_table_Login_2eproto_deps,
     1,
-    5,
+    4,
     schemas,
     file_default_instances,
     TableStruct_Login_2eproto::offsets,
@@ -1212,212 +1175,6 @@ void S2C_LOGIN_RES::InternalSwap(S2C_LOGIN_RES* PROTOBUF_RESTRICT other) {
 }
 
 ::google::protobuf::Metadata S2C_LOGIN_RES::GetMetadata() const {
-  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-class S2C_LOGIN_TEST_RES::_Internal {
- public:
-};
-
-S2C_LOGIN_TEST_RES::S2C_LOGIN_TEST_RES(::google::protobuf::Arena* arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, _class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:Protocol.S2C_LOGIN_TEST_RES)
-}
-S2C_LOGIN_TEST_RES::S2C_LOGIN_TEST_RES(
-    ::google::protobuf::Arena* arena, const S2C_LOGIN_TEST_RES& from)
-    : S2C_LOGIN_TEST_RES(arena) {
-  MergeFrom(from);
-}
-inline PROTOBUF_NDEBUG_INLINE S2C_LOGIN_TEST_RES::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility,
-    ::google::protobuf::Arena* arena)
-      : _cached_size_{0} {}
-
-inline void S2C_LOGIN_TEST_RES::SharedCtor(::_pb::Arena* arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.result_ = {};
-}
-S2C_LOGIN_TEST_RES::~S2C_LOGIN_TEST_RES() {
-  // @@protoc_insertion_point(destructor:Protocol.S2C_LOGIN_TEST_RES)
-  SharedDtor(*this);
-}
-inline void S2C_LOGIN_TEST_RES::SharedDtor(MessageLite& self) {
-  S2C_LOGIN_TEST_RES& this_ = static_cast<S2C_LOGIN_TEST_RES&>(self);
-  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.~Impl_();
-}
-
-inline void* S2C_LOGIN_TEST_RES::PlacementNew_(const void*, void* mem,
-                                        ::google::protobuf::Arena* arena) {
-  return ::new (mem) S2C_LOGIN_TEST_RES(arena);
-}
-constexpr auto S2C_LOGIN_TEST_RES::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(S2C_LOGIN_TEST_RES),
-                                            alignof(S2C_LOGIN_TEST_RES));
-}
-PROTOBUF_CONSTINIT
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::google::protobuf::internal::ClassDataFull S2C_LOGIN_TEST_RES::_class_data_ = {
-    ::google::protobuf::internal::ClassData{
-        &_S2C_LOGIN_TEST_RES_default_instance_._instance,
-        &_table_.header,
-        nullptr,  // OnDemandRegisterArenaDtor
-        nullptr,  // IsInitialized
-        &S2C_LOGIN_TEST_RES::MergeImpl,
-        ::google::protobuf::Message::GetNewImpl<S2C_LOGIN_TEST_RES>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        &S2C_LOGIN_TEST_RES::SharedDtor,
-        ::google::protobuf::Message::GetClearImpl<S2C_LOGIN_TEST_RES>(), &S2C_LOGIN_TEST_RES::ByteSizeLong,
-            &S2C_LOGIN_TEST_RES::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-        PROTOBUF_FIELD_OFFSET(S2C_LOGIN_TEST_RES, _impl_._cached_size_),
-        false,
-    },
-    &S2C_LOGIN_TEST_RES::kDescriptorMethods,
-    &descriptor_table_Login_2eproto,
-    nullptr,  // tracker
-};
-const ::google::protobuf::internal::ClassData* S2C_LOGIN_TEST_RES::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
-  return _class_data_.base();
-}
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 0, 0, 2> S2C_LOGIN_TEST_RES::_table_ = {
-  {
-    0,  // no _has_bits_
-    0, // no _extensions_
-    1, 0,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967294,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    1,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    _class_data_.base(),
-    nullptr,  // post_loop_handler
-    ::_pbi::TcParser::GenericFallback,  // fallback
-    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::Protocol::S2C_LOGIN_TEST_RES>(),  // to_prefetch
-    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-  }, {{
-    // bool result = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(S2C_LOGIN_TEST_RES, _impl_.result_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(S2C_LOGIN_TEST_RES, _impl_.result_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // bool result = 1;
-    {PROTOBUF_FIELD_OFFSET(S2C_LOGIN_TEST_RES, _impl_.result_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
-  }},
-  // no aux_entries
-  {{
-  }},
-};
-
-PROTOBUF_NOINLINE void S2C_LOGIN_TEST_RES::Clear() {
-// @@protoc_insertion_point(message_clear_start:Protocol.S2C_LOGIN_TEST_RES)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.result_ = false;
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::uint8_t* S2C_LOGIN_TEST_RES::_InternalSerialize(
-            const MessageLite& base, ::uint8_t* target,
-            ::google::protobuf::io::EpsCopyOutputStream* stream) {
-          const S2C_LOGIN_TEST_RES& this_ = static_cast<const S2C_LOGIN_TEST_RES&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-        ::uint8_t* S2C_LOGIN_TEST_RES::_InternalSerialize(
-            ::uint8_t* target,
-            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-          const S2C_LOGIN_TEST_RES& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(serialize_to_array_start:Protocol.S2C_LOGIN_TEST_RES)
-          ::uint32_t cached_has_bits = 0;
-          (void)cached_has_bits;
-
-          // bool result = 1;
-          if (this_._internal_result() != 0) {
-            target = stream->EnsureSpace(target);
-            target = ::_pbi::WireFormatLite::WriteBoolToArray(
-                1, this_._internal_result(), target);
-          }
-
-          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
-            target =
-                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-          }
-          // @@protoc_insertion_point(serialize_to_array_end:Protocol.S2C_LOGIN_TEST_RES)
-          return target;
-        }
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::size_t S2C_LOGIN_TEST_RES::ByteSizeLong(const MessageLite& base) {
-          const S2C_LOGIN_TEST_RES& this_ = static_cast<const S2C_LOGIN_TEST_RES&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-        ::size_t S2C_LOGIN_TEST_RES::ByteSizeLong() const {
-          const S2C_LOGIN_TEST_RES& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(message_byte_size_start:Protocol.S2C_LOGIN_TEST_RES)
-          ::size_t total_size = 0;
-
-          ::uint32_t cached_has_bits = 0;
-          // Prevent compiler warnings about cached_has_bits being unused
-          (void)cached_has_bits;
-
-           {
-            // bool result = 1;
-            if (this_._internal_result() != 0) {
-              total_size += 2;
-            }
-          }
-          return this_.MaybeComputeUnknownFieldsSize(total_size,
-                                                     &this_._impl_._cached_size_);
-        }
-
-void S2C_LOGIN_TEST_RES::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
-  auto* const _this = static_cast<S2C_LOGIN_TEST_RES*>(&to_msg);
-  auto& from = static_cast<const S2C_LOGIN_TEST_RES&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.S2C_LOGIN_TEST_RES)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (from._internal_result() != 0) {
-    _this->_impl_.result_ = from._impl_.result_;
-  }
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void S2C_LOGIN_TEST_RES::CopyFrom(const S2C_LOGIN_TEST_RES& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.S2C_LOGIN_TEST_RES)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-
-void S2C_LOGIN_TEST_RES::InternalSwap(S2C_LOGIN_TEST_RES* PROTOBUF_RESTRICT other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-        swap(_impl_.result_, other->_impl_.result_);
-}
-
-::google::protobuf::Metadata S2C_LOGIN_TEST_RES::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)

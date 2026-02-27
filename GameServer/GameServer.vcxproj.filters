@@ -73,6 +73,9 @@
     <ClInclude Include="GameSession.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="Generated\PacketServiceTypeHandler.h">
+      <Filter>PacketHandler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protocol\Enum.proto">

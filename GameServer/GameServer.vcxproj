@@ -256,6 +256,7 @@
     <ClInclude Include="Generated\Enum.pb.h" />
     <ClInclude Include="Generated\Login.pb.h" />
     <ClInclude Include="Generated\PacketId.pb.h" />
+    <ClInclude Include="Generated\PacketServiceTypeHandler.h" />
     <ClInclude Include="Generated\Struct.pb.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

@@ -53,7 +53,6 @@ public:
     
     static INetBufferRef MakeSendBuffer(Protocol::S2C_ECHO_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_ECHO_RES)); }
     static INetBufferRef MakeSendBuffer(Protocol::S2C_LOGIN_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_LOGIN_RES)); }
-    static INetBufferRef MakeSendBuffer(Protocol::S2C_LOGIN_TEST_RES& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_S2C_LOGIN_TEST_RES)); }
     
 
 private:
