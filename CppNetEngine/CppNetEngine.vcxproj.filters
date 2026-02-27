@@ -147,7 +147,9 @@
     <ClInclude Include="SessionReaper.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="SessionTimeoutTracker.h" />
+    <ClInclude Include="SessionTimeoutTracker.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -213,6 +215,8 @@
     <ClCompile Include="SessionReaper.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="SessionTimeoutTracker.cpp" />
+    <ClCompile Include="SessionTimeoutTracker.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

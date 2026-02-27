@@ -35,6 +35,7 @@ public:
 	void ReleaseSession(const SessionRef& pSession) const;
 	int32 EnterWaitQueue(const SessionRef& pSession) const;
 	SessionRef DequeueWaitQueue() const;
+	void RegisterSessionReap(const SessionRef& pSession) const;
 
 	eServiceType GetServiceType() const;
 	NetAddress& GetNetAddress();
@@ -53,6 +54,7 @@ private:
 	JobSchedulerRef mpScheduler;
 	SessionFactory mpSessionFactory;
 	SessionManagerRef mpSessionManager;
+	SessionReaperRef mpSessionReaper;
 	WaitQueueManagerRef mpWaitQueueManager;
 };
 

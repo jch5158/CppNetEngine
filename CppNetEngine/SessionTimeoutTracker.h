@@ -16,6 +16,8 @@ public:
 
 	void UpdateActivity();
 	[[nodiscard]] bool IsExpired() const;
+	[[nodiscard]] int64 GetLastActivityMs() const;
+	[[nodiscard]] int64 GetTimeoutMs() const;
 
 private:
 	

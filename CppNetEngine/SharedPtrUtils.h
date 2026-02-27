@@ -94,6 +94,9 @@ using JobSchedulerConstRef = SharedPtr<const JobScheduler>;
 using SessionManagerRef = SharedPtr<class SessionManager>;
 using SessionManagerConstRef = SharedPtr<const SessionManager>;
 
+using SessionReaperRef = SharedPtr<class SessionReaper>;
+using SessionReaperConstRef = SharedPtr<const SessionReaper>;
+
 using WaitQueueManagerRef = SharedPtr<class WaitQueueManager>;
 using WaitQueueManagerConstRef = SharedPtr<const WaitQueueManager>;
 

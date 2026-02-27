@@ -2,6 +2,7 @@
 #include "Service.h"
 #include "Listener.h"
 #include "Session.h"
+#include "SessionReaper.h"
 #include <utility>
 
 Service::Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore,
@@ -13,6 +14,7 @@ Service::Service(const eServiceType serviceType, const NetAddress& netAddress, I
 	, mpScheduler(std::move(pScheduler))
 	, mpSessionFactory(std::move(pSessionFactory))
 	, mpSessionManager(std::move(pSessionManager))
+	, mpSessionReaper()
 	, mpWaitQueueManager(std::move(pWaitQueueManager))
 {
 	if (mpSessionFactory == nullptr)
@@ -70,6 +72,13 @@ SessionRef Service::DequeueWaitQueue() const
 	}
 
 	return mpWaitQueueManager->DequeueWaitQueue();
+}
+
+void Service::RegisterSessionReap(const SessionRef& pSession) const
+{
+	const WeakSessionRef pWeak = pSession;
+
+	mpSessionReaper->DoTimer(mpScheduler, pSession->OnGetTimeoutMs(), &SessionReaper::ReapSession, pWeak);
 }
 
 eServiceType Service::GetServiceType() const

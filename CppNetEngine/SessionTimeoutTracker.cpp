@@ -27,6 +27,16 @@ bool SessionTimeoutTracker::IsExpired() const
 	return false;
 }
 
+int64 SessionTimeoutTracker::GetLastActivityMs() const
+{
+	return mLastActivityMs.load();
+}
+
+int64 SessionTimeoutTracker::GetTimeoutMs() const
+{
+	return mTimeoutMs;
+}
+
 int64 SessionTimeoutTracker::getNowTimeMs()
 {
 	return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();

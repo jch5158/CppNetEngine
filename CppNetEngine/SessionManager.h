@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "LockFreeStack.h"
+#include "SessionReaper.h"
 
 class SessionManager
 {

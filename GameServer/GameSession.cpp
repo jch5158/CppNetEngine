@@ -42,7 +42,7 @@ void GameSession::OnRecvPacket(byte* pBuffer, const int32 len)
 	
 	if (ClientLoginPacketHandler::GetInstance().HandlePacket(pSession, pBuffer, static_cast<uint16>(len)) == false)
 	{
-		pSession->Disconnect();
+		pSession->Disconnect(eDisconnectReason::Kicked);
 	}
 }
 

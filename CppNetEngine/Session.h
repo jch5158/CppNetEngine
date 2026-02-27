@@ -32,7 +32,7 @@ public:
 	friend class Listener;
 	friend class Service;
 	friend class SessionManager;
-
+	
 	static constexpr int32 MAX_SEND_WSABUF_SIZE = 64;
 	static constexpr int32 MAX_RECEIVE_WSABUF_SIZE = 2;
 
@@ -55,6 +55,10 @@ public:
 	virtual void OnSend(const int32 len) = 0;
 	virtual int32 OnReceive(byte* pBuffer, const int32 len) = 0;
 	virtual void OnError(const int32 errorCode) = 0;
+	virtual void OnActivityUpdate() = 0;
+	virtual bool OnIsExpired() = 0;
+	virtual int64 OnGetLastActivityMs() = 0;
+	virtual int64 OnGetTimeoutMs() = 0;
 
 	ServiceRef GetService() const;
 	SOCKET GetSocket() const;
@@ -66,13 +70,14 @@ public:
 	bool IsConnected() const;
 	bool IsDisconnected() const;
 	bool Connect();
-	bool Disconnect();
+	bool Disconnect(const eDisconnectReason reason);
 	void Send(const INetBufferRef& pSendBuffer);
 
 	bool RegisterConnect();
 	bool RegisterDisconnect();
 	void RegisterSend();
 	void RegisterReceive();
+	void RegisterReapSelf();
 
 	void ProcessConnect();
 	void ProcessDisconnect();
@@ -88,7 +93,6 @@ private:
 	bool setSessionConnected();
 	bool setSessionInGame();
 	bool setSessionDisconnected();
-	bool disconnect(const eDisconnectReason reason);
 
 	IocpConnectEvent mConnectEvent;
 	IocpDisconnectEvent mDisconnectEvent;

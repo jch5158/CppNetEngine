@@ -95,9 +95,9 @@ bool Session::Connect()
 	return RegisterConnect();
 }
 
-bool Session::Disconnect()
+bool Session::Disconnect(const eDisconnectReason reason)
 {
-	OnDisconnecting(eDisconnectReason::Kicked);
+	OnDisconnecting(reason);
 	return RegisterDisconnect();
 }
 
@@ -148,7 +148,7 @@ bool Session::RegisterConnect()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
-			disconnect(eDisconnectReason::SocketError);
+			Disconnect(eDisconnectReason::SocketError);
 			mConnectEvent.SetIocpObjectRef(nullptr);
 			return false;
 		}
@@ -217,7 +217,7 @@ void Session::RegisterSend()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
-			disconnect(eDisconnectReason::SocketError);
+			Disconnect(eDisconnectReason::SocketError);
 			mSendEvent.SetIocpObjectRef(nullptr);
 			mSendEvent.GetSendPendingBuffer().clear();
 			mbSendRegistered.store(false);
@@ -257,10 +257,15 @@ void Session::RegisterReceive()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			OnError(errorCode);
-			disconnect(eDisconnectReason::SocketError);
+			Disconnect(eDisconnectReason::SocketError);
 			mReceiveEvent.SetIocpObjectRef(nullptr);
 		}
 	}
+}
+
+void Session::RegisterReapSelf()
+{
+	GetService()->RegisterSessionReap(GetSessionRef());
 }
 
 void Session::ProcessConnect()
@@ -277,7 +282,7 @@ void Session::ProcessConnect()
 		const int32 waitTicket = GetService()->EnterWaitQueue(GetSessionRef());
 		if (waitTicket == -1)
 		{
-			disconnect(eDisconnectReason::ServerFull);
+			Disconnect(eDisconnectReason::ServerFull);
 			return;
 		}
 
@@ -285,6 +290,7 @@ void Session::ProcessConnect()
 		OnEnterWaitQueue(waitTicket);
 	}
 
+	RegisterReapSelf();
 	RegisterReceive();
 }
 
@@ -309,7 +315,7 @@ void Session::ProcessSend(const uint32 numOfBytes)
 
 	if (numOfBytes == 0)
 	{
-		Disconnect();
+		Disconnect(eDisconnectReason::Kicked);
 		return;
 	}
 
@@ -329,7 +335,7 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 
 	if (numOfBytes == 0)
 	{
-		disconnect(eDisconnectReason::Kicked);
+		Disconnect(eDisconnectReason::Kicked);
 		return;
 	}
 
@@ -339,7 +345,7 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 	const int32 processLen = OnReceive(mNetReceiveBuffer.GetReadPtr(), static_cast<int32>(numOfBytes));
 	if (processLen < 0 || processLen > dataSize)
 	{
-		disconnect(eDisconnectReason::Kicked);
+		Disconnect(eDisconnectReason::Kicked);
 		return;
 	}
 
@@ -385,10 +391,4 @@ bool Session::setSessionInGame()
 bool Session::setSessionDisconnected()
 {
 	return mSessionState.exchange(eSessionState::Disconnected) != eSessionState::Disconnected;
-}
-
-bool Session::disconnect(const eDisconnectReason reason)
-{
-	OnDisconnecting(reason);
-	return RegisterDisconnect();
 }

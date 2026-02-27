@@ -56,8 +56,8 @@ using Queue = std::queue<T, Deque<T>>;
 template<typename T>
 using Stack = std::stack<T, Deque<T>>;
 
-template<typename T>
-using PriorityQueue = std::priority_queue<T, Vector<T>, std::less<T>>;
+template<typename T, typename Compare = std::less<T>>
+using PriorityQueue = std::priority_queue<T, Vector<T>, Compare>;
 
 template<typename Key, typename Type>
 using Map = std::map<Key, Type, std::less<Key>, StlAllocator<std::pair<const Key, Type>>>;
