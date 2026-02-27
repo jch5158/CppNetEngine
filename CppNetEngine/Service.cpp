@@ -6,7 +6,7 @@
 #include <utility>
 
 Service::Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore,
-                 JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, WaitQueueManagerRef pWaitQueueManager)
+	JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager)
 	: mServiceType(serviceType)
 	, mMaxSessionCount(pSessionManager->GetMaxSessionCount())
 	, mNetAddress(netAddress)
@@ -14,7 +14,7 @@ Service::Service(const eServiceType serviceType, const NetAddress& netAddress, I
 	, mpScheduler(std::move(pScheduler))
 	, mpSessionFactory(std::move(pSessionFactory))
 	, mpSessionManager(std::move(pSessionManager))
-	, mpSessionReaper()
+	, mpSessionReaper(std::move(pSessionReaper))
 	, mpWaitQueueManager(std::move(pWaitQueueManager))
 {
 	if (mpSessionFactory == nullptr)
@@ -76,6 +76,11 @@ SessionRef Service::DequeueWaitQueue() const
 
 void Service::RegisterSessionReap(const SessionRef& pSession) const
 {
+	if (mpSessionReaper == nullptr)
+	{
+		return;
+	}
+
 	const WeakSessionRef pWeak = pSession;
 
 	mpSessionReaper->DoTimer(mpScheduler, pSession->OnGetTimeoutMs(),
@@ -126,7 +131,7 @@ int32 Service::GetWaitCount(const int32 myWaitTicket) const
 }
 
 ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager)
-	: Service(eServiceType::Client, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), std::move(pSessionManager), nullptr)
+	: Service(eServiceType::Client, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), std::move(pSessionManager), nullptr, nullptr)
 {
 }
 
@@ -149,8 +154,8 @@ void ClientService::CloseService()
 {
 }
 
-ServerService::ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, WaitQueueManagerRef pWaitQueueManager)
-	: Service(eServiceType::Server, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), std::move(pSessionManager), std::move(pWaitQueueManager))
+ServerService::ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager)
+	: Service(eServiceType::Server, targetAddress, std::move(pIocpCore), std::move(pScheduler), std::move(pSessionFactory), std::move(pSessionManager), std::move(pSessionReaper), std::move(pWaitQueueManager))
 {
 }
 

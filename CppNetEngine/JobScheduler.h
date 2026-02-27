@@ -41,7 +41,7 @@ public:
 
 	static constexpr int64 TIME_SLICE_MS = 16;
 	static constexpr int64 TICK_INTERVAL_MS = 10;
-	static constexpr int32 WHEEL_SIZE = 6000;
+	static constexpr int32 WHEEL_SIZE = 60 * 60 * 100 * TICK_INTERVAL_MS;
 
 	JobScheduler(const JobScheduler&) = delete;
 	JobScheduler& operator=(const JobScheduler&) = delete;

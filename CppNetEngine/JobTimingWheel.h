@@ -32,12 +32,34 @@ public:
 
 private:
 
+	class Ticking
+	{
+	public:
+		explicit Ticking(bool &isTicking)
+			:mIsTicking(isTicking)
+		{
+		}
+
+		[[nodiscard]] bool IsTicking() const
+		{
+			return mIsTicking.exchange(true) != true;
+		}
+
+		~Ticking()
+		{
+			mIsTicking.store(false);
+		}
+
+	private:
+		std::atomic_ref<bool> mIsTicking;
+	};
+
 	const int64 mTickIntervalMs;
 	const int32 mWheelSize;
 	std::chrono::steady_clock::time_point mLastTickTime;
 
 	Mutex mWheelMutex;
-	std::atomic<bool> mIsTicking;
+	bool mIsTicking;
 	int32 mCurrentSlotIndex;
 	Vector<Vector<TimingJob>> mWheel;
 };

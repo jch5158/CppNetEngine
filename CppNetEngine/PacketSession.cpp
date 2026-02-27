@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "PacketSession.h"
 
-PacketSession::PacketSession()
-	:mTimeoutTracker()
+PacketSession::PacketSession(const int64 timeoutMs)
+	: mTimeoutTracker(timeoutMs)
 {
 }
 

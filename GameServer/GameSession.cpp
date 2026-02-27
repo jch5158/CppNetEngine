@@ -3,7 +3,8 @@
 
 #include "Generated/ClientLoginPacketHandler.h"
 
-GameSession::GameSession()
+GameSession::GameSession(const int64 timeoutMs)
+	:PacketSession(timeoutMs)
 {
 	fmt::print(L"GameSession Created\n");
 }

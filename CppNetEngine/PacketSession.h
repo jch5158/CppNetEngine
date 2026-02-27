@@ -13,7 +13,7 @@ struct PacketHeader
 class PacketSession : public Session
 {
 public:
-	PacketSession();
+	explicit PacketSession(const int64 timeoutMs = SessionTimeoutTracker::DEFAULT_TIME_OUT);
 	virtual ~PacketSession() override = default;
 
 	PacketSessionRef GetPacketSessionRef();

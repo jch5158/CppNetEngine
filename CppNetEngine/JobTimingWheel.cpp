@@ -51,7 +51,8 @@ void JobTimingWheel::Reserve(const JobRef& pJob, const ActorRef& pOwner, const J
 
 void JobTimingWheel::Tick()
 {
-	if (mIsTicking.exchange(true) == true)
+	const Ticking ticking(mIsTicking);
+	if (ticking.IsTicking() == false)
 	{
 		return;
 	}
@@ -82,6 +83,4 @@ void JobTimingWheel::Tick()
 	{
 		timingJob.Execute();
 	}
-
-	mIsTicking.store(false);
 }

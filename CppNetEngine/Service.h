@@ -24,7 +24,7 @@ public:
 	Service(Service&&) = delete;
 	Service& operator=(Service&&) = delete;
 
-	Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, WaitQueueManagerRef pWaitQueueManager);
+	Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
 	virtual ~Service() = default;
 
 	virtual bool Start() = 0;
@@ -71,7 +71,7 @@ public:
 class ServerService : public Service
 {
 public:
-	ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, WaitQueueManagerRef pWaitQueueManager);
+	ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
 	virtual ~ServerService() override = default;
 
 	virtual bool Start() override;

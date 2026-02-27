@@ -5,7 +5,7 @@ class GameSession final : public PacketSession
 {
 public:
 
-	GameSession();
+	explicit GameSession(const int64 timeoutMs);
 	virtual ~GameSession() override;
 
 	virtual void OnConnected() override;
