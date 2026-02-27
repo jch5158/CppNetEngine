@@ -8,6 +8,6 @@ public:
 	SessionReaper() = default;
 	virtual ~SessionReaper() override = default;
 
-	void ReapSession(const WeakSessionRef& pWeakSession);
+	static void ReapSession(const WeakSessionRef& pWeakSession);
 };
 

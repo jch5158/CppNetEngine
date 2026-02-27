@@ -2,8 +2,6 @@
 #include "SessionReaper.h"
 #include "Session.h"
 
-
-// ReSharper disable once CppMemberFunctionMayBeStatic
 void SessionReaper::ReapSession(const WeakSessionRef& pWeakSession)
 {
 	const SessionRef pSession = pWeakSession.lock();
