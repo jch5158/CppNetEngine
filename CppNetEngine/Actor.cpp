@@ -30,6 +30,11 @@ void Actor::Execute(const JobTimeBudget& jobTimeBudget)
 	int32 count = mJobQueue.Count();
 	do
 	{
+		if (count-- <= 0)
+		{
+			break;
+		}
+
 		JobRef pJob;
 		if (mJobQueue.TryDequeue(pJob) == false)
 		{
@@ -38,7 +43,7 @@ void Actor::Execute(const JobTimeBudget& jobTimeBudget)
 
 		pJob->Execute();
 	}
-	while (!jobTimeBudget.IsExpired() && --count != 0);
+	while (!jobTimeBudget.IsExpired());
 
 	mbAcquire.store(false);
 }
