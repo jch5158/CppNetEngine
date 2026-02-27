@@ -21,7 +21,7 @@ JobTimingWheel::JobTimingWheel(const int64 tickIntervalMs, const int32 wheelSize
 	: mTickIntervalMs(tickIntervalMs)
 	, mWheelSize(wheelSize)
 	, mLastTickTime(std::chrono::steady_clock::now())
-	, mIsTicking(false)
+	, mbTicking(false)
 	, mCurrentSlotIndex(0)
 	, mWheel(wheelSize)
 {
@@ -51,8 +51,7 @@ void JobTimingWheel::Reserve(const JobRef& pJob, const ActorRef& pOwner, const J
 
 void JobTimingWheel::Tick()
 {
-	const Ticking ticking(mIsTicking);
-	if (ticking.IsTicking() == false)
+	if (mbTicking.exchange(true) == true)
 	{
 		return;
 	}
@@ -61,6 +60,7 @@ void JobTimingWheel::Tick()
 	const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - mLastTickTime).count();
 	if (elapsedMs < mTickIntervalMs)
 	{
+		mbTicking.store(false);
 		return;
 	}
 	
@@ -78,6 +78,8 @@ void JobTimingWheel::Tick()
 			mCurrentSlotIndex = (mCurrentSlotIndex + 1) % mWheelSize;
 		}
 	}
+
+	mbTicking.store(false);
 
 	for (const auto& timingJob : expiredJobs)
 	{

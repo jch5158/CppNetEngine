@@ -12,7 +12,6 @@ void SessionReaper::ReapSession(const WeakSessionRef& pWeakSession)
 
 	if (pSession->OnIsExpired())
 	{
-		fmt::print(L"Session Reap~!\n");
 		pSession->Disconnect(eDisconnectReason::Timeout);
 	}
 	else
