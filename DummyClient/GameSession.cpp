@@ -1,9 +1,6 @@
 ﻿#include "pch.h"
 #include "GameSession.h"
-
-#include "PacketServiceTypeHandler.h"
-
-#include "Generated/LoginPacketHandler.h"
+#include "Generated/PacketServiceTypeHandler.h"
 
 void GameSession::OnConnected()
 {

@@ -44,11 +44,14 @@
     <ClCompile Include="Generated\PacketId.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="ClientLoginPacketHandler.cpp">
-      <Filter>PacketHandler</Filter>
-    </ClCompile>
     <ClCompile Include="GameSession.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketServiceTypeHandler.cpp">
+      <Filter>PacketHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginPacketHandler.cpp">
+      <Filter>PacketHandler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -67,13 +70,13 @@
     <ClInclude Include="Generated\PacketId.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="Generated\ClientLoginPacketHandler.h">
-      <Filter>PacketHandler</Filter>
-    </ClInclude>
     <ClInclude Include="GameSession.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="Generated\PacketServiceTypeHandler.h">
+      <Filter>PacketHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Generated\LoginPacketHandler.h">
       <Filter>PacketHandler</Filter>
     </ClInclude>
   </ItemGroup>

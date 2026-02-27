@@ -18,7 +18,6 @@ public:
 	static void Init()
 	{{
         {1}
-
 		{2}
 	}}
 

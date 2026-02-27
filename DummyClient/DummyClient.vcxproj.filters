@@ -50,6 +50,9 @@
     <ClCompile Include="PacketServiceTypeHandler.cpp">
       <Filter>PacketHandler</Filter>
     </ClCompile>
+    <ClCompile Include="LoginPacketHandler.cpp">
+      <Filter>PacketHandler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

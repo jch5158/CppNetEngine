@@ -173,6 +173,11 @@ extern ::google::protobuf::internal::ExtensionIdentifier<
     ::google::protobuf::MessageOptions, ::google::protobuf::internal::EnumTypeTraits< ::Protocol::eRole, ::Protocol::eRole_IsValid>, 14,
     false>
     receiver;
+static const int kHandlerNameFieldNumber = 50002;
+extern ::google::protobuf::internal::ExtensionIdentifier<
+    ::google::protobuf::EnumValueOptions, ::google::protobuf::internal::StringTypeTraits, 9,
+    false>
+    handler_name;
 
 // ===================================================================
 

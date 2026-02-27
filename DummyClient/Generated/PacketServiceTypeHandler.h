@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "LoginPacketHandler.h"
 
 
@@ -14,7 +14,6 @@ public:
 	static void Init()
 	{
         LoginPacketHandler::Init();
-
 
 		
         sPacketServiceTypeMap[GET_SERVICE_TYPE(Protocol::eServiceType::SERVICE_TYPE_LOGIN)] = [](const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool

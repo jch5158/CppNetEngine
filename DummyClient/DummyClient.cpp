@@ -4,11 +4,15 @@
 #include "Service.h"
 #include "ThreadManager.h"
 
+#include "Generated/PacketServiceTypeHandler.h"
+
 int32 main()
 {
+	CrashReporter::Init(L"DummyClient", L"1.0.0", L"");
+
 	NetEngineInit netEngineInit;
 
-	CrashReporter::Init(L"DummyClient", L"1.0.0", L"");
+	PacketServiceTypeHandler::Init();
 
 	ClientServiceRef pService = cpp_net_engine::MakeShared<ClientService>(
 		NetAddress(L"127.0.0.1", 7777),

@@ -36,16 +36,18 @@ const char descriptor_table_protodef_PacketId_2eproto[] ABSL_ATTRIBUTE_SECTION_V
     protodesc_cold) = {
     "\n\016PacketId.proto\022\010Protocol\032 google/proto"
     "buf/descriptor.proto*3\n\005eRole\022\r\n\tROLE_NO"
-    "NE\020\000\022\n\n\006CLIENT\020\001\022\017\n\013GAME_SERVER\020\002*=\n\014eSe"
-    "rviceType\022\025\n\021SERVICE_TYPE_NONE\020\000\022\026\n\022SERV"
-    "ICE_TYPE_LOGIN\020\001*\210\001\n\tePacketId\022\013\n\007ID_NON"
-    "E\020\000\022\025\n\017ID_C2S_ECHO_REQ\020\201\200\004\022\025\n\017ID_S2C_ECH"
-    "O_RES\020\202\200\004\022\026\n\020ID_C2S_LOGIN_REQ\020\203\200\004\022\026\n\020ID_"
-    "S2C_LOGIN_RES\020\204\200\004\022\020\n\013ID_C2S_MOVE\020\201\004:B\n\006s"
-    "ender\022\037.google.protobuf.MessageOptions\030\320"
-    "\206\003 \001(\0162\017.Protocol.eRole:D\n\010receiver\022\037.go"
-    "ogle.protobuf.MessageOptions\030\321\206\003 \001(\0162\017.P"
-    "rotocol.eRoleb\006proto3"
+    "NE\020\000\022\n\n\006CLIENT\020\001\022\017\n\013GAME_SERVER\020\002*U\n\014eSe"
+    "rviceType\022\025\n\021SERVICE_TYPE_NONE\020\000\022.\n\022SERV"
+    "ICE_TYPE_LOGIN\020\001\032\026\222\265\030\022LoginPacketHandler"
+    "*\210\001\n\tePacketId\022\013\n\007ID_NONE\020\000\022\025\n\017ID_C2S_EC"
+    "HO_REQ\020\201\200\004\022\025\n\017ID_S2C_ECHO_RES\020\202\200\004\022\026\n\020ID_"
+    "C2S_LOGIN_REQ\020\203\200\004\022\026\n\020ID_S2C_LOGIN_RES\020\204\200"
+    "\004\022\020\n\013ID_C2S_MOVE\020\201\004:B\n\006sender\022\037.google.p"
+    "rotobuf.MessageOptions\030\320\206\003 \001(\0162\017.Protoco"
+    "l.eRole:D\n\010receiver\022\037.google.protobuf.Me"
+    "ssageOptions\030\321\206\003 \001(\0162\017.Protocol.eRole:9\n"
+    "\014handler_name\022!.google.protobuf.EnumValu"
+    "eOptions\030\322\206\003 \001(\tb\006proto3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_PacketId_2eproto_deps[1] =
     {
@@ -55,7 +57,7 @@ static ::absl::once_flag descriptor_table_PacketId_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_PacketId_2eproto = {
     false,
     false,
-    461,
+    544,
     descriptor_table_protodef_PacketId_2eproto,
     "PacketId.proto",
     &descriptor_table_PacketId_2eproto_once,
@@ -106,6 +108,12 @@ PROTOBUF_CONSTINIT
         ExtensionIdentifier<::google::protobuf::MessageOptions, ::_pbi::EnumTypeTraits< ::Protocol::eRole, ::Protocol::eRole_IsValid>,
                             14, false>
             receiver(kReceiverFieldNumber, static_cast< ::Protocol::eRole >(0));
+const std::string handler_name_default("");
+PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::_pbi::
+        ExtensionIdentifier<::google::protobuf::EnumValueOptions, ::_pbi::StringTypeTraits,
+                            9, false>
+            handler_name(kHandlerNameFieldNumber, handler_name_default);
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace Protocol
 namespace google {
@@ -122,5 +130,8 @@ PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::std::false_type
         ::_pbi::ExtensionSet::RegisterEnumExtension(
             &::google::protobuf::MessageOptions::default_instance(), 50001, 14,
             false, false, ::Protocol::eRole_IsValid),
+        ::_pbi::ExtensionSet::RegisterExtension(
+            &::google::protobuf::EnumValueOptions::default_instance(), 50002, 9,
+            false, false),
          ::std::false_type{});
 #include "google/protobuf/port_undef.inc"

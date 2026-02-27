@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "GameSession.h"
-
-#include "Generated/ClientLoginPacketHandler.h"
+#include "Generated/PacketServiceTypeHandler.h"
 
 GameSession::GameSession(const int64 timeoutMs)
 	:PacketSession(timeoutMs)
@@ -40,8 +39,8 @@ void GameSession::OnSend(const int32 len)
 void GameSession::OnRecvPacket(byte* pBuffer, const int32 len)
 {
 	PacketSessionRef pSession = GetPacketSessionRef();
-	
-	if (ClientLoginPacketHandler::GetInstance().HandlePacket(pSession, pBuffer, static_cast<uint16>(len)) == false)
+
+	if (PacketServiceTypeHandler::HandlePacketServiceType(static_cast<uint16>(len), pBuffer, pSession) == false)
 	{
 		pSession->Disconnect(eDisconnectReason::Kicked);
 	}

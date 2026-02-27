@@ -4,11 +4,15 @@
 #include "Service.h"
 #include "ThreadManager.h"
 
+#include "Generated/PacketServiceTypeHandler.h"
+
 int main()
 {
+	CrashReporter::Init(L"GameServer", L"1.0.0", L"");
+
 	NetEngineInit netEngineInit;
 
-	CrashReporter::Init(L"GameServer", L"1.0.0", L"");
+	PacketServiceTypeHandler::Init();
 
 	const ServerServiceRef pService = cpp_net_engine::MakeShared<ServerService>(
 		NetAddress(L"127.0.0.1", 7777),
