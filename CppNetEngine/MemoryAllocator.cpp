@@ -10,7 +10,7 @@ void* MemoryAllocator::	Alloc(const int64 size)
 		return nullptr;
 	}
 
-	void* pData = nullptr;
+	void* pData;
 
 	if (size <= (THRESHOLD - SMALL_STRIDE))
 	{
