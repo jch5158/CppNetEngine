@@ -16,7 +16,7 @@ public:
         LoginPacketHandler::Init();
 
 		
-        sPacketServiceTypeMap[GET_SERVICE_TYPE(Protocol::eServiceType::SERVICE_TYPE_LOGIN)] = [](const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
+        sPacketServiceTypeMap[Protocol::eServiceType::SERVICE_TYPE_LOGIN] = [](const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
 			{
 				return LoginPacketHandler::HandlePacket(size, packetId, pBuffer, pSession);
 			};

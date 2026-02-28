@@ -54,7 +54,7 @@ private:
 
         public static readonly string SERVICE_TYPE_HANDLE_INIT_FORMAT =
             @"
-        sPacketServiceTypeMap[GET_SERVICE_TYPE(Protocol::eServiceType::{0})] = [](const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
+        sPacketServiceTypeMap[Protocol::eServiceType::{0}] = [](const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
 			{{
 				return {1}::HandlePacket(size, packetId, pBuffer, pSession);
 			}};
