@@ -81,8 +81,8 @@ public:
 	IocpSendEvent();
 
 	[[nodiscard]]
-	Vector<INetBufferRef>& GetSendPendingBuffer();
+	Vector<SendBufferRef>& GetSendPendingBuffer();
 
 private:
-	Vector<INetBufferRef> mSendPendingBuffer; // 전송중인 버퍼
+	Vector<SendBufferRef> mSendPendingBuffer; // 전송중인 버퍼
 };

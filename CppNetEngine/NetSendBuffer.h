@@ -1,109 +1,35 @@
 ﻿#pragma once
 
-#include "Types.h"
-#include "INetBuffer.h"
-#include "StlTypes.h"
-
-template <int32 BUFFER_SIZE>
-class NetSendBuffer final : public INetBuffer
+class NetSendBuffer
 {
 public:
+
+	static constexpr int32 MAX_BUFFER_SIZE = 655336;
 
 	NetSendBuffer(const NetSendBuffer&) = delete;
 	NetSendBuffer& operator=(const NetSendBuffer&) = delete;
 	NetSendBuffer(NetSendBuffer&&) = delete;
 	NetSendBuffer& operator=(NetSendBuffer&&) = delete;
 
-	explicit NetSendBuffer()
-		: mReadPos(0)
-		, mWritePos(0)
-		, mBuffer()
-	{
-		static_assert(BUFFER_SIZE <= MAX_BUFFER_SIZE, "BUFFER_SIZE is equal to or less than MAX_BUFFER_SIZE");
-	}
-
-	virtual ~NetSendBuffer() override = default;
+	explicit NetSendBuffer(const int32 maxSize);
+	~NetSendBuffer() = default;
 	
-	virtual void Clear() override
-	{
-		mReadPos = 0;
-		mWritePos = 0;
-	}
+	void Clear();
 
-	[[nodiscard]]
-	virtual int32 GetMaxSize() const override
-	{
-		return BUFFER_SIZE;
-	}
-
-	[[nodiscard]]
-	virtual int32 GetFreeSize() const override
-	{
-		return BUFFER_SIZE - mWritePos;
-	}
-
-	[[nodiscard]]
-	virtual int32 GetUseSize() const override
-	{
-		return mWritePos;
-	}
-
-	[[nodiscard]]
-	virtual byte* GetBufferPtr() override
-	{
-		return mBuffer.data();
-	}
-
-	[[nodiscard]]
-	virtual byte* GetReadPtr() override
-	{
-		return &mBuffer[mReadPos];
-	}
-
-	[[nodiscard]]
-	virtual byte* GetWritePtr() override
-	{
-		return &mBuffer[mWritePos];
-	}
-
-	virtual void MoveReadPos(const int32 size) override
-	{
-		if (size + mReadPos > mWritePos)
-		{
-			return;
-		}
-
-		mReadPos += size;
-	}
-
-	virtual void MoveWritePos(const int32 size) override
-	{
-		if (std::cmp_less(GetFreeSize(), size))
-		{
-			return;
-		}
-
-		mWritePos += size;
-	}
-
-	[[nodiscard]]
-	virtual byte* Reserve(const int32 size) override
-	{
-		if (std::cmp_less(GetFreeSize(), size))
-		{
-			return nullptr;
-		}
-
-		return &mBuffer[mWritePos];
-	}
-
-	virtual void Commit(const int32 size) override
-	{
-		MoveWritePos(size);
-	}
+	[[nodiscard]] int32 GetMaxSize() const;
+	[[nodiscard]] int32 GetFreeSize() const;
+	[[nodiscard]] int32 GetUseSize() const;
+	[[nodiscard]] byte* GetBufferPtr() const;
+	[[nodiscard]] byte* GetReadPtr() const;
+	[[nodiscard]] byte* GetWritePtr() const;
+	[[nodiscard]] byte* Reserve(const int32 size) const;
+	void Commit(const int32 size);
+	void MoveReadPos(const int32 size);
+	void MoveWritePos(const int32 size);
 
 private:
+	const int32 mMaxBufferSize;
 	int32 mReadPos;
 	int32 mWritePos;
-	Array<byte, BUFFER_SIZE> mBuffer;
+	UniquePtr<byte[]> mpBuffer;
 };

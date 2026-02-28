@@ -75,7 +75,7 @@ IocpSendEvent::IocpSendEvent()
 	mSendPendingBuffer.reserve(Session::MAX_SEND_WSABUF_SIZE);
 }
 
-Vector<INetBufferRef>& IocpSendEvent::GetSendPendingBuffer()
+Vector<SendBufferRef>& IocpSendEvent::GetSendPendingBuffer()
 {
 	return mSendPendingBuffer;
 }

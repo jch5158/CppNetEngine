@@ -63,7 +63,7 @@ public:
 	ServiceRef GetService() const;
 	SOCKET GetSocket() const;
 	NetAddress& GetAddress();
-	NetReceiveBuffer<>& GetNetReceiveBuffer();
+	NetReceiveBuffer& GetNetReceiveBuffer();
 	SessionRef GetSessionRef();
 	
 	bool IsSessionInGame() const;
@@ -71,7 +71,7 @@ public:
 	bool IsDisconnected() const;
 	bool Connect();
 	bool Disconnect(const eDisconnectReason reason);
-	void Send(const INetBufferRef& pSendBuffer);
+	void Send(const SendBufferRef& pSendBuffer);
 
 	bool RegisterConnect();
 	bool RegisterDisconnect();
@@ -103,8 +103,8 @@ private:
 	SOCKET mSocket;
 	NetAddress mNetAddress;
 	std::atomic<eSessionState> mSessionState;
-	NetReceiveBuffer<> mNetReceiveBuffer;
+	NetReceiveBuffer mNetReceiveBuffer;
 	std::atomic<bool> mbSendRegistered;
-	LockFreeQueue<INetBufferRef> mSendQueue;
+	LockFreeQueue<SendBufferRef> mSendQueue;
 };
 

@@ -1,10 +1,9 @@
 ﻿#pragma once
-#include "ObjectAllocator.h"
-#include "MemoryAllocator.h"
-#include "UniquePtrUtils.h"
-#include "SharedPtrUtils.h"
-#include "SendBufferAllocator.h"
+
 #include <utility>
+
+#include "ObjectAllocator.h"
+#include "SendBufferAllocator.h"
 
 namespace cpp_net_engine
 {
@@ -25,7 +24,7 @@ namespace cpp_net_engine
 		return MemoryAllocator::GetInstance().Alloc(size);
 	}
 
-	inline INetBufferRef MakeSendBuffer(const int32 size)
+	inline SendBufferRef MakeSendBuffer(const int32 size)
 	{
 		return SendBufferAllocator::Alloc(size);
 	}
@@ -37,9 +36,9 @@ namespace cpp_net_engine
 	}
 
 	template <typename T>
-	UniquePtr<T[]> MakeUniqueArray()
+	UniquePtr<T[]> MakeUniqueArray(const int32 count)
 	{
-		return UniquePtrUtils<T[]>::Alloc();
+		return UniquePtrUtils<T[]>::Alloc(count);
 	}
 
 	template <typename T, typename... Args>

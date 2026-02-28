@@ -82,8 +82,8 @@ using PacketSessionConstRef = SharedPtr<const PacketSession>;
 using GameSessionRef = SharedPtr<class GameSession>;
 using GameSessionConstRef = SharedPtr<const GameSession>;
 
-using INetBufferRef = SharedPtr<class INetBuffer>;
-using INetBufferConstRef = SharedPtr<const INetBuffer>;
+using SendBufferRef = SharedPtr<class NetSendBuffer>;
+using SendBufferConstRef = SharedPtr<const NetSendBuffer>;
 
 using IocpCoreRef = SharedPtr<class IocpCore>;
 using IocpCoreConstRef = SharedPtr<const IocpCore>;

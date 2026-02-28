@@ -111,9 +111,6 @@
     <ClInclude Include="SendBufferAllocator.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="INetBuffer.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="AllocatorUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -216,6 +213,12 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="SessionTimeoutTracker.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetSendBuffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetReceiveBuffer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

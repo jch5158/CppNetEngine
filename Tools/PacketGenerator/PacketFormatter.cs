@@ -113,7 +113,7 @@ private:
 	}}
 
     template<typename T>
-	static INetBufferRef MakeSendBuffer(T& packet, const uint16 packetId)
+	static SendBufferRef MakeSendBuffer(T& packet, const uint16 packetId)
 	{{
 		const uint16 dataSize = static_cast<uint16>(packet.ByteSizeLong());
 		const uint16 packetSize = dataSize + sizeof(PacketHeader);
@@ -158,7 +158,7 @@ private:
     ";
 
         public static readonly string MAKE_SEND_BUFFER_FORMAT =
-            @"static INetBufferRef MakeSendBuffer(Protocol::{0}& packet) {{ return MakeSendBuffer(packet, static_cast<uint16>(Protocol::{1})); }}
+            @"static SendBufferRef MakeSendBuffer(Protocol::{0}& packet) {{ return MakeSendBuffer(packet, static_cast<uint16>(Protocol::{1})); }}
     ";
     }
 }

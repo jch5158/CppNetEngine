@@ -65,7 +65,7 @@ NetAddress& Session::GetAddress()
 	return mNetAddress;
 }
 
-NetReceiveBuffer<>& Session::GetNetReceiveBuffer()
+NetReceiveBuffer& Session::GetNetReceiveBuffer()
 {
 	return mNetReceiveBuffer;
 }
@@ -101,7 +101,7 @@ bool Session::Disconnect(const eDisconnectReason reason)
 	return RegisterDisconnect();
 }
 
-void Session::Send(const INetBufferRef& pSendBuffer)
+void Session::Send(const SendBufferRef& pSendBuffer)
 {
 	if (IsDisconnected())
 	{
@@ -200,7 +200,7 @@ void Session::RegisterSend()
 	int32 sendCount;
 	for (sendCount = 0; sendCount < MAX_SEND_WSABUF_SIZE; ++sendCount)
 	{
-		INetBufferRef pSendBuffer = nullptr;
+		SendBufferRef pSendBuffer = nullptr;
 		if (mSendQueue.TryDequeue(pSendBuffer) == false)
 		{
 			break;
