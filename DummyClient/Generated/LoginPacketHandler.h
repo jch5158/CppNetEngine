@@ -37,10 +37,10 @@ public:
 			return iter->second(size, pBuffer, pSession);
 		}
 
-		return HANDLE_PACKET_INVALID(size, packetId, pBuffer, pSession);
+		return HANDLE_PACKET_ID_INVALID(size, packetId, pBuffer, pSession);
 	}
 
-	static bool HANDLE_PACKET_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);
+	static bool HANDLE_PACKET_ID_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);
     static bool HANDLE_S2C_ECHO_RES(const Protocol::S2C_ECHO_RES& packet, PacketSessionRef& pSession);
     static bool HANDLE_S2C_LOGIN_RES(const Protocol::S2C_LOGIN_RES& packet, PacketSessionRef& pSession);
     

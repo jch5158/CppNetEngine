@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Generated/LoginPacketHandler.h"
 
-bool LoginPacketHandler::HANDLE_PACKET_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession)
+bool LoginPacketHandler::HANDLE_PACKET_ID_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession)
 {
 	return true;
 }

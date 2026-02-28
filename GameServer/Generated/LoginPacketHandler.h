@@ -37,10 +37,10 @@ public:
 			return iter->second(size, pBuffer, pSession);
 		}
 
-		return HANDLE_PACKET_INVALID(size, packetId, pBuffer, pSession);
+		return HANDLE_PACKET_ID_INVALID(size, packetId, pBuffer, pSession);
 	}
 
-	static bool HANDLE_PACKET_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);
+	static bool HANDLE_PACKET_ID_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);
     static bool HANDLE_C2S_ECHO_REQ(const Protocol::C2S_ECHO_REQ& packet, PacketSessionRef& pSession);
     static bool HANDLE_C2S_LOGIN_REQ(const Protocol::C2S_LOGIN_REQ& packet, PacketSessionRef& pSession);
     
