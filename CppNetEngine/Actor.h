@@ -3,19 +3,19 @@
 #include "Job.h"
 #include "JobScheduler.h"
 
-class IActor : public std::enable_shared_from_this<Actor>
+class IActor : public std::enable_shared_from_this<IActor>
 {
 public:
 
 	using CallbackType = std::function<void()>;
 
-	explicit IActor();
+	explicit IActor() = default;
 	virtual ~IActor() = default;
 
 	virtual void DoAsync(const JobSchedulerRef& pScheduler, CallbackType&& callback) = 0;
 	virtual void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback) = 0;
 	virtual void Execute(const JobTimeBudget& jobTimeBudget) = 0;
-	virtual void Register(const JobSchedulerRef& pScheduler);
+	virtual void Register(const JobSchedulerRef& pScheduler) = 0;
 	virtual bool TryAcquire() = 0;
 	virtual void Release() = 0;
 	virtual void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler) = 0;
@@ -34,11 +34,11 @@ public:
 		Push(cpp_net_engine::MakeShared<Job>(std::move(callback)), pScheduler);
 	}
 
-	template<typename T, typename Ret, typename... Args>
-	void DoAsync(const JobSchedulerRef& pScheduler, Ret(T::* memFunc)(Args...), Args&&... args)
+	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
+	void DoAsync(const JobSchedulerRef& pScheduler, Ret(T::* memFunc)(FuncArgs...), CallArgs&&... args)
 	{
-		auto pOwner = static_pointer_cast<T>(shared_from_this());
-		Push(cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<Args>(args)...), pScheduler);
+		auto pOwner = std::static_pointer_cast<T>(shared_from_this());
+		Push(cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<CallArgs>(args)...), pScheduler);
 	}
 
 	virtual void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback) override
@@ -47,11 +47,11 @@ public:
 		pScheduler->Reserve(pJob, shared_from_this(), delayMs);
 	}
 
-	template<typename T, typename Ret, typename... Args>
-	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* memFunc)(Args...), Args&&... args)
+	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
+	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* memFunc)(FuncArgs...), CallArgs&&... args)
 	{
-		auto pOwner = static_pointer_cast<T>(shared_from_this());
-		const JobRef pJob = cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<Args>(args)...);
+		auto pOwner = std::static_pointer_cast<T>(shared_from_this());
+		const JobRef pJob = cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<CallArgs>(args)...);
 		pScheduler->Reserve(pJob, shared_from_this(), delayMs);
 	}
 

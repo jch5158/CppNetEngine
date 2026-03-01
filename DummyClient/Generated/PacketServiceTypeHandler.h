@@ -6,7 +6,7 @@ class PacketServiceTypeHandler
 {
 public:
 
-	using PacketServiceTypeHandle = std::function<bool(const uint16, const uint16, byte*, PacketSessionRef&)>;
+	using PacketServiceTypeHandle = std::function<bool(const uint16, const uint32, byte*, PacketSessionRef&)>;
 
 	static constexpr uint16 GET_SERVICE_TYPE(const uint32 packetId) { return (packetId >> 16) & 0x0000FFFF; }
 	static constexpr uint16 GET_PACKET_ID(const uint32 packetId) { return packetId & 0x0000FFFF; }
@@ -16,7 +16,7 @@ public:
         LoginPacketHandler::Init();
 
 		
-        sPacketServiceTypeMap[Protocol::eServiceType::SERVICE_TYPE_LOGIN] = [](const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
+        sPacketServiceTypeMap[Protocol::eServiceType::SERVICE_TYPE_LOGIN] = [](const uint16 size, const uint32 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
 			{
 				return LoginPacketHandler::HandlePacket(size, packetId, pBuffer, pSession);
 			};
@@ -33,10 +33,10 @@ public:
 		const auto iter = sPacketServiceTypeMap.find(serviceType);
 		if (iter != sPacketServiceTypeMap.end())
 		{
-			return iter->second(packetSize, packetId, pBuffer, pSession);
+			return iter->second(packetSize, id, pBuffer, pSession);
 		}
 
-		return HANDLE_SERVICE_TYPE_INVALID(packetSize, packetId, pBuffer, pSession);
+		return HANDLE_SERVICE_TYPE_INVALID(packetSize, id, pBuffer, pSession);
 	}
 
 	static bool HANDLE_SERVICE_TYPE_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);

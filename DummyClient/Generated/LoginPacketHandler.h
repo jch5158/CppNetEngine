@@ -29,7 +29,7 @@ public:
 		
     }
 
-	static bool HandlePacket(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession)
+	static bool HandlePacket(const uint16 size, const uint32 packetId, byte* pBuffer, PacketSessionRef& pSession)
 	{
 		const auto iter = sPacketHandleMap.find(packetId);
 		if (iter != sPacketHandleMap.end())
@@ -40,13 +40,13 @@ public:
 		return HANDLE_PACKET_ID_INVALID(size, packetId, pBuffer, pSession);
 	}
 
-	static bool HANDLE_PACKET_ID_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);
+	static bool HANDLE_PACKET_ID_INVALID(const uint16 size, const uint32 packetId, byte* pBuffer, PacketSessionRef& pSession);
     static bool HANDLE_S2C_ECHO_RES(const Protocol::S2C_ECHO_RES& packet, PacketSessionRef& pSession);
     static bool HANDLE_S2C_LOGIN_RES(const Protocol::S2C_LOGIN_RES& packet, PacketSessionRef& pSession);
     
     
-    static SendBufferRef MakeSendBuffer(Protocol::C2S_ECHO_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_C2S_ECHO_REQ)); }
-    static SendBufferRef MakeSendBuffer(Protocol::C2S_LOGIN_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint16>(Protocol::ID_C2S_LOGIN_REQ)); }
+    static SendBufferRef MakeSendBuffer(Protocol::C2S_ECHO_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint32>(Protocol::ID_C2S_ECHO_REQ)); }
+    static SendBufferRef MakeSendBuffer(Protocol::C2S_LOGIN_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint32>(Protocol::ID_C2S_LOGIN_REQ)); }
     
 
 private:
@@ -64,7 +64,7 @@ private:
 	}
 
     template<typename T>
-	static SendBufferRef MakeSendBuffer(T& packet, const uint16 packetId)
+	static SendBufferRef MakeSendBuffer(T& packet, const uint32 packetId)
 	{
 		const uint16 dataSize = static_cast<uint16>(packet.ByteSizeLong());
 		const uint16 packetSize = dataSize + sizeof(PacketHeader);

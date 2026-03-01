@@ -10,7 +10,7 @@ class PacketServiceTypeHandler
 {{
 public:
 
-	using PacketServiceTypeHandle = std::function<bool(const uint16, const uint16, byte*, PacketSessionRef&)>;
+	using PacketServiceTypeHandle = std::function<bool(const uint16, const uint32, byte*, PacketSessionRef&)>;
 
 	static constexpr uint16 GET_SERVICE_TYPE(const uint32 packetId) {{ return (packetId >> 16) & 0x0000FFFF; }}
 	static constexpr uint16 GET_PACKET_ID(const uint32 packetId) {{ return packetId & 0x0000FFFF; }}
@@ -31,10 +31,10 @@ public:
 		const auto iter = sPacketServiceTypeMap.find(serviceType);
 		if (iter != sPacketServiceTypeMap.end())
 		{{
-			return iter->second(packetSize, packetId, pBuffer, pSession);
+			return iter->second(packetSize, id, pBuffer, pSession);
 		}}
 
-		return HANDLE_SERVICE_TYPE_INVALID(packetSize, packetId, pBuffer, pSession);
+		return HANDLE_SERVICE_TYPE_INVALID(packetSize, id, pBuffer, pSession);
 	}}
 
 	static bool HANDLE_SERVICE_TYPE_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);
@@ -54,7 +54,7 @@ private:
 
         public static readonly string SERVICE_TYPE_HANDLE_INIT_FORMAT =
             @"
-        sPacketServiceTypeMap[Protocol::eServiceType::{0}] = [](const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
+        sPacketServiceTypeMap[Protocol::eServiceType::{0}] = [](const uint16 size, const uint32 packetId, byte* pBuffer, PacketSessionRef& pSession) -> bool
 			{{
 				return {1}::HandlePacket(size, packetId, pBuffer, pSession);
 			}};
@@ -82,7 +82,7 @@ public:
         {1}
     }}
 
-	static bool HandlePacket(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession)
+	static bool HandlePacket(const uint16 size, const uint32 packetId, byte* pBuffer, PacketSessionRef& pSession)
 	{{
 		const auto iter = sPacketHandleMap.find(packetId);
 		if (iter != sPacketHandleMap.end())
@@ -93,7 +93,7 @@ public:
 		return HANDLE_PACKET_ID_INVALID(size, packetId, pBuffer, pSession);
 	}}
 
-	static bool HANDLE_PACKET_ID_INVALID(const uint16 size, const uint16 packetId, byte* pBuffer, PacketSessionRef& pSession);
+	static bool HANDLE_PACKET_ID_INVALID(const uint16 size, const uint32 packetId, byte* pBuffer, PacketSessionRef& pSession);
     {2}
     
     {3}
@@ -113,7 +113,7 @@ private:
 	}}
 
     template<typename T>
-	static SendBufferRef MakeSendBuffer(T& packet, const uint16 packetId)
+	static SendBufferRef MakeSendBuffer(T& packet, const uint32 packetId)
 	{{
 		const uint16 dataSize = static_cast<uint16>(packet.ByteSizeLong());
 		const uint16 packetSize = dataSize + sizeof(PacketHeader);
@@ -158,7 +158,7 @@ private:
     ";
 
         public static readonly string MAKE_SEND_BUFFER_FORMAT =
-            @"static SendBufferRef MakeSendBuffer(Protocol::{0}& packet) {{ return MakeSendBuffer(packet, static_cast<uint16>(Protocol::{1})); }}
+            @"static SendBufferRef MakeSendBuffer(Protocol::{0}& packet) {{ return MakeSendBuffer(packet, static_cast<uint32>(Protocol::{1})); }}
     ";
     }
 }
