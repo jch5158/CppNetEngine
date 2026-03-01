@@ -3,16 +3,31 @@
 #include "Job.h"
 #include "JobScheduler.h"
 
-class Actor : public std::enable_shared_from_this<Actor>
+class IActor : public std::enable_shared_from_this<Actor>
 {
 public:
 
 	using CallbackType = std::function<void()>;
 
-	explicit Actor();
-	virtual ~Actor() = default;
+	explicit IActor();
+	virtual ~IActor() = default;
 
-	void DoAsync(const JobSchedulerRef& pScheduler, CallbackType&& callback)
+	virtual void DoAsync(const JobSchedulerRef& pScheduler, CallbackType&& callback) = 0;
+	virtual void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback) = 0;
+	virtual void Execute(const JobTimeBudget& jobTimeBudget) = 0;
+	virtual void Register(const JobSchedulerRef& pScheduler);
+	virtual bool TryAcquire() = 0;
+	virtual void Release() = 0;
+};
+
+class Actor : public IActor
+{
+public:
+
+	explicit Actor();
+	virtual ~Actor() override = default;
+
+	virtual void DoAsync(const JobSchedulerRef& pScheduler, CallbackType&& callback) override
 	{
 		Push(cpp_net_engine::MakeShared<Job>(std::move(callback)), pScheduler);
 	}
@@ -24,7 +39,7 @@ public:
 		Push(cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<Args>(args)...), pScheduler);
 	}
 
-	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback)
+	virtual void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback) override
 	{
 		const JobRef pJob = cpp_net_engine::MakeShared<Job>(std::move(callback));
 		pScheduler->Reserve(pJob, shared_from_this(), delayMs);
@@ -38,11 +53,16 @@ public:
 		pScheduler->Reserve(pJob, shared_from_this(), delayMs);
 	}
 
+	virtual void Execute(const JobTimeBudget& jobTimeBudget) override;
+	virtual void Register(const JobSchedulerRef& pScheduler) override;
+	virtual bool TryAcquire() override;
+	virtual void Release() override;
+
 	void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler);
-	void Execute(const JobTimeBudget& jobTimeBudget);
 	void Flush();
 	void Clear();
 	[[nodiscard]] int32 Count() const;
+	[[nodiscard]] int64 GetSeed() const;
 
 private:
 	static std::atomic<int64> sSeedBase;

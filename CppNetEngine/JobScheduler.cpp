@@ -63,11 +63,13 @@ void JobScheduler::Dispatch()
 				break;
 			}
 
-			pActor->Execute(jobTimeBudget);
-
-			if (pActor->Count() > 0)
+			if (pActor->TryAcquire())
 			{
-				Push(pActor);
+				pActor->Execute(jobTimeBudget);
+
+				pActor->Register(shared_from_this());
+
+				pActor->Release();
 			}
 
 		} while (!jobTimeBudget.IsExpired());

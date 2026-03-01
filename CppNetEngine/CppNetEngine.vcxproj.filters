@@ -147,6 +147,9 @@
     <ClInclude Include="SessionTimeoutTracker.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="ScopedActor.h">
+      <Filter>Job</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -220,6 +223,9 @@
     </ClCompile>
     <ClCompile Include="NetReceiveBuffer.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="ScopedActor.cpp">
+      <Filter>Job</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
