@@ -35,8 +35,8 @@ public:
 	virtual void Register(const JobSchedulerRef& pScheduler) override;
 	virtual bool TryAcquire() override;
 	virtual void Release() override;
-	
-	void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler);
+	virtual void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler) override;
+	virtual void Flush() override;
 
 	void SetSpinCount(const int32 spinCount);
 	[[nodiscard]] int32 GetSpinCount() const;

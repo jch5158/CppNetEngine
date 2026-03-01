@@ -2,7 +2,7 @@
 #include "JobTimingWheel.h"
 #include "Actor.h"
 
-TimingJob::TimingJob(JobRef pJob, const ActorRef& pOwner, JobSchedulerRef pScheduler)
+TimingJob::TimingJob(JobRef pJob, const IActorRef& pOwner, JobSchedulerRef pScheduler)
 	: mJob(std::move(pJob))
 	, mpOwnerQueue(pOwner)
 	, mpScheduler(std::move(pScheduler))
@@ -27,7 +27,7 @@ JobTimingWheel::JobTimingWheel(const int64 tickIntervalMs, const int32 wheelSize
 {
 }
 
-void JobTimingWheel::Reserve(const JobRef& pJob, const ActorRef& pOwner, const JobSchedulerRef& pScheduler, const int64 delayMs)
+void JobTimingWheel::Reserve(const JobRef& pJob, const IActorRef& pOwner, const JobSchedulerRef& pScheduler, const int64 delayMs)
 {
 	if (delayMs < 0 || delayMs >= mTickIntervalMs * mWheelSize)
 	{

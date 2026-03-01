@@ -117,7 +117,13 @@ using ClientServiceConstRef = SharedPtr<const ClientService>;
 using JobRef = SharedPtr<class Job>;
 using JobConstRef = SharedPtr<const Job>;
 
+using IActorRef = SharedPtr<class IActor>;
+using IActorConstRef = SharedPtr<const IActor>;
+using IActorWeak = WeakPtr<IActor>;
+using IActorConstWeak = WeakPtr<const IActor>;
 using ActorRef = SharedPtr<class Actor>;
 using ActorConstRef = SharedPtr<const Actor>;
+using ScopedActorRef = SharedPtr<class ScopedActor>;
+using ScopedActorConstRef = SharedPtr<const ScopedActor>;
 using ActorWeak = WeakPtr<Actor>;
 using ActorConstWeak = WeakPtr<const Actor>;

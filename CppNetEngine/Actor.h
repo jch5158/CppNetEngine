@@ -18,6 +18,8 @@ public:
 	virtual void Register(const JobSchedulerRef& pScheduler);
 	virtual bool TryAcquire() = 0;
 	virtual void Release() = 0;
+	virtual void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler) = 0;
+	virtual void Flush() = 0;
 };
 
 class Actor : public IActor
@@ -57,9 +59,9 @@ public:
 	virtual void Register(const JobSchedulerRef& pScheduler) override;
 	virtual bool TryAcquire() override;
 	virtual void Release() override;
+	virtual void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler) override;
+	virtual void Flush() override;
 
-	void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler);
-	void Flush();
 	void Clear();
 	[[nodiscard]] int32 Count() const;
 	[[nodiscard]] int64 GetSeed() const;

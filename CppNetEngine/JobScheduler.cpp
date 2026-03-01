@@ -31,7 +31,7 @@ JobScheduler::~JobScheduler()
 	}
 }
 
-void JobScheduler::Push(const ActorRef& pActor)
+void JobScheduler::Push(const IActorRef& pActor)
 {
 	if (mActorQueue.TryEnqueue(pActor) == false)
 	{
@@ -57,7 +57,7 @@ void JobScheduler::Dispatch()
 	{
 		do
 		{
-			ActorRef pActor = nullptr;
+			IActorRef pActor = nullptr;
 			if (!mActorQueue.TryDequeue(pActor))
 			{
 				break;
@@ -67,9 +67,9 @@ void JobScheduler::Dispatch()
 			{
 				pActor->Execute(jobTimeBudget);
 
-				pActor->Register(shared_from_this());
-
 				pActor->Release();
+
+				pActor->Register(shared_from_this());
 			}
 
 		} while (!jobTimeBudget.IsExpired());
@@ -87,14 +87,14 @@ void JobScheduler::Dispatch()
 	mTimingWheel.Tick();
 }
 
-void JobScheduler::Reserve(const JobRef& pJob, const ActorRef& pOwner, const int64 delayMs)
+void JobScheduler::Reserve(const JobRef& pJob, const IActorRef& pOwner, const int64 delayMs)
 {
 	mTimingWheel.Reserve(pJob, pOwner, shared_from_this(), delayMs);
 }
 
 void JobScheduler::Flush()
 {
-	ActorRef pActor = nullptr;
+	IActorRef pActor = nullptr;
 	while (mActorQueue.TryDequeue(pActor))
 	{
 		pActor->Flush();

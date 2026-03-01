@@ -72,6 +72,15 @@ void ScopedActor::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
 	Register(pScheduler);
 }
 
+void ScopedActor::Flush()
+{
+	JobRef pJob;
+	while (mJobQueue.TryDequeue(pJob))
+	{
+		pJob->Execute();
+	}
+}
+
 void ScopedActor::SetSpinCount(const int32 spinCount)
 {
 	mSpinCount = spinCount;
