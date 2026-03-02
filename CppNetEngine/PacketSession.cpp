@@ -24,7 +24,7 @@ int32 PacketSession::OnReceive(byte* pBuffer, const int32 len)
 		}
 
 		auto [size, id] = *(reinterpret_cast<PacketHeader*>(&pBuffer[processLen]));
-		if (std::cmp_less(size, SIZE_OF_16(PacketHeader)) || std::cmp_less(NetSendBuffer::MAX_BUFFER_SIZE, size))
+		if (std::cmp_less(size, SIZE_OF_16(PacketHeader)) || std::cmp_less(NetReceiveBuffer::DEFAULT_BUFFER_SIZE, size))
 		{
 			return -1;
 		}

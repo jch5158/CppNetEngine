@@ -5,7 +5,7 @@ NetReceiveBuffer::NetReceiveBuffer(const int32 maxSize)
 	: mMaxBufferSize(maxSize)
 	, mReadPos(0)
 	, mWritePos(0)
-	, mpBuffer(cpp_net_engine::MakeUniqueArray<byte>(maxSize))
+	, mpBuffer(cpp_net_engine::MakeUniqueArray<byte>(maxSize + 1))
 {
 }
 

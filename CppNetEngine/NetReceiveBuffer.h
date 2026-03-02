@@ -4,14 +4,14 @@ class NetReceiveBuffer
 {
 public:
 
-	static constexpr int32 DEFAULT_BUFFER_SIZE = 65536;
+	static constexpr int32 DEFAULT_BUFFER_SIZE = 65535;
 
 	NetReceiveBuffer(const NetReceiveBuffer&) = delete;
 	NetReceiveBuffer& operator=(const NetReceiveBuffer&) = delete;
 	NetReceiveBuffer(NetReceiveBuffer&&) = delete;
 	NetReceiveBuffer& operator=(NetReceiveBuffer&&) = delete;
 
-	explicit NetReceiveBuffer(const int32 maxSize = DEFAULT_BUFFER_SIZE + 1);
+	explicit NetReceiveBuffer(const int32 maxSize = DEFAULT_BUFFER_SIZE);
 	~NetReceiveBuffer() = default;
 
 	void Clear();
