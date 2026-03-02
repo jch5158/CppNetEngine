@@ -33,7 +33,7 @@ fs::path CrashReporter::GetExeDirectory()
     if (GetModuleFileNameW(nullptr, buffer, MAX_PATH) > 0)
     {
         const fs::path exePath(buffer);
-        return exePath.parent_path(); // 파일명을 제외한 디렉터리 리턴
+        return exePath.parent_path();
     }
 #endif
 

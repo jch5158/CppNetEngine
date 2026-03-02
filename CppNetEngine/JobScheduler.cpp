@@ -57,7 +57,7 @@ void JobScheduler::Dispatch()
 	{
 		do
 		{
-			IActorRef pActor = nullptr;
+			IActorRef pActor;
 			if (!mActorQueue.TryDequeue(pActor))
 			{
 				break;
