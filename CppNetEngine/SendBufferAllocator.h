@@ -26,7 +26,7 @@ public:
 	SendBufferAllocator& operator=(SendBufferAllocator&&) = delete;
 
 	[[nodiscard]]
-	static SendBufferRef Alloc(const int32 size);
+	static NetSendBufferRef Alloc(const int32 size);
 
 private:
 

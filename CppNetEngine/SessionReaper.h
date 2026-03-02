@@ -10,7 +10,7 @@ public:
 	virtual ~SessionReaper() override = default;
 
 	[[nodiscard]] int64 GetTimeoutMs() const;
-	void ReapSession(const WeakSessionRef& pWeakSession) const;
+	void ReapSession(const SessionWeak& pSessionWeak) const;
 
 private:
 

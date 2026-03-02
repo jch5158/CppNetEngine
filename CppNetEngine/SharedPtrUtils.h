@@ -68,62 +68,31 @@ using WeakPtr = std::weak_ptr<T>;
 template <typename T>
 using SharedPtr = std::shared_ptr<T>;
 
-using ListenerRef = SharedPtr<class Listener>;
-using ListenerConstRef = SharedPtr<const Listener>;
+#define DECLARE_SHARED_PTR(TypeName) \
+	class TypeName; /*NOLINT(bugprone-macro-parentheses)*/ \
+	using TypeName##Ref = SharedPtr<TypeName>; \
+	using TypeName##ConstRef = SharedPtr<const TypeName>;
 
-using SessionRef = SharedPtr<class Session>;
-using SessionConstRef = SharedPtr<const Session>;
-using WeakSessionRef = WeakPtr<Session>;
-using WeakSessionConstRef = WeakPtr<const Session>;
+#define DECLARE_SMART_PTR(TypeName) \
+	DECLARE_SHARED_PTR(TypeName) \
+	using TypeName##Weak = WeakPtr<TypeName>; \
+	using TypeName##ConstWeak = WeakPtr<const TypeName>;
 
-using PacketSessionRef = SharedPtr<class PacketSession>;
-using PacketSessionConstRef = SharedPtr<const PacketSession>;
-
-using GameSessionRef = SharedPtr<class GameSession>;
-using GameSessionConstRef = SharedPtr<const GameSession>;
-
-using SendBufferRef = SharedPtr<class NetSendBuffer>;
-using SendBufferConstRef = SharedPtr<const NetSendBuffer>;
-
-using IocpCoreRef = SharedPtr<class IocpCore>;
-using IocpCoreConstRef = SharedPtr<const IocpCore>;
-
-using JobSchedulerRef = SharedPtr<class JobScheduler>;
-using JobSchedulerConstRef = SharedPtr<const JobScheduler>;
-
-using SessionManagerRef = SharedPtr<class SessionManager>;
-using SessionManagerConstRef = SharedPtr<const SessionManager>;
-
-using SessionReaperRef = SharedPtr<class SessionReaper>;
-using SessionReaperConstRef = SharedPtr<const SessionReaper>;
-
-using WaitQueueManagerRef = SharedPtr<class WaitQueueManager>;
-using WaitQueueManagerConstRef = SharedPtr<const WaitQueueManager>;
-
-using WeakServiceRef = WeakPtr<class Service>;
-using WeakServiceConstRef = WeakPtr<const Service>;
-using ServiceRef = SharedPtr<Service>;
-using ServiceConstRef = SharedPtr<const Service>;
-
-using IocpObjectRef = SharedPtr<class IocpObject>;
-using IocpObjectConstRef = SharedPtr<const IocpObjectRef>;
-
-using ServerServiceRef = SharedPtr<class ServerService>;
-using ServerServiceConstRef = SharedPtr<const ServerService>;
-
-using ClientServiceRef = SharedPtr<class ClientService>;
-using ClientServiceConstRef = SharedPtr<const ClientService>;
-
-using JobRef = SharedPtr<class Job>;
-using JobConstRef = SharedPtr<const Job>;
-
-using IActorRef = SharedPtr<class IActor>;
-using IActorConstRef = SharedPtr<const IActor>;
-using IActorWeak = WeakPtr<IActor>;
-using IActorConstWeak = WeakPtr<const IActor>;
-using ActorRef = SharedPtr<class Actor>;
-using ActorConstRef = SharedPtr<const Actor>;
-using ScopedActorRef = SharedPtr<class ScopedActor>;
-using ScopedActorConstRef = SharedPtr<const ScopedActor>;
-using ActorWeak = WeakPtr<Actor>;
-using ActorConstWeak = WeakPtr<const Actor>;
+DECLARE_SMART_PTR(Listener);
+DECLARE_SMART_PTR(PacketSession);
+DECLARE_SMART_PTR(GameSession);
+DECLARE_SMART_PTR(NetSendBuffer);
+DECLARE_SMART_PTR(IocpCore);
+DECLARE_SMART_PTR(JobScheduler);
+DECLARE_SMART_PTR(SessionManager);
+DECLARE_SMART_PTR(SessionReaper);
+DECLARE_SMART_PTR(WaitQueueManager);
+DECLARE_SMART_PTR(IocpObject);
+DECLARE_SMART_PTR(ServerService);
+DECLARE_SMART_PTR(ClientService);
+DECLARE_SMART_PTR(Job);
+DECLARE_SMART_PTR(ScopedActor);
+DECLARE_SMART_PTR(Session);
+DECLARE_SMART_PTR(Service);
+DECLARE_SMART_PTR(IActor);
+DECLARE_SMART_PTR(Actor);

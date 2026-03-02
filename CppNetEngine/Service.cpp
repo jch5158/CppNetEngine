@@ -81,9 +81,9 @@ void Service::RegisterSessionReap(const SessionRef& pSession) const
 		return;
 	}
 
-	WeakSessionRef pWeakSession = pSession;
+	SessionWeak pSessionWeak = pSession;
 
-	mpSessionReaper->DoTimer(mpScheduler, mpSessionReaper->GetTimeoutMs(), &SessionReaper::ReapSession, pWeakSession);
+	mpSessionReaper->DoTimer(mpScheduler, mpSessionReaper->GetTimeoutMs(), &SessionReaper::ReapSession, pSessionWeak);
 }
 
 eServiceType Service::GetServiceType() const

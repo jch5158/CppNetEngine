@@ -45,8 +45,8 @@ public:
     static bool HANDLE_S2C_LOGIN_RES(const Protocol::S2C_LOGIN_RES& packet, PacketSessionRef& pSession);
     
     
-    static SendBufferRef MakeSendBuffer(Protocol::C2S_ECHO_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint32>(Protocol::ID_C2S_ECHO_REQ)); }
-    static SendBufferRef MakeSendBuffer(Protocol::C2S_LOGIN_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint32>(Protocol::ID_C2S_LOGIN_REQ)); }
+    static NetSendBufferRef MakeSendBuffer(Protocol::C2S_ECHO_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint32>(Protocol::ID_C2S_ECHO_REQ)); }
+    static NetSendBufferRef MakeSendBuffer(Protocol::C2S_LOGIN_REQ& packet) { return MakeSendBuffer(packet, static_cast<uint32>(Protocol::ID_C2S_LOGIN_REQ)); }
     
 
 private:
@@ -64,7 +64,7 @@ private:
 	}
 
     template<typename T>
-	static SendBufferRef MakeSendBuffer(T& packet, const uint32 packetId)
+	static NetSendBufferRef MakeSendBuffer(T& packet, const uint32 packetId)
 	{
 		const uint16 dataSize = static_cast<uint16>(packet.ByteSizeLong());
 		const uint16 packetSize = dataSize + sizeof(PacketHeader);

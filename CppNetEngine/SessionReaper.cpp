@@ -13,9 +13,9 @@ int64 SessionReaper::GetTimeoutMs() const
 	return mTimeoutMs;
 }
 
-void SessionReaper::ReapSession(const WeakSessionRef& pWeakSession) const
+void SessionReaper::ReapSession(const SessionWeak& pSessionWeak) const
 {
-	const SessionRef pSession = pWeakSession.lock();
+	const SessionRef pSession = pSessionWeak.lock();
 	if (pSession == nullptr)
 	{
 		return;

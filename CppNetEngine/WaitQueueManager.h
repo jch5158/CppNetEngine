@@ -25,6 +25,6 @@ private:
 	};
 
 	TicketInfo mWaitQueueTicket;
-	LockFreeQueue<WeakSessionRef> mEnterWaitQueue;
+	LockFreeQueue<SessionWeak> mEnterWaitQueue;
 };
 

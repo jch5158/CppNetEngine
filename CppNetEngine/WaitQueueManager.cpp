@@ -24,13 +24,13 @@ SessionRef WaitQueueManager::DequeueWaitQueue()
 	const std::atomic_ref<int32> enterTicket(mWaitQueueTicket.enterTicket);
 	while (!mEnterWaitQueue.IsEmpty())
 	{
-		WeakSessionRef pWeakSession;
-		if (mEnterWaitQueue.TryDequeue(pWeakSession) == true)
+		SessionWeak pSessionWeak;
+		if (mEnterWaitQueue.TryDequeue(pSessionWeak) == true)
 		{
 			// ReSharper disable once CppExpressionWithoutSideEffects
 			enterTicket.fetch_add(1);
 
-			SessionRef pSession = pWeakSession.lock();
+			SessionRef pSession = pSessionWeak.lock();
 			if (pSession == nullptr)
 			{
 				continue;

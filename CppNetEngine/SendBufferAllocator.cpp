@@ -1,18 +1,16 @@
 ﻿#include "pch.h"
 #include "SendBufferAllocator.h"
 
-SendBufferRef SendBufferAllocator::Alloc(const int32 size)
+NetSendBufferRef SendBufferAllocator::Alloc(const int32 size)
 {
-	SendBufferRef pData = nullptr;
-
 	if (size < 0 || size > MAX_SIZE)
 	{
-		return pData;
+		return nullptr;
 	}
 
 	const int32 allocSize = getAllocSize(size);
 
-	pData = SharedPtrUtils::Alloc<NetSendBuffer>(allocSize);
+	NetSendBufferRef pData = SharedPtrUtils::Alloc<NetSendBuffer>(allocSize);
 
 	return pData;
 }

@@ -101,7 +101,7 @@ bool Session::Disconnect(const eDisconnectReason reason)
 	return RegisterDisconnect();
 }
 
-void Session::Send(const SendBufferRef& pSendBuffer)
+void Session::Send(const NetSendBufferRef& pSendBuffer)
 {
 	if (IsDisconnected())
 	{
@@ -200,7 +200,7 @@ void Session::RegisterSend()
 	int32 sendCount;
 	for (sendCount = 0; sendCount < MAX_SEND_WSABUF_SIZE; ++sendCount)
 	{
-		SendBufferRef pSendBuffer = nullptr;
+		NetSendBufferRef pSendBuffer;
 		if (mSendQueue.TryDequeue(pSendBuffer) == false)
 		{
 			break;

@@ -24,7 +24,7 @@ namespace cpp_net_engine
 		return MemoryAllocator::GetInstance().Alloc(size);
 	}
 
-	inline SendBufferRef MakeSendBuffer(const int32 size)
+	inline NetSendBufferRef MakeSendBuffer(const int32 size)
 	{
 		return SendBufferAllocator::Alloc(size);
 	}

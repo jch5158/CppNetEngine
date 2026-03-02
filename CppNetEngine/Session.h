@@ -69,7 +69,7 @@ public:
 	bool IsDisconnected() const;
 	bool Connect();
 	bool Disconnect(const eDisconnectReason reason);
-	void Send(const SendBufferRef& pSendBuffer);
+	void Send(const NetSendBufferRef& pSendBuffer);
 
 	bool RegisterConnect();
 	bool RegisterDisconnect();
@@ -97,12 +97,12 @@ private:
 	IocpReceiveEvent mReceiveEvent;
 	IocpSendEvent mSendEvent;
 
-	WeakServiceRef mpService;
+	ServiceWeak mpService;
 	SOCKET mSocket;
 	NetAddress mNetAddress;
 	std::atomic<eSessionState> mSessionState;
 	NetReceiveBuffer mNetReceiveBuffer;
 	std::atomic<bool> mbSendRegistered;
-	LockFreeQueue<SendBufferRef> mSendQueue;
+	LockFreeQueue<NetSendBufferRef> mSendQueue;
 };
 
