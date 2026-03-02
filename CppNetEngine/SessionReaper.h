@@ -1,12 +1,22 @@
 ﻿#pragma once
 
-class SessionReaper : public Actor
+class SessionReaper final : public Actor
 {
 public:
 
-	SessionReaper() = default;
+	static constexpr int64 DEFAULT_TIME_OUT = 60000;
+
+	explicit SessionReaper(const int64 timeoutMs);
 	virtual ~SessionReaper() override = default;
 
-	static void ReapSession(const WeakSessionRef& pWeakSession);
+	[[nodiscard]] int64 GetTimeoutMs() const;
+	void ReapSession(const WeakSessionRef& pWeakSession) const;
+
+private:
+
+	bool isExpired(const int64 lastActivityMs) const;
+	static int64 getNowTimeMs();
+
+	const int64 mTimeoutMs;
 };
 

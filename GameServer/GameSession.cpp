@@ -2,8 +2,8 @@
 #include "GameSession.h"
 #include "Generated/PacketServiceTypeHandler.h"
 
-GameSession::GameSession(const int64 timeoutMs)
-	:PacketSession(timeoutMs)
+GameSession::GameSession()
+	:PacketSession()
 {
 	fmt::print(L"GameSession Created\n");
 }

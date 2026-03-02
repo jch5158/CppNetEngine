@@ -4,6 +4,10 @@
 class GameSession final : public PacketSession
 {
 public:
+
+	explicit GameSession();
+	virtual ~GameSession() override;
+
 	virtual void OnConnected() override;
 	virtual void OnEnterWaitQueue(const int32 waitTicket) override;
 	virtual void OnDisconnecting(const eDisconnectReason reason) override;

@@ -13,16 +13,14 @@ struct PacketHeader
 class PacketSession : public Session
 {
 public:
-	explicit PacketSession(const int64 timeoutMs = SessionTimeoutTracker::DEFAULT_TIME_OUT);
+	explicit PacketSession();
 	virtual ~PacketSession() override = default;
 
 	PacketSessionRef GetPacketSessionRef();
 
 	virtual int32 OnReceive(byte* pBuffer, const int32 len) override final;
 	virtual void OnActivityUpdate() override final;
-	virtual bool OnIsExpired() override final;
 	virtual int64 OnGetLastActivityMs() override final;
-	virtual int64 OnGetTimeoutMs() override final;
 	virtual void OnRecvPacket(byte* pBuffer, const int32 len) = 0;
 
 private:

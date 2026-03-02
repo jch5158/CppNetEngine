@@ -35,10 +35,17 @@ public:
 	}
 
 	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
-	void DoAsync(const JobSchedulerRef& pScheduler, Ret(T::* memFunc)(FuncArgs...), CallArgs&&... args)
+	void DoAsync(const JobSchedulerRef& pScheduler, Ret(T::* pMemFunc)(FuncArgs...), CallArgs&&... args)
 	{
 		auto pOwner = std::static_pointer_cast<T>(shared_from_this());
-		Push(cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<CallArgs>(args)...), pScheduler);
+		Push(cpp_net_engine::MakeShared<Job>(pOwner, pMemFunc, std::forward<CallArgs>(args)...), pScheduler);
+	}
+
+	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
+	void DoAsync(const JobSchedulerRef& pScheduler, Ret(T::* pMemFunc)(FuncArgs...) const, CallArgs&&... args)
+	{
+		auto pOwner = std::static_pointer_cast<T>(shared_from_this());
+		Push(cpp_net_engine::MakeShared<Job>(pOwner, pMemFunc, std::forward<CallArgs>(args)...), pScheduler);
 	}
 
 	virtual void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback) override
@@ -48,10 +55,18 @@ public:
 	}
 
 	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
-	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* memFunc)(FuncArgs...), CallArgs&&... args)
+	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* pMemFunc)(FuncArgs...), CallArgs&&... args)
 	{
 		auto pOwner = std::static_pointer_cast<T>(shared_from_this());
-		const JobRef pJob = cpp_net_engine::MakeShared<Job>(pOwner, memFunc, std::forward<CallArgs>(args)...);
+		const JobRef pJob = cpp_net_engine::MakeShared<Job>(pOwner, pMemFunc, std::forward<CallArgs>(args)...);
+		pScheduler->Reserve(pJob, shared_from_this(), delayMs);
+	}
+
+	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
+	void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* pMemFunc)(FuncArgs...) const, CallArgs&&... args)
+	{
+		auto pOwner = std::static_pointer_cast<T>(shared_from_this());
+		const JobRef pJob = cpp_net_engine::MakeShared<Job>(pOwner, pMemFunc, std::forward<CallArgs>(args)...);
 		pScheduler->Reserve(pJob, shared_from_this(), delayMs);
 	}
 

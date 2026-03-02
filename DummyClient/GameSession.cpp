@@ -2,6 +2,17 @@
 #include "GameSession.h"
 #include "Generated/PacketServiceTypeHandler.h"
 
+GameSession::GameSession()
+	:PacketSession()
+{
+	fmt::print(L"GameSession Created\n");
+}
+
+GameSession::~GameSession()
+{
+	fmt::print(L"GameSession Destroyed\n");
+}
+
 void GameSession::OnConnected()
 {
 	Protocol::C2S_ECHO_REQ packet;

@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "PacketSession.h"
 
-PacketSession::PacketSession(const int64 timeoutMs)
-	: mTimeoutTracker(timeoutMs)
+PacketSession::PacketSession()
+	: mTimeoutTracker()
 {
 }
 
@@ -48,18 +48,7 @@ void PacketSession::OnActivityUpdate()
 	mTimeoutTracker.UpdateActivity();
 }
 
-bool PacketSession::OnIsExpired()
-{
-	return mTimeoutTracker.IsExpired();
-}
-
 int64 PacketSession::OnGetLastActivityMs()
 {
 	return mTimeoutTracker.GetLastActivityMs();
 }
-
-int64 PacketSession::OnGetTimeoutMs()
-{
-	return mTimeoutTracker.GetTimeoutMs();
-}
-

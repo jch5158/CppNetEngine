@@ -56,9 +56,7 @@ public:
 	virtual int32 OnReceive(byte* pBuffer, const int32 len) = 0;
 	virtual void OnError(const int32 errorCode) = 0;
 	virtual void OnActivityUpdate() = 0;
-	virtual bool OnIsExpired() = 0;
 	virtual int64 OnGetLastActivityMs() = 0;
-	virtual int64 OnGetTimeoutMs() = 0;
 
 	ServiceRef GetService() const;
 	SOCKET GetSocket() const;

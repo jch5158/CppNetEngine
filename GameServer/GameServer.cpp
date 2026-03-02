@@ -18,13 +18,9 @@ int main()
 		NetAddress(L"127.0.0.1", 7777),
 		cpp_net_engine::MakeShared<IocpCore>(),
 		cpp_net_engine::MakeShared<JobScheduler>(),
-		[]() 
-		{
-			constexpr int64 timeoutMs = 10000;
-			return cpp_net_engine::MakeShared<GameSession>(timeoutMs);
-		},
+		cpp_net_engine::MakeShared<GameSession>,
 		cpp_net_engine::MakeShared<SessionManager>(10),
-		cpp_net_engine::MakeShared<SessionReaper>(),
+		cpp_net_engine::MakeShared<SessionReaper>(10000),
 		cpp_net_engine::MakeShared<WaitQueueManager>(0));
 
 	pService->Start();
