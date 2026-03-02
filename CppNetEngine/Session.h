@@ -39,6 +39,10 @@ public:
 	friend class SessionManager;
 	friend class SessionReaper;
 	friend class Sender;
+	friend class Connector;
+	friend class Disconnector;
+	friend class Receiver;
+	friend class Sender;
 
 	Session(const Session&) = delete;
 	Session& operator=(const Session&) = delete;
@@ -94,6 +98,7 @@ private:
 	void setService(const ServiceRef& pService);
 	void setSessionEvent(const ServiceRef& pService);
 	void setNetAddress(const NetAddress& address);
+
 	bool setSessionWaiting();
 	bool setWaitingToConnected();
 	bool setSessionConnected();

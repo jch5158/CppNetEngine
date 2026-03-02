@@ -48,6 +48,8 @@ public:
 
 private:
 
+	void processWaitQueue() const;
+
 	const eServiceType mServiceType;
 	const int32	mMaxSessionCount;
 	NetAddress mNetAddress;

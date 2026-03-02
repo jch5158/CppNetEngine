@@ -51,9 +51,9 @@ bool Service::AddSession(const SessionRef& pSession) const
 
 void Service::ReleaseSession(const SessionRef& pSession) const
 {
-	pSession->OnDisconnected();
-
 	mpSessionManager->ReleaseSession(pSession);
+
+	processWaitQueue();
 }
 
 int32 Service::EnterWaitQueue(const SessionRef& pSession) const
@@ -126,6 +126,18 @@ int32 Service::GetWaitCount(const int32 myWaitTicket) const
 	}
 
 	return mpWaitQueueManager->GetWaitCount(myWaitTicket);
+}
+
+void Service::processWaitQueue() const
+{
+	const SessionRef pWaitSession = DequeueWaitQueue();
+	if (pWaitSession != nullptr)
+	{
+		if (pWaitSession->setWaitingToConnected())
+		{
+			pWaitSession->OnConnected();
+		}
+	}
 }
 
 ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager)

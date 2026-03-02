@@ -106,6 +106,11 @@ bool Session::Connect()
 
 void Session::Disconnect(const eDisconnectReason reason)
 {
+	if (!setSessionDisconnected())
+	{
+		return;
+	}
+
 	OnDisconnecting(reason);
 	registerDisconnect();
 }
@@ -197,20 +202,11 @@ void Session::processDisconnect()
 {
 	mDisconnector.Process();
 
+	OnDisconnected();
+
 	GetService()->ReleaseSession(GetSessionRef());
 
-	const ServiceRef pService = GetService();
-
 	Clear();
-
-	const SessionRef pWaitSession = pService->DequeueWaitQueue();
-	if (pWaitSession != nullptr)
-	{
-		if (pWaitSession->setWaitingToConnected())
-		{
-			pWaitSession->OnConnected();
-		}
-	}
 }
 
 void Session::processSend(const uint32 numOfBytes)
