@@ -64,7 +64,7 @@ public:
 	NetReceiveBuffer& GetNetReceiveBuffer();
 	SessionRef GetSessionRef();
 	
-	bool IsSessionInGame() const;
+	bool IsInGame() const;
 	bool IsConnected() const;
 	bool IsDisconnected() const;
 	bool Connect();

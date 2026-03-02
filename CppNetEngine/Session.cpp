@@ -75,7 +75,7 @@ SessionRef Session::GetSessionRef()
 	return std::static_pointer_cast<Session>(shared_from_this());
 }
 
-bool Session::IsSessionInGame() const
+bool Session::IsInGame() const
 {
 	return mSessionState.load() == eSessionState::InGame;
 }
