@@ -274,8 +274,10 @@ void Session::ProcessConnect()
 
 	if (GetService()->AddSession(GetSessionRef()) == true)
 	{
-		setSessionConnected();
-		OnConnected();
+		if (setSessionConnected())
+		{
+			OnConnected();
+		}
 	}
 	else
 	{
@@ -286,8 +288,10 @@ void Session::ProcessConnect()
 			return;
 		}
 
-		setSessionWaiting();
-		OnEnterWaitQueue(waitTicket);
+		if (setSessionWaiting())
+		{
+			OnEnterWaitQueue(waitTicket);
+		}
 	}
 
 	RegisterReapSelf();
@@ -303,8 +307,10 @@ void Session::ProcessDisconnect()
 	const SessionRef pWaitSession = GetService()->DequeueWaitQueue();
 	if (pWaitSession != nullptr)
 	{
-		pWaitSession->setWaitingToConnected();
-		pWaitSession->OnConnected();
+		if (pWaitSession->setWaitingToConnected())
+		{
+			pWaitSession->OnConnected();
+		}
 	}
 }
 
@@ -354,6 +360,12 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 	RegisterReceive();
 }
 
+bool Session::SetSessionInGame()
+{
+	auto expected = eSessionState::Connected;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
+}
+
 void Session::setService(const ServiceRef& pService)
 {
 	mpService = pService;
@@ -380,12 +392,6 @@ bool Session::setSessionConnected()
 {
 	auto expected = eSessionState::Disconnected;
 	return mSessionState.compare_exchange_weak(expected, eSessionState::Connected);
-}
-
-bool Session::setSessionInGame()
-{
-	auto expected = eSessionState::Connected;
-	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
 }
 
 bool Session::setSessionDisconnected()

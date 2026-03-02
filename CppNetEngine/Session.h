@@ -82,6 +82,8 @@ public:
 	void ProcessSend(const uint32 numOfBytes);
 	void ProcessReceive(const uint32 numOfBytes);
 
+	bool SetSessionInGame();
+
 private:
 
 	void setService(const ServiceRef& pService);
@@ -89,7 +91,6 @@ private:
 	bool setSessionWaiting();
 	bool setWaitingToConnected();
 	bool setSessionConnected();
-	bool setSessionInGame();
 	bool setSessionDisconnected();
 
 	IocpConnectEvent mConnectEvent;
