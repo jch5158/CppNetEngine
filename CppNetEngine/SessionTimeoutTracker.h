@@ -20,7 +20,7 @@ public:
 private:
 	
 	static int64 getNowTimeMs();
-
-	std::atomic<int64> mLastActivityMs;
+	
+	int64 mLastActivityMs;
 };
 
