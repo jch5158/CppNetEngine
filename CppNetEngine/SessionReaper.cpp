@@ -27,7 +27,7 @@ void SessionReaper::ReapSession(const SessionWeak& pSessionWeak) const
 	}
 	else
 	{
-		pSession->registerReapSelf();
+		pSession->registerReap();
 	}
 }
 

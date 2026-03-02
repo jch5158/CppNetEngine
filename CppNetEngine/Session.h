@@ -79,7 +79,7 @@ private:
 	bool registerDisconnect();
 	void registerSend();
 	void registerReceive();
-	void registerReapSelf();
+	void registerReap();
 
 	void processConnect();
 	void processDisconnect();

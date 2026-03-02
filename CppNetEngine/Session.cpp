@@ -269,7 +269,7 @@ void Session::registerReceive()
 	}
 }
 
-void Session::registerReapSelf()
+void Session::registerReap()
 {
 	GetService()->RegisterSessionReap(GetSessionRef());
 }
@@ -300,7 +300,7 @@ void Session::processConnect()
 		}
 	}
 
-	registerReapSelf();
+	registerReap();
 	registerReceive();
 }
 
