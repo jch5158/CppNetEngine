@@ -25,22 +25,16 @@ public:
 	explicit IocpEvent(const eIocpEventType eventType);
 	~IocpEvent() = default;
 
-	void Init();
-
-	[[nodiscard]]
-	eIocpEventType GetEventType() const;
-
-	[[nodiscard]]
-	IocpObjectRef GetIocpObjectRef();
-
-	void SetIocpObjectRef(const IocpObjectRef& iocpObjectRef);
-
-	void ReleaseIocpObjectRef();
+	void ClearOverlapped();
+	[[nodiscard]] eIocpEventType GetEventType() const;
+	[[nodiscard]] IocpObjectRef GetOwner();
+	void SetOwner(const IocpObjectRef& pOwner);
+	void ResetOwner();
 
 private:
 
 	const eIocpEventType mEventType;
-	IocpObjectRef mIocpObjectRef;
+	IocpObjectRef mpOwner;
 };
 
 class IocpAcceptEvent final : public IocpEvent
@@ -48,10 +42,9 @@ class IocpAcceptEvent final : public IocpEvent
 public:
 	IocpAcceptEvent();
 
-	void SetSession(SessionRef pClientSession);
+	void SetSession(SessionRef pSession);
 
-	[[nodiscard]]
-	SessionRef GetClientSession() const;
+	[[nodiscard]] SessionRef GetClientSession() const;
 
 private:
 	SessionRef mpClientSession;
@@ -80,8 +73,7 @@ class IocpSendEvent final : public IocpEvent
 public:
 	IocpSendEvent();
 
-	[[nodiscard]]
-	Vector<NetSendBufferRef>& GetSendPendingBuffer();
+	[[nodiscard]] Vector<NetSendBufferRef>& GetSendPendingBuffer();
 
 private:
 	Vector<NetSendBufferRef> mSendPendingBuffer; // 전송중인 버퍼

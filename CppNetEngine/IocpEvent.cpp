@@ -8,7 +8,7 @@ IocpEvent::IocpEvent(const eIocpEventType eventType)
 {
 }
 
-void IocpEvent::Init()
+void IocpEvent::ClearOverlapped()
 {
 	OVERLAPPED::Internal = 0;
 	OVERLAPPED::InternalHigh = 0;
@@ -22,19 +22,19 @@ eIocpEventType IocpEvent::GetEventType() const
 	return mEventType;
 }
 
-IocpObjectRef IocpEvent::GetIocpObjectRef()
+IocpObjectRef IocpEvent::GetOwner()
 {
-	return mIocpObjectRef;
+	return mpOwner;
 }
 
-void IocpEvent::SetIocpObjectRef(const IocpObjectRef& iocpObjectRef)
+void IocpEvent::SetOwner(const IocpObjectRef& pOwner)
 {
-	mIocpObjectRef = iocpObjectRef;
+	mpOwner = pOwner;
 }
 
-void IocpEvent::ReleaseIocpObjectRef()
+void IocpEvent::ResetOwner()
 {
-	mIocpObjectRef = nullptr;
+	mpOwner = nullptr;
 }
 
 IocpAcceptEvent::IocpAcceptEvent()
@@ -43,9 +43,9 @@ IocpAcceptEvent::IocpAcceptEvent()
 {
 }
 
-void IocpAcceptEvent::SetSession(SessionRef pClientSession)
+void IocpAcceptEvent::SetSession(SessionRef pSession)
 {
-	mpClientSession = std::move(pClientSession);
+	mpClientSession = std::move(pSession);
 }
 
 SessionRef IocpAcceptEvent::GetClientSession() const
@@ -72,7 +72,7 @@ IocpSendEvent::IocpSendEvent()
 	:IocpEvent(eIocpEventType::Send)
 	, mSendPendingBuffer()
 {
-	mSendPendingBuffer.reserve(Session::MAX_SEND_WSABUF_SIZE);
+	mSendPendingBuffer.reserve(Sender::MAX_SEND_WSABUF_SIZE);
 }
 
 Vector<NetSendBufferRef>& IocpSendEvent::GetSendPendingBuffer()

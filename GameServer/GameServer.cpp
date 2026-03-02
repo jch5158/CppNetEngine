@@ -16,12 +16,17 @@ int main()
 
 	const ServerServiceRef pService = cpp_net_engine::MakeShared<ServerService>(
 		NetAddress(L"127.0.0.1", 7777),
-		cpp_net_engine::MakeShared<IocpCore>(),
-		cpp_net_engine::MakeShared<JobScheduler>(),
-		cpp_net_engine::MakeShared<GameSession>,
-		cpp_net_engine::MakeShared<SessionManager>(10),
-		cpp_net_engine::MakeShared<SessionReaper>(10000),
-		cpp_net_engine::MakeShared<WaitQueueManager>(0));
+		cpp_net_engine::MakeShared<Listener>(10,
+			[](const uint32 errorCode)->void
+			{
+				NET_ENGINE_LOG_ERROR("Listener Error Handle, errorCode : {}", errorCode);
+			}),
+			cpp_net_engine::MakeShared<IocpCore>(),
+			cpp_net_engine::MakeShared<JobScheduler>(),
+			cpp_net_engine::MakeShared<GameSession>,
+			cpp_net_engine::MakeShared<SessionManager>(1),
+			cpp_net_engine::MakeShared<SessionReaper>(10000),
+			cpp_net_engine::MakeShared<WaitQueueManager>(0));
 
 	pService->Start();
 

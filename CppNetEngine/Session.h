@@ -1,9 +1,13 @@
 ﻿#pragma once
+#include "Connector.h"
+#include "Disconnector.h"
 #include "IocpCore.h"
 #include "IocpEvent.h"
 #include "LockFreeQueue.h"
 #include "NetAddress.h"
 #include "NetReceiveBuffer.h"
+#include "Receiver.h"
+#include "Sender.h"
 #include "SharedPtrUtils.h"
 
 enum class eSessionState : uint8
@@ -22,7 +26,8 @@ enum class eDisconnectReason : uint16  // NOLINT(performance-enum-size)
 	Kicked,         // 서버에서 강퇴
 	ServerFull,		// 대기큐마저 꽉 찼을 때
 	ServerShutdown, // 서버 종료
-	SocketError     // 네트워크 에러
+	SocketError,     // 네트워크 에러
+	ServiceError,
 };
 
 class Session : public IocpObject
@@ -33,9 +38,7 @@ public:
 	friend class Service;
 	friend class SessionManager;
 	friend class SessionReaper;
-	
-	static constexpr int32 MAX_SEND_WSABUF_SIZE = 64;
-	static constexpr int32 MAX_RECEIVE_WSABUF_SIZE = 2;
+	friend class Sender;
 
 	Session(const Session&) = delete;
 	Session& operator=(const Session&) = delete;
@@ -63,20 +66,22 @@ public:
 	[[nodiscard]] ServiceRef GetService() const;
 	[[nodiscard]] SOCKET GetSocket() const;
 	[[nodiscard]] NetAddress& GetAddress();
-	[[nodiscard]] NetReceiveBuffer& GetNetReceiveBuffer();
+	[[nodiscard]] byte* GetReceiveBufferPtr() const;
 	[[nodiscard]] SessionRef GetSessionRef();
 	
 	[[nodiscard]] bool IsInGame() const;
 	[[nodiscard]] bool IsConnected() const;
+	[[nodiscard]] bool IsWaiting() const;
 	[[nodiscard]] bool IsDisconnected() const;
 	[[nodiscard]] bool Connect();
-	bool Disconnect(const eDisconnectReason reason);
+	void Disconnect(const eDisconnectReason reason);
 	void Send(const NetSendBufferRef& pSendBuffer);
+	void Clear();
 
 private:
 
 	bool registerConnect();
-	bool registerDisconnect();
+	void registerDisconnect();
 	void registerSend();
 	void registerReceive();
 	void registerReap();
@@ -87,23 +92,20 @@ private:
 	void processReceive(const uint32 numOfBytes);
 
 	void setService(const ServiceRef& pService);
+	void setSessionEvent(const ServiceRef& pService);
 	void setNetAddress(const NetAddress& address);
 	bool setSessionWaiting();
 	bool setWaitingToConnected();
 	bool setSessionConnected();
 	bool setSessionDisconnected();
 
-	IocpConnectEvent mConnectEvent;
-	IocpDisconnectEvent mDisconnectEvent;
-	IocpReceiveEvent mReceiveEvent;
-	IocpSendEvent mSendEvent;
-
-	ServiceWeak mpService;
+	ServiceRef mpService;
 	SOCKET mSocket;
 	NetAddress mNetAddress;
 	std::atomic<eSessionState> mSessionState;
-	NetReceiveBuffer mNetReceiveBuffer;
-	std::atomic<bool> mbSendRegistered;
-	LockFreeQueue<NetSendBufferRef> mSendQueue;
+	Connector mConnector;
+	Disconnector mDisconnector;
+	Receiver mReceiver;
+	Sender mSender;
 };
 

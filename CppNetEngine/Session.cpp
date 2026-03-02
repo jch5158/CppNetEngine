@@ -6,16 +6,14 @@
 #include "NetSendBuffer.h"
 
 Session::Session()
-	: mConnectEvent()
-	, mDisconnectEvent()
-	, mReceiveEvent()
-	, mSendEvent()
-	, mpService()
+	: mpService()
 	, mSocket(INVALID_SOCKET)
 	, mNetAddress()
 	, mSessionState(eSessionState::Disconnected)
-	, mNetReceiveBuffer()
-	, mSendQueue(65535)
+	, mConnector()
+	, mDisconnector()
+	, mReceiver()
+	, mSender()
 {
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
@@ -58,7 +56,7 @@ bool Session::SetSessionInGame()
 
 ServiceRef Session::GetService() const
 {
-	return mpService.lock();
+	return mpService;
 }
 
 SOCKET Session::GetSocket() const
@@ -71,9 +69,9 @@ NetAddress& Session::GetAddress()
 	return mNetAddress;
 }
 
-NetReceiveBuffer& Session::GetNetReceiveBuffer()
+byte* Session::GetReceiveBufferPtr() const
 {
-	return mNetReceiveBuffer;
+	return mReceiver.GetWritePtr();
 }
 
 SessionRef Session::GetSessionRef()
@@ -91,6 +89,11 @@ bool Session::IsConnected() const
 	return mSessionState.load() == eSessionState::Connected;
 }
 
+bool Session::IsWaiting() const
+{
+	return mSessionState.load() == eSessionState::Waiting;
+}
+
 bool Session::IsDisconnected() const
 {
 	return mSessionState.load() == eSessionState::Disconnected;
@@ -101,172 +104,45 @@ bool Session::Connect()
 	return registerConnect();
 }
 
-bool Session::Disconnect(const eDisconnectReason reason)
+void Session::Disconnect(const eDisconnectReason reason)
 {
 	OnDisconnecting(reason);
-	return registerDisconnect();
+	registerDisconnect();
 }
 
 void Session::Send(const NetSendBufferRef& pSendBuffer)
 {
-	if (IsDisconnected())
-	{
-		return;
-	}
+	mSender.Send(pSendBuffer);
+}
 
-	if (mSendQueue.TryEnqueue(pSendBuffer) == false)
-	{
-		NET_ENGINE_LOG_FATAL("Session::Send - TryEnqueue is Failed, mSendQueue.Count() : {}", mSendQueue.Count());
-		return;
-	}
-
-	registerSend();
+void Session::Clear()
+{
+	mpService.reset();
+	mSocket = INVALID_SOCKET;
+	mConnector.Clear();
+	mDisconnector.Clear();
+	mReceiver.Clear();
+	mSender.Clear();
 }
 
 bool Session::registerConnect()
 {
-	if (!IsDisconnected())
-	{
-		return false;
-	}
-
-	if (GetService()->GetServiceType() != eServiceType::Client)
-	{
-		return false;
-	}
-
-	if (SocketUtils::SetReuseAddress(mSocket, true) == false)
-	{
-		return false;
-	}
-
-	if (SocketUtils::BindAnyAddress(mSocket, 0) == false)
-	{
-		return false;
-	}
-
-	mConnectEvent.Init();
-	mConnectEvent.SetIocpObjectRef(shared_from_this());
-
-	if (false == SocketUtils::ConnectEx(mSocket, GetService()->GetNetAddress().GetSockAddr(), &mConnectEvent))
-	{
-		const int32 errorCode = WSAGetLastError();
-		if (errorCode != WSA_IO_PENDING)
-		{
-			OnError(errorCode);
-			Disconnect(eDisconnectReason::SocketError);
-			mConnectEvent.SetIocpObjectRef(nullptr);
-			return false;
-		}
-	}
-
-	return true;
+	return mConnector.Register();
 }
 
-bool Session::registerDisconnect()
+void Session::registerDisconnect()
 {
-	if (!setSessionDisconnected())
-	{
-		return false;
-	}
-
-	mDisconnectEvent.Init();
-	mDisconnectEvent.SetIocpObjectRef(shared_from_this());
-
-	if (SocketUtils::DisconnectEx(mSocket, &mDisconnectEvent) == false)
-	{
-		const int32 errorCode = WSAGetLastError();
-		if (errorCode != WSA_IO_PENDING)
-		{
-			OnError(errorCode);
-			mDisconnectEvent.SetIocpObjectRef(nullptr);
-			return false;
-		}
-	}
-
-	return true;
+	mDisconnector.Register();
 }
 
 void Session::registerSend()
 {
-	if (IsDisconnected())
-	{
-		return;
-	}
-
-	if (mbSendRegistered.exchange(true) == true)
-	{
-		return;
-	}
-
-	mSendEvent.Init();
-	mSendEvent.SetIocpObjectRef(shared_from_this());
-
-	WSABUF wsabufs[MAX_SEND_WSABUF_SIZE]{};
-	int32 sendCount;
-	for (sendCount = 0; sendCount < MAX_SEND_WSABUF_SIZE; ++sendCount)
-	{
-		NetSendBufferRef pSendBuffer;
-		if (mSendQueue.TryDequeue(pSendBuffer) == false)
-		{
-			break;
-		}
-
-		mSendEvent.GetSendPendingBuffer().emplace_back(pSendBuffer);
-		wsabufs[sendCount].buf = reinterpret_cast<char*>(pSendBuffer->GetReadPtr());
-		wsabufs[sendCount].len = pSendBuffer->GetUseSize();
-	}
-
-	if (SocketUtils::WsaSend(mSocket, wsabufs, sendCount, &mSendEvent) == false)
-	{
-		const int32 errorCode = WSAGetLastError();
-		if (errorCode != WSA_IO_PENDING)
-		{
-			OnError(errorCode);
-			Disconnect(eDisconnectReason::SocketError);
-			mSendEvent.SetIocpObjectRef(nullptr);
-			mSendEvent.GetSendPendingBuffer().clear();
-			mbSendRegistered.store(false);
-		}
-	}
+	mSender.Register();
 }
 
 void Session::registerReceive()
 {
-	if (IsDisconnected())
-	{
-		return;
-	}
-
-	mReceiveEvent.Init();
-	mReceiveEvent.SetIocpObjectRef(shared_from_this());
-
-	WSABUF wsabufs[MAX_RECEIVE_WSABUF_SIZE]{};
-
-	const int32 linearSize = mNetReceiveBuffer.GetLinearWriteSize();
-	const int32 remainSize = mNetReceiveBuffer.GetFreeSize() - linearSize;
-
-	wsabufs[0].buf = reinterpret_cast<char*>(mNetReceiveBuffer.GetWritePtr());
-	wsabufs[0].len = linearSize;
-
-	int32 wsabufsLen = 1;
-	if (remainSize != 0)
-	{
-		++wsabufsLen;
-		wsabufs[1].buf = reinterpret_cast<char*>(mNetReceiveBuffer.GetBufferPtr());
-		wsabufs[1].len = remainSize;
-	}
-
-	if (SocketUtils::WsaReceive(mSocket, wsabufs, wsabufsLen, &mReceiveEvent) == false)
-	{
-		const int32 errorCode = WSAGetLastError();
-		if (errorCode != WSA_IO_PENDING)
-		{
-			OnError(errorCode);
-			Disconnect(eDisconnectReason::SocketError);
-			mReceiveEvent.SetIocpObjectRef(nullptr);
-		}
-	}
+	mReceiver.Register();
 }
 
 void Session::registerReap()
@@ -276,41 +152,58 @@ void Session::registerReap()
 
 void Session::processConnect()
 {
-	mConnectEvent.ReleaseIocpObjectRef();
+	mConnector.Process();
 
-	if (GetService()->AddSession(GetSessionRef()) == true)
+	const SessionRef pSession = GetSessionRef();
+	const ServiceRef pService = GetService();
+
+	mReceiver.SetOwner(pSession);
+	mSender.SetOwner(pSession);
+
+	bool bStateChanged;
+
+	if (pService->AddSession(pSession))
 	{
-		if (setSessionConnected())
+		bStateChanged = setSessionConnected();
+		if (bStateChanged)
 		{
 			OnConnected();
 		}
 	}
 	else
 	{
-		const int32 waitTicket = GetService()->EnterWaitQueue(GetSessionRef());
+		const int32 waitTicket = pService->EnterWaitQueue(pSession);
 		if (waitTicket == -1)
 		{
 			Disconnect(eDisconnectReason::ServerFull);
 			return;
 		}
 
-		if (setSessionWaiting())
+		bStateChanged = setSessionWaiting();
+		if (bStateChanged)
 		{
 			OnEnterWaitQueue(waitTicket);
 		}
 	}
 
-	registerReap();
-	registerReceive();
+	if (bStateChanged)
+	{
+		registerReap();
+		registerReceive();
+	}
 }
 
 void Session::processDisconnect()
 {
-	mDisconnectEvent.ReleaseIocpObjectRef();
+	mDisconnector.Process();
 
 	GetService()->ReleaseSession(GetSessionRef());
 
-	const SessionRef pWaitSession = GetService()->DequeueWaitQueue();
+	const ServiceRef pService = GetService();
+
+	Clear();
+
+	const SessionRef pWaitSession = pService->DequeueWaitQueue();
 	if (pWaitSession != nullptr)
 	{
 		if (pWaitSession->setWaitingToConnected())
@@ -322,53 +215,28 @@ void Session::processDisconnect()
 
 void Session::processSend(const uint32 numOfBytes)
 {
-	mSendEvent.ReleaseIocpObjectRef();
-	mSendEvent.GetSendPendingBuffer().clear();
-
-	if (numOfBytes == 0)
-	{
-		Disconnect(eDisconnectReason::Kicked);
-		return;
-	}
-
-	OnSend(static_cast<int32>(numOfBytes));
-
-	mbSendRegistered.store(false);
-
-	if (!mSendQueue.IsEmpty())
-	{
-		registerSend();
-	}
+	mSender.Process(numOfBytes);
 }
 
 void Session::processReceive(const uint32 numOfBytes)
 {
-	mReceiveEvent.ReleaseIocpObjectRef();
-
-	if (numOfBytes == 0)
-	{
-		Disconnect(eDisconnectReason::Kicked);
-		return;
-	}
-
-	mNetReceiveBuffer.MoveWritePos(static_cast<int32>(numOfBytes));
-
-	const int32 dataSize = mNetReceiveBuffer.GetUseSize();
-	const int32 processLen = OnReceive(mNetReceiveBuffer.GetReadPtr(), static_cast<int32>(numOfBytes));
-	if (processLen < 0 || processLen > dataSize)
-	{
-		Disconnect(eDisconnectReason::Kicked);
-		return;
-	}
-
-	mNetReceiveBuffer.MoveReadPos(processLen);
-
-	registerReceive();
+	mReceiver.Process(numOfBytes);
 }
 
 void Session::setService(const ServiceRef& pService)
 {
 	mpService = pService;
+}
+
+void Session::setSessionEvent(const ServiceRef& pService)
+{
+	mConnector.SetService(pService);
+
+	const SessionRef pSession = GetSessionRef();
+	mConnector.SetOwner(pSession);
+	mDisconnector.SetOwner(pSession);
+	mReceiver.SetOwner(pSession);
+	mSender.SetOwner(pSession);
 }
 
 void Session::setNetAddress(const NetAddress& address)

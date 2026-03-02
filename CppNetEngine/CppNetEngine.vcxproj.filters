@@ -150,6 +150,18 @@
     <ClInclude Include="ScopedActor.h">
       <Filter>Job</Filter>
     </ClInclude>
+    <ClInclude Include="Sender.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Receiver.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Connector.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Disconnector.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -226,6 +238,18 @@
     </ClCompile>
     <ClCompile Include="ScopedActor.cpp">
       <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Sender.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Receiver.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Connector.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Disconnector.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

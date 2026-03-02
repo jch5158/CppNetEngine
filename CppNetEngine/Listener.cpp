@@ -6,8 +6,10 @@
 #include "Service.h"
 #include "Session.h"
 
-Listener::Listener()
+Listener::Listener(const int32 acceptCount, std::function<void(const uint32)> pErrorHandle)
 	: mSocket(INVALID_SOCKET)
+	, mAcceptCount(acceptCount)
+	, mpErrorHandle(std::move(pErrorHandle))
 	, mAcceptEvents()
 {
 }
@@ -34,7 +36,7 @@ void Listener::Dispatch(class IocpEvent& iocpEvent, uint32 numOfBytes)
 	processAccept(*pAcceptEvent);
 }
 
-bool Listener::StartAccept(ServerServiceRef pServerService)
+bool Listener::StartAccept(const ServerServiceRef& pServerService)
 {
 	if (pServerService == nullptr)
 	{
@@ -42,7 +44,7 @@ bool Listener::StartAccept(ServerServiceRef pServerService)
 		CrashReporter::Crash();
 	}
 
-	mpServerService = std::move(pServerService);
+	mpServerService = pServerService;
 
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
@@ -86,12 +88,11 @@ bool Listener::StartAccept(ServerServiceRef pServerService)
 		CrashReporter::Crash();
 	}
 	
-	const int32 acceptEventCount = mpServerService->GetMaxSessionCount();
-	for (int32 i = 0; i < acceptEventCount; ++i)
+	for (int32 i = 0; i < mAcceptCount; ++i)
 	{
 		auto pAcceptEvent = cpp_net_engine::NewObject<IocpAcceptEvent>();
-		pAcceptEvent->Init();
-		pAcceptEvent->SetIocpObjectRef(shared_from_this());
+		pAcceptEvent->ClearOverlapped();
+		pAcceptEvent->SetOwner(shared_from_this());
 		mAcceptEvents.emplace_back(pAcceptEvent);
 		registerAccept(*pAcceptEvent);
 	}
@@ -107,15 +108,21 @@ void Listener::CloseAccept()
 void Listener::registerAccept(IocpAcceptEvent& acceptEvent) const
 {
 	const SessionRef pSession = mpServerService->CreateSession();
-	acceptEvent.Init();
-	acceptEvent.SetSession(pSession);
+	if (pSession == nullptr)
+	{
+		NET_ENGINE_LOG_FATAL("Listener::registerAccept - mpServerService->CreateSession() is failed");
+		return;
+	}
 
-	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetNetReceiveBuffer().GetWritePtr(),&acceptEvent))
+	acceptEvent.SetSession(pSession);
+	acceptEvent.ClearOverlapped();
+	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetReceiveBufferPtr(), &acceptEvent))
 	{
 		const int32 errorCode = WSAGetLastError();
 		if (errorCode != WSA_IO_PENDING)
 		{
-			registerAccept(acceptEvent);
+			pSession->Clear();
+			mpErrorHandle(errorCode);
 		}
 	}
 }

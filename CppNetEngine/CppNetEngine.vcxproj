@@ -196,7 +196,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AllocatorUtils.h" />
+    <ClInclude Include="Connector.h" />
     <ClInclude Include="CrashReporter.h" />
+    <ClInclude Include="Disconnector.h" />
     <ClInclude Include="EnginePch.h" />
     <ClInclude Include="IocpCore.h" />
     <ClInclude Include="IocpEvent.h" />
@@ -220,8 +222,10 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="NetReceiveBuffer.h" />
     <ClInclude Include="NetSendBuffer.h" />
+    <ClInclude Include="Receiver.h" />
     <ClInclude Include="ScopedActor.h" />
     <ClInclude Include="SendBufferAllocator.h" />
+    <ClInclude Include="Sender.h" />
     <ClInclude Include="Service.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SessionManager.h" />
@@ -236,7 +240,9 @@
     <ClInclude Include="WaitQueueManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Connector.cpp" />
     <ClCompile Include="CrashReporter.cpp" />
+    <ClCompile Include="Disconnector.cpp" />
     <ClCompile Include="IocpCore.cpp" />
     <ClCompile Include="IocpEvent.cpp" />
     <ClCompile Include="Actor.cpp" />
@@ -256,8 +262,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Receiver.cpp" />
     <ClCompile Include="ScopedActor.cpp" />
     <ClCompile Include="SendBufferAllocator.cpp" />
+    <ClCompile Include="Sender.cpp" />
     <ClCompile Include="Service.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SessionManager.cpp" />

@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include "Listener.h"
 #include "NetAddress.h"
 #include "LockFreeStack.h"
 #include "SessionManager.h"
@@ -13,11 +14,11 @@ enum class eServiceType : uint8
 	Client
 };
 
-using SessionFactory = std::function<SessionRef()>;
-
 class Service : public std::enable_shared_from_this<Service>
 {
 public:
+
+	using SessionFactory = std::function<SessionRef()>;
 
 	Service(const Service&) = delete;
 	Service& operator=(const Service&) = delete;
@@ -71,12 +72,12 @@ public:
 class ServerService : public Service
 {
 public:
-	explicit ServerService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
+	explicit ServerService(const NetAddress& targetAddress, ListenerRef pListener, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
 	virtual ~ServerService() override = default;
 
 	virtual bool Start() override;
 	virtual void CloseService() override;
 
 private:
-	ListenerRef mListener;
+	ListenerRef mpListener;
 };
