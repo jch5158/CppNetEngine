@@ -139,6 +139,6 @@ void Listener::processAccept(IocpAcceptEvent& acceptEvent) const
 	}
 
 	pSession->setNetAddress(NetAddress(sockAddr));
-	pSession->ProcessConnect();
+	pSession->processConnect();
 	registerAccept(acceptEvent);
 }

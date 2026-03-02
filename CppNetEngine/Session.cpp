@@ -33,21 +33,27 @@ void Session::Dispatch(IocpEvent& iocpEvent, const uint32 numOfBytes)
 	switch (iocpEvent.GetEventType())  // NOLINT(clang-diagnostic-switch-enum)
 	{
 	case eIocpEventType::Connect:
-		ProcessConnect();
+		processConnect();
 		break;
 	case eIocpEventType::Disconnect:
-		ProcessDisconnect();
+		processDisconnect();
 		break;
 	case eIocpEventType::Send:
-		ProcessSend(numOfBytes);
+		processSend(numOfBytes);
 		break;
 	case eIocpEventType::Receive:
-		ProcessReceive(numOfBytes);
+		processReceive(numOfBytes);
 		break;
 	default:
 		NET_ENGINE_LOG_ERROR("Session::Dispatch - iocp event type is unmatched, iocpEvent.GetEventType() : {}", static_cast<uint8>(iocpEvent.GetEventType()));
 		break;
 	}
+}
+
+bool Session::SetSessionInGame()
+{
+	auto expected = eSessionState::Connected;
+	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
 }
 
 ServiceRef Session::GetService() const
@@ -92,13 +98,13 @@ bool Session::IsDisconnected() const
 
 bool Session::Connect()
 {
-	return RegisterConnect();
+	return registerConnect();
 }
 
 bool Session::Disconnect(const eDisconnectReason reason)
 {
 	OnDisconnecting(reason);
-	return RegisterDisconnect();
+	return registerDisconnect();
 }
 
 void Session::Send(const NetSendBufferRef& pSendBuffer)
@@ -114,10 +120,10 @@ void Session::Send(const NetSendBufferRef& pSendBuffer)
 		return;
 	}
 
-	RegisterSend();
+	registerSend();
 }
 
-bool Session::RegisterConnect()
+bool Session::registerConnect()
 {
 	if (!IsDisconnected())
 	{
@@ -157,7 +163,7 @@ bool Session::RegisterConnect()
 	return true;
 }
 
-bool Session::RegisterDisconnect()
+bool Session::registerDisconnect()
 {
 	if (!setSessionDisconnected())
 	{
@@ -181,7 +187,7 @@ bool Session::RegisterDisconnect()
 	return true;
 }
 
-void Session::RegisterSend()
+void Session::registerSend()
 {
 	if (IsDisconnected())
 	{
@@ -225,7 +231,7 @@ void Session::RegisterSend()
 	}
 }
 
-void Session::RegisterReceive()
+void Session::registerReceive()
 {
 	if (IsDisconnected())
 	{
@@ -263,12 +269,12 @@ void Session::RegisterReceive()
 	}
 }
 
-void Session::RegisterReapSelf()
+void Session::registerReapSelf()
 {
 	GetService()->RegisterSessionReap(GetSessionRef());
 }
 
-void Session::ProcessConnect()
+void Session::processConnect()
 {
 	mConnectEvent.ReleaseIocpObjectRef();
 
@@ -294,11 +300,11 @@ void Session::ProcessConnect()
 		}
 	}
 
-	RegisterReapSelf();
-	RegisterReceive();
+	registerReapSelf();
+	registerReceive();
 }
 
-void Session::ProcessDisconnect()
+void Session::processDisconnect()
 {
 	mDisconnectEvent.ReleaseIocpObjectRef();
 
@@ -314,7 +320,7 @@ void Session::ProcessDisconnect()
 	}
 }
 
-void Session::ProcessSend(const uint32 numOfBytes)
+void Session::processSend(const uint32 numOfBytes)
 {
 	mSendEvent.ReleaseIocpObjectRef();
 	mSendEvent.GetSendPendingBuffer().clear();
@@ -331,11 +337,11 @@ void Session::ProcessSend(const uint32 numOfBytes)
 
 	if (!mSendQueue.IsEmpty())
 	{
-		RegisterSend();
+		registerSend();
 	}
 }
 
-void Session::ProcessReceive(const uint32 numOfBytes)
+void Session::processReceive(const uint32 numOfBytes)
 {
 	mReceiveEvent.ReleaseIocpObjectRef();
 
@@ -357,13 +363,7 @@ void Session::ProcessReceive(const uint32 numOfBytes)
 
 	mNetReceiveBuffer.MoveReadPos(processLen);
 
-	RegisterReceive();
-}
-
-bool Session::SetSessionInGame()
-{
-	auto expected = eSessionState::Connected;
-	return mSessionState.compare_exchange_weak(expected, eSessionState::InGame);
+	registerReceive();
 }
 
 void Session::setService(const ServiceRef& pService)

@@ -32,6 +32,7 @@ public:
 	friend class Listener;
 	friend class Service;
 	friend class SessionManager;
+	friend class SessionReaper;
 	
 	static constexpr int32 MAX_SEND_WSABUF_SIZE = 64;
 	static constexpr int32 MAX_RECEIVE_WSABUF_SIZE = 2;
@@ -44,8 +45,7 @@ public:
 	explicit Session();
 	virtual ~Session() override = default;
 
-	[[nodiscard]]
-	virtual HANDLE GetHandle() const override;
+	[[nodiscard]] virtual HANDLE GetHandle() const override;
 	virtual void Dispatch(class IocpEvent& iocpEvent, const uint32 numOfBytes) override;
 
 	virtual void OnConnected() = 0;
@@ -58,33 +58,33 @@ public:
 	virtual void OnActivityUpdate() = 0;
 	virtual int64 OnGetLastActivityMs() = 0;
 
-	ServiceRef GetService() const;
-	SOCKET GetSocket() const;
-	NetAddress& GetAddress();
-	NetReceiveBuffer& GetNetReceiveBuffer();
-	SessionRef GetSessionRef();
+	[[nodiscard]] bool SetSessionInGame();
+
+	[[nodiscard]] ServiceRef GetService() const;
+	[[nodiscard]] SOCKET GetSocket() const;
+	[[nodiscard]] NetAddress& GetAddress();
+	[[nodiscard]] NetReceiveBuffer& GetNetReceiveBuffer();
+	[[nodiscard]] SessionRef GetSessionRef();
 	
-	bool IsInGame() const;
-	bool IsConnected() const;
-	bool IsDisconnected() const;
-	bool Connect();
+	[[nodiscard]] bool IsInGame() const;
+	[[nodiscard]] bool IsConnected() const;
+	[[nodiscard]] bool IsDisconnected() const;
+	[[nodiscard]] bool Connect();
 	bool Disconnect(const eDisconnectReason reason);
 	void Send(const NetSendBufferRef& pSendBuffer);
 
-	bool RegisterConnect();
-	bool RegisterDisconnect();
-	void RegisterSend();
-	void RegisterReceive();
-	void RegisterReapSelf();
-
-	void ProcessConnect();
-	void ProcessDisconnect();
-	void ProcessSend(const uint32 numOfBytes);
-	void ProcessReceive(const uint32 numOfBytes);
-
-	bool SetSessionInGame();
-
 private:
+
+	bool registerConnect();
+	bool registerDisconnect();
+	void registerSend();
+	void registerReceive();
+	void registerReapSelf();
+
+	void processConnect();
+	void processDisconnect();
+	void processSend(const uint32 numOfBytes);
+	void processReceive(const uint32 numOfBytes);
 
 	void setService(const ServiceRef& pService);
 	void setNetAddress(const NetAddress& address);
