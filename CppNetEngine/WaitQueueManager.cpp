@@ -40,14 +40,7 @@ SessionRef WaitQueueManager::DequeueWaitQueue()
 		}
 	}
 
-	TicketInfo expected{};
-	const std::atomic_ref<TicketInfo> ticketInfo(mWaitQueueTicket);
-	do
-	{
-		expected.waitTicket = mWaitQueueTicket.enterTicket;
-		expected.enterTicket = mWaitQueueTicket.enterTicket;
-
-	} while (!ticketInfo.compare_exchange_weak(expected, { 0,0 }));
+	ticketClear();
 
 	return nullptr;
 }
@@ -56,10 +49,22 @@ int32 WaitQueueManager::GetWaitCount(const int32 myTicket) const
 {
 	const int32 enterTicket = mWaitQueueTicket.enterTicket;
 
-	if (enterTicket > myTicket)
+	if (enterTicket >= myTicket)
 	{
 		return enterTicket - myTicket;
 	}
 
 	return 0;
+}
+
+void WaitQueueManager::ticketClear()
+{
+	TicketInfo expected{};
+	const std::atomic_ref<TicketInfo> ticketInfo(mWaitQueueTicket);
+	do
+	{
+		expected.waitTicket = mWaitQueueTicket.waitTicket;
+		expected.enterTicket = mWaitQueueTicket.enterTicket;
+
+	} while (!ticketInfo.compare_exchange_weak(expected, { 0,0 }));
 }

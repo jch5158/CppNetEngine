@@ -18,6 +18,8 @@ public:
 
 private:
 
+	void ticketClear();
+
 	struct TicketInfo
 	{
 		int32 waitTicket;
