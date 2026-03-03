@@ -165,36 +165,14 @@ void Session::processConnect()
 	mReceiver.SetOwner(pSession);
 	mSender.SetOwner(pSession);
 
-	bool bStateChanged;
-
-	if (pService->AddSession(pSession))
-	{
-		bStateChanged = setSessionConnected();
-		if (bStateChanged)
-		{
-			OnConnected();
-		}
-	}
-	else
-	{
-		uint64 myTicket;
-		if (pService->EnterWaitQueue(pSession, myTicket) == false)
-		{
-			Disconnect(eDisconnectReason::ServerFull);
-			return;
-		}
-
-		bStateChanged = setSessionWaiting();
-		if (bStateChanged)
-		{
-			OnEnterWaitQueue(myTicket);
-		}
-	}
-
-	if (bStateChanged)
+	if (!pService->AddSession(pSession))
 	{
 		registerReap();
 		registerReceive();
+	}
+	else
+	{
+		Disconnect(eDisconnectReason::ServerFull);
 	}
 }
 
@@ -204,7 +182,7 @@ void Session::processDisconnect()
 
 	OnDisconnected();
 
-	GetService()->ReleaseSession(GetSessionRef());
+	GetService()->RemoveSession(GetSessionRef());
 
 	Clear();
 }

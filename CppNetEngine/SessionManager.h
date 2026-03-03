@@ -13,17 +13,19 @@ public:
 	explicit SessionManager(const int32 maxSessionCount);
 	~SessionManager() = default;
 
-	bool AddSession(const SessionRef& pSession);
-	void ReleaseSession(const SessionRef& pSession);
+	[[nodiscard]] bool AddSession(const SessionRef& pSession);
+	[[nodiscard]] bool AddWaitingSession(const SessionRef& pSession);
+	void RemoveSession(const SessionRef& pSession, const bool bKeepWaitingSession = false);
+	void ReleaseKeepTicket();
 
-	int32 GetMaxSessionCount() const;
-	int32 GetCurrentSessionCount() const;
+	[[nodiscard]] int32 GetMaxSessionCount() const;
+	[[nodiscard]] int32 GetCurrentSessionCount();
 
 private:
 
 	const int32 mMaxSessionCount;
-	std::atomic<int32> mCurrentSessionCount;
 
 	Mutex mLock;
+	int32 mCurrentSessionCount;
 	Set<SessionRef> mSessions;
 };

@@ -46,14 +46,40 @@ SessionRef Service::CreateSession()
 
 bool Service::AddSession(const SessionRef& pSession) const
 {
-	return mpSessionManager->AddSession(pSession);
+	if (mpSessionManager->AddSession(pSession))
+	{
+		if (pSession->setSessionConnected() || pSession->setWaitingToConnected())
+		{
+			pSession->OnConnected();
+			return true;
+		}
+
+		RemoveSession(pSession);
+		pSession->Disconnect(eDisconnectReason::StateError);
+	}
+	else
+	{
+		uint64 myTicket;
+		if (mpWaitQueueManager->EnterWaitQueue(pSession, myTicket))
+		{
+			if (pSession->setSessionWaiting())
+			{
+				pSession->OnEnterWaitQueue(myTicket);
+				return true;
+			}
+			
+			pSession->Disconnect(eDisconnectReason::StateError);
+		}
+	}
+
+	return false;
 }
 
-void Service::ReleaseSession(const SessionRef& pSession) const
+void Service::RemoveSession(const SessionRef& pSession) const
 {
-	mpSessionManager->ReleaseSession(pSession);
+	mpSessionManager->RemoveSession(pSession, true);
 
-	processWaitQueue();
+	admitWaitingSession();
 }
 
 bool Service::EnterWaitQueue(const SessionRef& pSession, uint64& outTicket) const
@@ -129,15 +155,32 @@ bool Service::GetWaitCount(const uint64 myTicket, uint64& outWaitCount) const
 	return true;
 }
 
-void Service::processWaitQueue() const
+void Service::admitWaitingSession() const
 {
 	const SessionRef pWaitSession = DequeueWaitQueue();
 	if (pWaitSession != nullptr)
 	{
-		if (pWaitSession->setWaitingToConnected())
+		if (mpSessionManager->AddWaitingSession(pWaitSession))
 		{
-			pWaitSession->OnConnected();
+			if (pWaitSession->setWaitingToConnected())
+			{
+				pWaitSession->OnConnected();
+			}
+			else
+			{
+				mpSessionManager->RemoveSession(pWaitSession);
+				pWaitSession->Disconnect(eDisconnectReason::StateError);
+			}
 		}
+		else
+		{
+			mpSessionManager->ReleaseKeepTicket();
+			pWaitSession->Disconnect(eDisconnectReason::StateError);
+		}
+	}
+	else
+	{
+		mpSessionManager->ReleaseKeepTicket();
 	}
 }
 

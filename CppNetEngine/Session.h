@@ -27,6 +27,7 @@ enum class eDisconnectReason : uint16  // NOLINT(performance-enum-size)
 	ServerFull,		// 대기큐마저 꽉 찼을 때
 	ServerShutdown, // 서버 종료
 	SocketError,     // 네트워크 에러
+	StateError,
 	ServiceError,
 };
 

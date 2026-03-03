@@ -33,7 +33,7 @@ public:
 
 	SessionRef CreateSession();
 	bool AddSession(const SessionRef& pSession) const;
-	void ReleaseSession(const SessionRef& pSession) const;
+	void RemoveSession(const SessionRef& pSession) const;
 	bool EnterWaitQueue(const SessionRef& pSession, uint64& outTicket) const;
 	SessionRef DequeueWaitQueue() const;
 	void RegisterSessionReap(const SessionRef& pSession) const;
@@ -48,7 +48,7 @@ public:
 
 private:
 
-	void processWaitQueue() const;
+	void admitWaitingSession() const;
 
 	const eServiceType mServiceType;
 	const int32	mMaxSessionCount;

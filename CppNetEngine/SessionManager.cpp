@@ -11,27 +11,46 @@ SessionManager::SessionManager(const int32 maxSessionCount)
 
 bool SessionManager::AddSession(const SessionRef& pSession)
 {
-	if (pSession == nullptr)
+	UniqueLock lock(mLock);
+
+	// 1. 최대 인원(예약석 포함) 검사 복구
+	if (mCurrentSessionCount >= mMaxSessionCount)
 	{
 		return false;
 	}
 
-	if (mCurrentSessionCount.fetch_add(1) >= mMaxSessionCount)
+	// 2. 맵에 실제로 삽입이 성공했을 때만 카운트를 증가시킴 (누수 방지)
+	if (mSessions.emplace(pSession).second)
 	{
-		mCurrentSessionCount.fetch_sub(1);
-		return false;
+		++mCurrentSessionCount;
+		return true;
 	}
 
+	return false;
+}
+
+bool SessionManager::AddWaitingSession(const SessionRef& pSession)
+{
 	UniqueLock lock(mLock);
 	return mSessions.emplace(pSession).second;
 }
 
-void SessionManager::ReleaseSession(const SessionRef& pSession)
+void SessionManager::RemoveSession(const SessionRef& pSession, const bool bKeepWaitingSession)
 {
-	mCurrentSessionCount.fetch_sub(1);
-
 	UniqueLock lock(mLock);
-	mSessions.erase(pSession);
+	if (mSessions.erase(pSession) != 0)
+	{
+		if (bKeepWaitingSession == false)
+		{
+			--mCurrentSessionCount;
+		}
+	}
+}
+
+void SessionManager::ReleaseKeepTicket()
+{
+	UniqueLock lock(mLock);
+	--mCurrentSessionCount;
 }
 
 int32 SessionManager::GetMaxSessionCount() const
@@ -39,7 +58,8 @@ int32 SessionManager::GetMaxSessionCount() const
 	return mMaxSessionCount;
 }
 
-int32 SessionManager::GetCurrentSessionCount() const
+int32 SessionManager::GetCurrentSessionCount()
 {
-	return mCurrentSessionCount.load();
+	UniqueLock lock(mLock);
+	return mCurrentSessionCount;
 }
