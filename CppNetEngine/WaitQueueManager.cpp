@@ -47,7 +47,7 @@ SessionRef WaitQueueManager::DequeueWaitQueue()
 		expected.waitTicket = mWaitQueueTicket.enterTicket;
 		expected.enterTicket = mWaitQueueTicket.enterTicket;
 
-	} while (ticketInfo.compare_exchange_weak(expected, { 0,0 }));
+	} while (!ticketInfo.compare_exchange_weak(expected, { 0,0 }));
 
 	return nullptr;
 }
