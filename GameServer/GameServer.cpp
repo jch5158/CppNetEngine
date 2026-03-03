@@ -28,9 +28,11 @@ int main()
 			cpp_net_engine::MakeShared<SessionReaper>(10000),
 			cpp_net_engine::MakeShared<WaitQueueManager>(0));
 
-	pService->Start();
-
-	NET_ENGINE_LOG_INFO("GameServer is started.");
+	if (pService->Start() == false)
+	{
+		NET_ENGINE_LOG_INFO("GameServer start is failed\n");
+		CrashReporter::Crash();
+	}
 
 	for (int32 i = 0; i < 5; ++i)
 	{

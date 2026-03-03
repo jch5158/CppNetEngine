@@ -57,7 +57,7 @@ bool Service::AddSession(const SessionRef& pSession) const
 		RemoveSession(pSession);
 		pSession->Disconnect(eDisconnectReason::StateError);
 	}
-	else
+	else if (mpWaitQueueManager != nullptr)
 	{
 		uint64 myTicket;
 		if (mpWaitQueueManager->EnterWaitQueue(pSession, myTicket))
@@ -192,7 +192,7 @@ ClientService::ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpC
 bool ClientService::Start()
 {
 	const int32 sessionCount = GetMaxSessionCount();
-	for (int32 i = 0; i < sessionCount; i++)
+	for (int32 i = 0; i < sessionCount; ++i)
 	{
 		const SessionRef pSession = CreateSession();
 		if (pSession->Connect() == false)

@@ -22,7 +22,11 @@ int32 main()
 		cpp_net_engine::MakeShared<SessionManager>(1)
 	);
 
-	NET_ASSERT(pService->Start(), "Connect Failed");
+	if (pService->Start() == false)
+	{
+		NET_ENGINE_LOG_INFO("DummyClient start Failed");
+		CrashReporter::Crash();
+	}
 
 	for (int32 i = 0; i < 5; ++i)
 	{

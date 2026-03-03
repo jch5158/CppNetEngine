@@ -165,7 +165,7 @@ void Session::processConnect()
 	mReceiver.SetOwner(pSession);
 	mSender.SetOwner(pSession);
 
-	if (!pService->AddSession(pSession))
+	if (pService->AddSession(pSession))
 	{
 		registerReap();
 		registerReceive();
