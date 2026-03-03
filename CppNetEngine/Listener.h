@@ -8,6 +8,8 @@ class Listener final : public IocpObject
 {
 public:
 
+	friend class Acceptor;
+
 	using ErrorHandle = std::function<void(const uint32)>;
 
 	Listener(const Listener&) = delete;
@@ -22,18 +24,17 @@ public:
 	virtual HANDLE GetHandle() const override;
 	virtual void Dispatch(IocpEvent& iocpEvent, uint32 numOfBytes) override;
 
+	SOCKET GetSocket() const;
+	ListenerRef GetListenerRef();
+
 	bool StartAccept(const ServerServiceRef& pServerService);
 	void CloseAccept();
 
 private:
 
-	void registerAccept(IocpAcceptEvent& acceptEvent) const;
-	void processAccept(IocpAcceptEvent& acceptEvent) const;
-
 	SOCKET mSocket;
 	const int32 mAcceptCount;
 	const ErrorHandle mpErrorHandle;
-	Vector<IocpAcceptEvent*> mAcceptEvents;
-	ServerServiceRef mpServerService;
+	Vector<AcceptorRef> mAcceptors;
 };
 

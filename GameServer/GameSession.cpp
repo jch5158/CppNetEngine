@@ -16,6 +16,7 @@ GameSession::~GameSession()
 void GameSession::OnConnected()
 {
 	fmt::print(L"Client Connect\n");
+
 }
 
 void GameSession::OnEnterWaitQueue(const int32 waitTicket)
@@ -29,7 +30,7 @@ void GameSession::OnDisconnecting(const eDisconnectReason reason)
 
 void GameSession::OnDisconnected()
 {
-	fmt::print(L"Client Disconnect\n");
+	fmt::print(L"Client Disconnect {}\n", GetSessionRef().use_count());
 }
 
 void GameSession::OnSend(const int32 len)

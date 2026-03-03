@@ -31,6 +31,15 @@
     <Filter Include="Job">
       <UniqueIdentifier>{8d774a0e-136e-4008-855e-facdab60d221}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network\IOCP">
+      <UniqueIdentifier>{20017d25-67d7-4212-a24f-58508c5f5828}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\IOCP\Event">
+      <UniqueIdentifier>{395bfe04-1100-42e9-a0a2-d6f5ac94fbba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Session">
+      <UniqueIdentifier>{3e98945e-61f1-4f9e-9d67-500f8b271781}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -75,22 +84,13 @@
     <ClInclude Include="MemoryAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="NetReceiveBuffer.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="SocketUtils.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="NetAddress.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Session.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="Listener.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="NetSendBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="UniquePtrUtils.h">
@@ -105,12 +105,6 @@
     <ClInclude Include="Service.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="PacketSession.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="SendBufferAllocator.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="AllocatorUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -123,12 +117,6 @@
     <ClInclude Include="JobScheduler.h">
       <Filter>Job</Filter>
     </ClInclude>
-    <ClInclude Include="IocpEvent.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="IocpCore.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="JobTimingWheel.h">
       <Filter>Job</Filter>
     </ClInclude>
@@ -138,29 +126,53 @@
     <ClInclude Include="WaitQueueManager.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="SessionManager.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionReaper.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionTimeoutTracker.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="ScopedActor.h">
       <Filter>Job</Filter>
     </ClInclude>
-    <ClInclude Include="Sender.h">
-      <Filter>Network</Filter>
+    <ClInclude Include="IocpEvent.h">
+      <Filter>Network\IOCP</Filter>
     </ClInclude>
-    <ClInclude Include="Receiver.h">
-      <Filter>Network</Filter>
+    <ClInclude Include="IocpCore.h">
+      <Filter>Network\IOCP</Filter>
     </ClInclude>
     <ClInclude Include="Connector.h">
-      <Filter>Network</Filter>
+      <Filter>Network\IOCP\Event</Filter>
     </ClInclude>
     <ClInclude Include="Disconnector.h">
-      <Filter>Network</Filter>
+      <Filter>Network\IOCP\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Receiver.h">
+      <Filter>Network\IOCP\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Sender.h">
+      <Filter>Network\IOCP\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketSession.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Acceptor.h">
+      <Filter>Network\IOCP\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="NetSendBuffer.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBufferAllocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="NetReceiveBuffer.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionReaper.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionTimeoutTracker.h">
+      <Filter>Network\Session</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -185,19 +197,10 @@
     <ClCompile Include="NetAddress.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Session.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="Listener.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="Service.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketSession.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="SendBufferAllocator.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp">
@@ -205,12 +208,6 @@
     </ClCompile>
     <ClCompile Include="JobScheduler.cpp">
       <Filter>Job</Filter>
-    </ClCompile>
-    <ClCompile Include="IocpCore.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="IocpEvent.cpp">
-      <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="JobTimingWheel.cpp">
       <Filter>Job</Filter>
@@ -221,35 +218,53 @@
     <ClCompile Include="WaitQueueManager.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="SessionManager.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="SessionReaper.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="SessionTimeoutTracker.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="NetSendBuffer.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="NetReceiveBuffer.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="ScopedActor.cpp">
       <Filter>Job</Filter>
     </ClCompile>
-    <ClCompile Include="Sender.cpp">
-      <Filter>Network</Filter>
+    <ClCompile Include="IocpCore.cpp">
+      <Filter>Network\IOCP</Filter>
     </ClCompile>
-    <ClCompile Include="Receiver.cpp">
-      <Filter>Network</Filter>
+    <ClCompile Include="IocpEvent.cpp">
+      <Filter>Network\IOCP</Filter>
     </ClCompile>
     <ClCompile Include="Connector.cpp">
-      <Filter>Network</Filter>
+      <Filter>Network\IOCP\Event</Filter>
     </ClCompile>
     <ClCompile Include="Disconnector.cpp">
-      <Filter>Network</Filter>
+      <Filter>Network\IOCP\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Receiver.cpp">
+      <Filter>Network\IOCP\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Sender.cpp">
+      <Filter>Network\IOCP\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketSession.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="Acceptor.cpp">
+      <Filter>Network\IOCP\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="NetSendBuffer.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBufferAllocator.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="NetReceiveBuffer.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionReaper.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionTimeoutTracker.cpp">
+      <Filter>Network\Session</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

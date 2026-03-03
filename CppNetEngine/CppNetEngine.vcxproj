@@ -195,6 +195,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Acceptor.h" />
     <ClInclude Include="AllocatorUtils.h" />
     <ClInclude Include="Connector.h" />
     <ClInclude Include="CrashReporter.h" />
@@ -240,6 +241,7 @@
     <ClInclude Include="WaitQueueManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Acceptor.cpp" />
     <ClCompile Include="Connector.cpp" />
     <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="Disconnector.cpp" />

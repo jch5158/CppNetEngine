@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "Listener.h"
+
+#include "Acceptor.h"
 #include "SocketUtils.h"
 #include "IocpEvent.h"
 #include "ObjectAllocator.h"
@@ -10,7 +12,7 @@ Listener::Listener(const int32 acceptCount, std::function<void(const uint32)> pE
 	: mSocket(INVALID_SOCKET)
 	, mAcceptCount(acceptCount)
 	, mpErrorHandle(std::move(pErrorHandle))
-	, mAcceptEvents()
+	, mAcceptors()
 {
 }
 
@@ -32,8 +34,18 @@ void Listener::Dispatch(class IocpEvent& iocpEvent, uint32 numOfBytes)
 		return;
 	}
 
-	auto* pAcceptEvent = static_cast<IocpAcceptEvent*>(&iocpEvent);
-	processAccept(*pAcceptEvent);
+	const auto* pAcceptEvent = static_cast<IocpAcceptEvent*>(&iocpEvent);
+	mAcceptors[pAcceptEvent->GetAcceptorIndex()]->Process();
+}
+
+SOCKET Listener::GetSocket() const
+{
+	return mSocket;
+}
+
+ListenerRef Listener::GetListenerRef()
+{
+	return std::static_pointer_cast<Listener>(shared_from_this());
 }
 
 bool Listener::StartAccept(const ServerServiceRef& pServerService)
@@ -44,17 +56,15 @@ bool Listener::StartAccept(const ServerServiceRef& pServerService)
 		CrashReporter::Crash();
 	}
 
-	mpServerService = pServerService;
-
 	if (SocketUtils::CreateTcpSocket(mSocket) == false)
 	{
 		NET_ENGINE_LOG_FATAL("SocketUtils::CreateTcpSocket is failed - errorCode : {}", WSAGetLastError());
 		CrashReporter::Crash();
 	}
 
-	if (mpServerService->GetIocpCore()->Register(shared_from_this()) == false)
+	if (pServerService->GetIocpCore()->Register(shared_from_this()) == false)
 	{
-		NET_ENGINE_LOG_FATAL("mpServerService->GetIocpCore()->Register is failed - errorCode : {}", WSAGetLastError());
+		NET_ENGINE_LOG_FATAL("pServerService->GetIocpCore()->Register is failed - errorCode : {}", WSAGetLastError());
 		CrashReporter::Crash();
 	}
 
@@ -76,7 +86,7 @@ bool Listener::StartAccept(const ServerServiceRef& pServerService)
 		CrashReporter::Crash();
 	}
 
-	if (SocketUtils::Bind(mSocket, mpServerService->GetNetAddress().GetSockAddr()) == false)
+	if (SocketUtils::Bind(mSocket, pServerService->GetNetAddress().GetSockAddr()) == false)
 	{
 		NET_ENGINE_LOG_FATAL("SocketUtils::Bind is failed - errorCode : {}", WSAGetLastError());
 		CrashReporter::Crash();
@@ -88,13 +98,14 @@ bool Listener::StartAccept(const ServerServiceRef& pServerService)
 		CrashReporter::Crash();
 	}
 	
+	mAcceptors.reserve(mAcceptCount);
 	for (int32 i = 0; i < mAcceptCount; ++i)
 	{
-		auto pAcceptEvent = cpp_net_engine::NewObject<IocpAcceptEvent>();
-		pAcceptEvent->ClearOverlapped();
-		pAcceptEvent->SetOwner(shared_from_this());
-		mAcceptEvents.emplace_back(pAcceptEvent);
-		registerAccept(*pAcceptEvent);
+		const AcceptorRef pAcceptor = cpp_net_engine::MakeShared<Acceptor>(i);
+		pAcceptor->SetOwner(GetListenerRef());
+		pAcceptor->SetService(pServerService);
+		mAcceptors.emplace_back(pAcceptor);
+		pAcceptor->Register();
 	}
 
 	return true;
@@ -103,49 +114,4 @@ bool Listener::StartAccept(const ServerServiceRef& pServerService)
 void Listener::CloseAccept()
 {
 	SocketUtils::Close(mSocket);
-}
-
-void Listener::registerAccept(IocpAcceptEvent& acceptEvent) const
-{
-	const SessionRef pSession = mpServerService->CreateSession();
-	if (pSession == nullptr)
-	{
-		NET_ENGINE_LOG_FATAL("Listener::registerAccept - mpServerService->CreateSession() is failed");
-		return;
-	}
-
-	acceptEvent.SetSession(pSession);
-	acceptEvent.ClearOverlapped();
-	if (false == SocketUtils::AcceptEx(mSocket, pSession->GetSocket(), pSession->GetReceiveBufferPtr(), &acceptEvent))
-	{
-		const int32 errorCode = WSAGetLastError();
-		if (errorCode != WSA_IO_PENDING)
-		{
-			pSession->Clear();
-			mpErrorHandle(errorCode);
-		}
-	}
-}
-
-void Listener::processAccept(IocpAcceptEvent& acceptEvent) const
-{
-	const SessionRef pSession = acceptEvent.GetClientSession();
-
-	if (SocketUtils::SetUpdateAcceptSocket(pSession->GetSocket(), mSocket) == false)
-	{
-		registerAccept(acceptEvent);
-		return;
-	}
-
-	SOCKADDR_IN sockAddr{};
-	int32 sizeOfSockAddr = SIZE_OF_32(sockAddr);
-	if (SOCKET_ERROR == getpeername(pSession->GetSocket(), reinterpret_cast<SOCKADDR*>(&sockAddr), &sizeOfSockAddr))
-	{
-		registerAccept(acceptEvent);
-		return;
-	}
-
-	pSession->setNetAddress(NetAddress(sockAddr));
-	pSession->processConnect();
-	registerAccept(acceptEvent);
 }

@@ -37,15 +37,26 @@ void IocpEvent::ResetOwner()
 	mpOwner = nullptr;
 }
 
-IocpAcceptEvent::IocpAcceptEvent()
+IocpAcceptEvent::IocpAcceptEvent(const int32 acceptorIndex)
 	: IocpEvent(eIocpEventType::Accept)
+	, mAcceptorIndex(acceptorIndex)
 	, mpClientSession(nullptr)
 {
 }
 
-void IocpAcceptEvent::SetSession(SessionRef pSession)
+int32 IocpAcceptEvent::GetAcceptorIndex() const
 {
-	mpClientSession = std::move(pSession);
+	return mAcceptorIndex;
+}
+
+void IocpAcceptEvent::ResetSession()
+{
+	mpClientSession.reset();
+}
+
+void IocpAcceptEvent::SetSession(const SessionRef& pSession)
+{
+	mpClientSession = pSession;
 }
 
 SessionRef IocpAcceptEvent::GetClientSession() const

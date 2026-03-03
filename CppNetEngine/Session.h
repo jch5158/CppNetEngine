@@ -39,6 +39,7 @@ public:
 	friend class SessionManager;
 	friend class SessionReaper;
 	friend class Sender;
+	friend class Acceptor;
 	friend class Connector;
 	friend class Disconnector;
 	friend class Receiver;

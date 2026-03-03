@@ -40,13 +40,17 @@ private:
 class IocpAcceptEvent final : public IocpEvent
 {
 public:
-	IocpAcceptEvent();
+	explicit IocpAcceptEvent(const int32 acceptorIndex);
 
-	void SetSession(SessionRef pSession);
+	[[nodiscard]] int32 GetAcceptorIndex() const;
 
+	void ResetSession();
+	void SetSession(const SessionRef& pSession);
 	[[nodiscard]] SessionRef GetClientSession() const;
 
+
 private:
+	const int32 mAcceptorIndex;
 	SessionRef mpClientSession;
 };
 
