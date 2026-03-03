@@ -83,7 +83,7 @@ DECLARE_SMART_PTR(PacketSession);
 DECLARE_SMART_PTR(GameSession);
 DECLARE_SMART_PTR(NetSendBuffer);
 DECLARE_SMART_PTR(IocpCore);
-DECLARE_SMART_PTR(JobScheduler);
+DECLARE_SMART_PTR(ActorScheduler);
 DECLARE_SMART_PTR(SessionManager);
 DECLARE_SMART_PTR(SessionReaper);
 DECLARE_SMART_PTR(WaitQueueManager);

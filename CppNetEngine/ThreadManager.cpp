@@ -2,7 +2,7 @@
 #include "ThreadManager.h"
 
 #include "Actor.h"
-#include "JobScheduler.h"
+#include "ActorScheduler.h"
 
 ThreadManager::ThreadManager()
 	: ISingleton<ThreadManager>()

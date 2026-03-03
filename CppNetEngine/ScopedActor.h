@@ -29,14 +29,16 @@ public:
 
 	virtual ~ScopedActor() override = default;
 
-	virtual void DoAsync(const JobSchedulerRef& pScheduler, CallbackType&& callback) override;
-	virtual void DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback) override;
-	virtual void Execute(const JobTimeBudget& jobTimeBudget) override;
-	virtual void Register(const JobSchedulerRef& pScheduler) override;
-	virtual bool TryAcquire() override;
+	virtual void Execute(const ActorTimeBudget& timeBudget) override;
+	[[nodiscard]] virtual bool TryAcquire() override;
 	virtual void Release() override;
-	virtual void Push(const JobRef& pJob, const JobSchedulerRef& pScheduler) override;
+	virtual void Register(const ActorSchedulerRef& pActorScheduler) override;
 	virtual void Flush() override;
+	[[nodiscard]] virtual bool PushJob(const JobRef& pJob) override;
+	[[nodiscard]] virtual int32 GetJobCount() override;
+
+	void Post(const ActorSchedulerRef& pScheduler, CallbackType&& callback);
+	void PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback);
 
 	void SetSpinCount(const int32 spinCount);
 	[[nodiscard]] int32 GetSpinCount() const;

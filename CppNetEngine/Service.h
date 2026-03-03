@@ -25,7 +25,7 @@ public:
 	Service(Service&&) = delete;
 	Service& operator=(Service&&) = delete;
 
-	explicit Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
+	explicit Service(const eServiceType serviceType, const NetAddress& netAddress, IocpCoreRef pIocpCore, ActorSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
 	virtual ~Service() = default;
 
 	virtual bool Start() = 0;
@@ -41,7 +41,7 @@ public:
 	eServiceType GetServiceType() const;
 	NetAddress& GetNetAddress();
 	IocpCoreRef GetIocpCore() const;
-	JobSchedulerRef GetJobScheduler() const;
+	ActorSchedulerRef GetActorScheduler() const;
 	int32 GetCurrentSessionCount() const;
 	int32 GetMaxSessionCount() const;
 	bool GetWaitCount(const uint64 myTicket, uint64& outWaitCount) const;
@@ -54,7 +54,7 @@ private:
 	const int32	mMaxSessionCount;
 	NetAddress mNetAddress;
 	IocpCoreRef mpIocpCore;
-	JobSchedulerRef mpScheduler;
+	ActorSchedulerRef mpScheduler;
 	SessionFactory mpSessionFactory;
 	SessionManagerRef mpSessionManager;
 	SessionReaperRef mpSessionReaper;
@@ -64,7 +64,7 @@ private:
 class ClientService : public Service
 {
 public:
-	explicit ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager);
+	explicit ClientService(const NetAddress& targetAddress, IocpCoreRef pIocpCore, ActorSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager);
 	virtual ~ClientService() override = default;
 
 	virtual bool Start() override;
@@ -74,7 +74,7 @@ public:
 class ServerService : public Service
 {
 public:
-	explicit ServerService(const NetAddress& targetAddress, ListenerRef pListener, IocpCoreRef pIocpCore, JobSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
+	explicit ServerService(const NetAddress& targetAddress, ListenerRef pListener, IocpCoreRef pIocpCore, ActorSchedulerRef pScheduler, SessionFactory pSessionFactory, SessionManagerRef pSessionManager, SessionReaperRef pSessionReaper, WaitQueueManagerRef pWaitQueueManager);
 	virtual ~ServerService() override = default;
 
 	virtual bool Start() override;

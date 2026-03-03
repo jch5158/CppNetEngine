@@ -1,18 +1,7 @@
 ﻿#include "pch.h"
 #include "ScopedActor.h"
 
-void ScopedActor::DoAsync(const JobSchedulerRef& pScheduler, CallbackType&& callback)
-{
-	Push(cpp_net_engine::MakeShared<Job>(std::move(callback)), pScheduler);
-}
-
-void ScopedActor::DoTimer(const JobSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback)
-{
-	const JobRef pJob = cpp_net_engine::MakeShared<Job>(std::move(callback));
-	pScheduler->Reserve(pJob, shared_from_this(), delayMs);
-}
-
-void ScopedActor::Execute(const JobTimeBudget& jobTimeBudget)
+void ScopedActor::Execute(const ActorTimeBudget& timeBudget)
 {
 	int32 count = mJobQueue.Count();
 	do
@@ -29,15 +18,7 @@ void ScopedActor::Execute(const JobTimeBudget& jobTimeBudget)
 		}
 
 		pJob->Execute();
-	} while (!jobTimeBudget.IsExpired());
-}
-
-void ScopedActor::Register(const JobSchedulerRef& pScheduler)
-{
-	if (mJobQueue.Count() > 0)
-	{
-		pScheduler->Push(shared_from_this());
-	}
+	} while (!timeBudget.IsExpired());
 }
 
 bool ScopedActor::TryAcquire()
@@ -61,15 +42,12 @@ void ScopedActor::Release()
 	mAcquireIndex = -1;
 }
 
-void ScopedActor::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
+void ScopedActor::Register(const ActorSchedulerRef& pActorScheduler)
 {
-	if (mJobQueue.TryEnqueue(pJob) == false)
+	if (mJobQueue.Count() > 0)
 	{
-		NET_ENGINE_LOG_ERROR("ScopedActor::Push - mJobQueue.TryEnqueue is failed, mJobQueue.Count() : {}", mJobQueue.Count());
-		return;
+		pActorScheduler->Schedule(shared_from_this(), true);
 	}
-
-	Register(pScheduler);
 }
 
 void ScopedActor::Flush()
@@ -79,6 +57,28 @@ void ScopedActor::Flush()
 	{
 		pJob->Execute();
 	}
+}
+
+bool ScopedActor::PushJob(const JobRef& pJob)
+{
+	return mJobQueue.TryEnqueue(pJob);
+}
+
+int32 ScopedActor::GetJobCount()
+{
+	return mJobQueue.Count();
+}
+
+void ScopedActor::Post(const ActorSchedulerRef& pScheduler, CallbackType&& callback)
+{
+	const auto pJob = cpp_net_engine::MakeShared<Job>(std::move(callback));
+	JobDispatcher::Post(pJob, shared_from_this(), pScheduler);
+}
+
+void ScopedActor::PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback)
+{
+	const auto pJob = cpp_net_engine::MakeShared<Job>(std::move(callback));
+	JobDispatcher::PostDelay(pJob, shared_from_this(), pScheduler, delayMs);
 }
 
 void ScopedActor::SetSpinCount(const int32 spinCount)

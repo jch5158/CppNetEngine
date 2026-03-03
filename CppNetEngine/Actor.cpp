@@ -1,6 +1,21 @@
 ﻿#include "pch.h"
 #include "Actor.h"
-#include "JobScheduler.h"
+#include "ActorScheduler.h"
+
+IActor::IActor()
+	: mActorOverlapped()
+{
+}
+
+ActorOverlapped& IActor::GetActorOverlapped()
+{
+	return mActorOverlapped;
+}
+
+void IActor::ClearActorOverlapped()
+{
+	mActorOverlapped.Clear();
+}
 
 Actor::Actor()
 	: mSeed(sSeedBase.fetch_add(1))
@@ -9,7 +24,7 @@ Actor::Actor()
 {
 }
 
-void Actor::Execute(const JobTimeBudget& jobTimeBudget)
+void Actor::Execute(const ActorTimeBudget& timeBudget)
 {
 	int32 count = mJobQueue.Count();
 	do
@@ -26,15 +41,7 @@ void Actor::Execute(const JobTimeBudget& jobTimeBudget)
 		}
 
 		pJob->Execute();
-	} while (!jobTimeBudget.IsExpired());
-}
-
-void Actor::Register(const JobSchedulerRef& pScheduler)
-{
-	if (mJobQueue.Count() > 0)
-	{
-		pScheduler->Push(shared_from_this());
-	}
+	} while (!timeBudget.IsExpired());
 }
 
 bool Actor::TryAcquire()
@@ -52,15 +59,12 @@ void Actor::Release()
 	mbAcquire.store(false);
 }
 
-void Actor::Push(const JobRef& pJob, const JobSchedulerRef& pScheduler)
+void Actor::Register(const ActorSchedulerRef& pActorScheduler)
 {
-	if (mJobQueue.TryEnqueue(pJob) == false)
+	if (mJobQueue.Count() > 0)
 	{
-		NET_ENGINE_LOG_ERROR("Actor::Push - mJobQueue.TryEnqueue is failed, mJobQueue.Count() : {}", mJobQueue.Count());
-		return;
+		pActorScheduler->Schedule(shared_from_this());
 	}
-
-	Register(pScheduler);
 }
 
 void Actor::Flush()
@@ -70,6 +74,16 @@ void Actor::Flush()
 	{
 		pJob->Execute();
 	}
+}
+
+bool Actor::PushJob(const JobRef& pJob)
+{
+	return mJobQueue.TryEnqueue(pJob);
+}
+
+int32 Actor::GetJobCount()
+{
+	return mJobQueue.Count();
 }
 
 void Actor::Clear()

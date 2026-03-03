@@ -4,7 +4,7 @@
 class TimingJob
 {
 public:
-	explicit TimingJob(JobRef pJob, const IActorRef& pOwner, JobSchedulerRef pScheduler);
+	explicit TimingJob(JobRef pJob, const IActorRef& pOwner, ActorSchedulerRef pScheduler);
 	TimingJob(TimingJob&&) = default;
 	TimingJob& operator=(TimingJob&&) = default;
 
@@ -12,8 +12,8 @@ public:
 
 private:
 	JobRef mJob;
-	IActorWeak mpOwnerQueue;
-	JobSchedulerRef mpScheduler;
+	IActorWeak mpOwner;
+	ActorSchedulerRef mpScheduler;
 };
 
 class JobTimingWheel
@@ -28,7 +28,7 @@ public:
 	explicit JobTimingWheel(const int64 tickIntervalMs, const int32 wheelSize);
 	~JobTimingWheel() = default;
 
-	void Reserve(const JobRef& pJob, const IActorRef& pOwner, const JobSchedulerRef& pScheduler, const int64 delayMs);
+	void Reserve(const JobRef& pJob, const IActorRef& pOwner, const ActorSchedulerRef& pScheduler, const int64 delayMs);
 	void Tick();
 
 private:

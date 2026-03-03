@@ -22,7 +22,7 @@ int main()
 				NET_ENGINE_LOG_ERROR("Listener Error Handle, errorCode : {}", errorCode);
 			}),
 			cpp_net_engine::MakeShared<IocpCore>(),
-			cpp_net_engine::MakeShared<JobScheduler>(),
+			cpp_net_engine::MakeShared<ActorScheduler>(),
 			cpp_net_engine::MakeShared<GameSession>,
 			cpp_net_engine::MakeShared<SessionManager>(1),
 			cpp_net_engine::MakeShared<SessionReaper>(10000),
@@ -48,7 +48,7 @@ int main()
 			{
 				while (true)
 				{
-					pService->GetJobScheduler()->Dispatch();
+					pService->GetActorScheduler()->Dispatch();
 				}
 			});
 	}

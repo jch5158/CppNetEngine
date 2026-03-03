@@ -5,10 +5,10 @@
 #include "JobTimingWheel.h"
 #include "LockFreeQueue.h"
 
-class JobTimeBudget
+class ActorTimeBudget
 {
 public:
-	explicit JobTimeBudget(const int64 timeSliceMs)
+	explicit ActorTimeBudget(const int64 timeSliceMs)
 		: mTimeSlice(std::chrono::milliseconds(timeSliceMs))
 		, mStart(std::chrono::steady_clock::now())
 	{
@@ -35,7 +35,8 @@ private:
 	const std::chrono::steady_clock::time_point mStart;
 };
 
-class JobScheduler : public std::enable_shared_from_this<JobScheduler>
+// TODO : ActorScheduler로 변경
+class ActorScheduler : public std::enable_shared_from_this<ActorScheduler>
 {
 public:
 
@@ -43,24 +44,22 @@ public:
 	static constexpr int64 TICK_INTERVAL_MS = 10;
 	static constexpr int32 WHEEL_SIZE = 60 * 60 * 100 * TICK_INTERVAL_MS;
 
-	JobScheduler(const JobScheduler&) = delete;
-	JobScheduler& operator=(const JobScheduler&) = delete;
-	JobScheduler(JobScheduler&&) = delete;
-	JobScheduler& operator=(JobScheduler&&) = delete;
+	ActorScheduler(const ActorScheduler&) = delete;
+	ActorScheduler& operator=(const ActorScheduler&) = delete;
+	ActorScheduler(ActorScheduler&&) = delete;
+	ActorScheduler& operator=(ActorScheduler&&) = delete;
 
-	explicit JobScheduler();
-	explicit JobScheduler(std::function<void(const uint32)> pOnHandleError);
-	~JobScheduler();
+	explicit ActorScheduler();
+	explicit ActorScheduler(std::function<void(const uint32)> pOnHandleError);
+	~ActorScheduler();
 
-	void Push(const IActorRef& pActor);
+	void Schedule(const IActorRef& pActor, const bool bBypassAcquire = false) const;
+	void ScheduleDelay(const JobRef& pJob, const IActorRef& pOwner, const int64 delayMs);
 	void Dispatch();
-	void Reserve(const JobRef& pJob, const IActorRef& pOwner, const int64 delayMs);
-	void Flush();
 	
 private:
 
 	HANDLE mJobIocpHandle;
 	JobTimingWheel mTimingWheel;
-	LockFreeQueue<IActorRef> mActorQueue;
 	std::function<void(const uint32)> mpOnHandleError;
 };

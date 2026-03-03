@@ -28,9 +28,6 @@
     <Filter Include="Pattern">
       <UniqueIdentifier>{e0791a0c-49cb-4011-a2e8-c3975f0a0171}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Job">
-      <UniqueIdentifier>{8d774a0e-136e-4008-855e-facdab60d221}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Network\IOCP">
       <UniqueIdentifier>{20017d25-67d7-4212-a24f-58508c5f5828}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Network\Session">
       <UniqueIdentifier>{3e98945e-61f1-4f9e-9d67-500f8b271781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor">
+      <UniqueIdentifier>{8d774a0e-136e-4008-855e-facdab60d221}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -109,16 +109,16 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Job.h">
-      <Filter>Job</Filter>
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="Actor.h">
-      <Filter>Job</Filter>
+      <Filter>Actor</Filter>
     </ClInclude>
-    <ClInclude Include="JobScheduler.h">
-      <Filter>Job</Filter>
+    <ClInclude Include="ActorScheduler.h">
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="JobTimingWheel.h">
-      <Filter>Job</Filter>
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="NetEngineLogger.h">
       <Filter>Main</Filter>
@@ -127,10 +127,7 @@
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="ScopedActor.h">
-      <Filter>Job</Filter>
-    </ClInclude>
-    <ClInclude Include="IocpEvent.h">
-      <Filter>Network\IOCP</Filter>
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="IocpCore.h">
       <Filter>Network\IOCP</Filter>
@@ -174,6 +171,15 @@
     <ClInclude Include="SessionTimeoutTracker.h">
       <Filter>Network\Session</Filter>
     </ClInclude>
+    <ClInclude Include="JobDispatcher.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorOverlapped.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpEvent.h">
+      <Filter>Network\IOCP\Event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -204,13 +210,13 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp">
-      <Filter>Job</Filter>
+      <Filter>Actor</Filter>
     </ClCompile>
-    <ClCompile Include="JobScheduler.cpp">
-      <Filter>Job</Filter>
+    <ClCompile Include="ActorScheduler.cpp">
+      <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="JobTimingWheel.cpp">
-      <Filter>Job</Filter>
+      <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="NetEngineLogger.cpp">
       <Filter>Main</Filter>
@@ -219,12 +225,9 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="ScopedActor.cpp">
-      <Filter>Job</Filter>
+      <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="IocpCore.cpp">
-      <Filter>Network\IOCP</Filter>
-    </ClCompile>
-    <ClCompile Include="IocpEvent.cpp">
       <Filter>Network\IOCP</Filter>
     </ClCompile>
     <ClCompile Include="Connector.cpp">
@@ -265,6 +268,15 @@
     </ClCompile>
     <ClCompile Include="SessionTimeoutTracker.cpp">
       <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="JobDispatcher.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorOverlapped.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpEvent.cpp">
+      <Filter>Network\IOCP\Event</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
