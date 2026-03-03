@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "ActorScheduler.h"
-
 #include "Actor.h"
-#include "ActorScheduler.h"
 
 ActorScheduler::ActorScheduler()
 	: mJobIocpHandle(nullptr)
@@ -66,22 +64,18 @@ void ActorScheduler::Dispatch()
 	const int32 gqcsRet = GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, reinterpret_cast<LPOVERLAPPED*>(&pActorOverlapped), static_cast<DWORD>(timeBudget.RemainingTimeMs()));
 	if (gqcsRet != 0)
 	{
-		do
+		const IActorRef pActor = pActorOverlapped->GetOwner();
+
+		if (pActor->TryAcquire())
 		{
-			const IActorRef pActor = pActorOverlapped->GetOwner();
+			pActor->Execute(timeBudget);
 
-			if (pActor->TryAcquire())
-			{
-				pActor->Execute(timeBudget);
+			pActor->ClearActorOverlapped();
 
-				pActor->ClearActorOverlapped();
+			pActor->Release();
 
-				pActor->Release();
-
-				pActor->Register(shared_from_this());
-			}
-
-		} while (!timeBudget.IsExpired());
+			pActor->Register(shared_from_this());
+		}
 	}
 	else
 	{

@@ -2,19 +2,24 @@
 #include "JobTimingWheel.h"
 #include "Actor.h"
 
-TimingJob::TimingJob(JobRef pJob, const IActorRef& pOwner, ActorSchedulerRef pScheduler)
+TimingJob::TimingJob(JobRef pJob, IActorRef pOwner, ActorSchedulerRef pScheduler)
 	: mJob(std::move(pJob))
-	, mpOwner(pOwner)
+	, mpOwner(std::move(pOwner))
 	, mpScheduler(std::move(pScheduler))
 {
 }
 
-void TimingJob::Execute() const
+void TimingJob::Execute()
 {
-	if (const auto pOwner = mpOwner.lock())
-	{
-		JobDispatcher::Post(mJob, pOwner, mpScheduler);
-	}
+	JobDispatcher::Post(mJob, mpOwner, mpScheduler);
+	clear();
+}
+
+void TimingJob::clear()
+{
+	mJob.reset();
+	mpOwner.reset();
+	mpScheduler.reset();
 }
 
 JobTimingWheel::JobTimingWheel(const int64 tickIntervalMs, const int32 wheelSize)
@@ -81,7 +86,7 @@ void JobTimingWheel::Tick()
 
 	mbTicking.store(false);
 
-	for (const auto& timingJob : expiredJobs)
+	for (auto& timingJob : expiredJobs)
 	{
 		timingJob.Execute();
 	}

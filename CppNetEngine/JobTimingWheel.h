@@ -4,15 +4,18 @@
 class TimingJob
 {
 public:
-	explicit TimingJob(JobRef pJob, const IActorRef& pOwner, ActorSchedulerRef pScheduler);
+	explicit TimingJob(JobRef pJob, IActorRef pOwner, ActorSchedulerRef pScheduler);
 	TimingJob(TimingJob&&) = default;
 	TimingJob& operator=(TimingJob&&) = default;
 
-	void Execute() const;
+	void Execute();
 
 private:
+
+	void clear();
+
 	JobRef mJob;
-	IActorWeak mpOwner;
+	IActorRef mpOwner;
 	ActorSchedulerRef mpScheduler;
 };
 
