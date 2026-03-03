@@ -1,70 +1,61 @@
 ﻿#include "pch.h"
 #include "WaitQueueManager.h"
 
-WaitQueueManager::WaitQueueManager(const int32 waitQueueSize)
-	: mWaitQueueTicket{}
-	, mEnterWaitQueue(waitQueueSize)
+#include <utility>
+
+WaitQueueManager::WaitQueueManager(const int32 maxWaitSize)
+	: mLock()
+	, mMaxWaitSize(maxWaitSize)
+	, mWaitTicket(0)
+	, mEnterTicket(0)
+	, mEnterWaitQueue()
 {
 }
 
-int32 WaitQueueManager::EnterWaitQueue(const SessionRef& pSession)
+bool WaitQueueManager::EnterWaitQueue(const SessionRef& pSession, uint64& outTicket)
 {
-	if (mEnterWaitQueue.TryEnqueue(pSession))
+	UniqueLock lock(mLock);
+	if (std::cmp_less_equal(mMaxWaitSize, mEnterWaitQueue.size()))
 	{
-		const std::atomic_ref<int32> waitTicket(mWaitQueueTicket.waitTicket);
-		const int32 retTicket = waitTicket.fetch_add(1);
-		return retTicket;
+		return false;
 	}
-
-	return -1;
+	
+	mEnterWaitQueue.push(pSession);
+	outTicket = mWaitTicket++;
+	return true;
 }
 
 SessionRef WaitQueueManager::DequeueWaitQueue()
 {
-	const std::atomic_ref<int32> enterTicket(mWaitQueueTicket.enterTicket);
-	while (!mEnterWaitQueue.IsEmpty())
+	UniqueLock lock(mLock);
+
+	while (!mEnterWaitQueue.empty())
 	{
-		SessionWeak pSessionWeak;
-		if (mEnterWaitQueue.TryDequeue(pSessionWeak) == true)
+		++mEnterTicket;
+
+		const SessionWeak pSessionWeak = mEnterWaitQueue.front();
+		mEnterWaitQueue.pop();
+
+		SessionRef pSession = pSessionWeak.lock();
+		if (pSession == nullptr)
 		{
-			// ReSharper disable once CppExpressionWithoutSideEffects
-			enterTicket.fetch_add(1);
-
-			SessionRef pSession = pSessionWeak.lock();
-			if (pSession == nullptr)
-			{
-				continue;
-			}
-
-			return pSession;
+			continue;
 		}
-	}
 
-	ticketClear();
+		return pSession;
+	}
 
 	return nullptr;
 }
 
-int32 WaitQueueManager::GetWaitCount(const int32 myTicket) const
+uint64 WaitQueueManager::GetWaitCount(const uint64 myTicket)
 {
-	const int32 enterTicket = mWaitQueueTicket.enterTicket;
+	UniqueLock lock(mLock);
 
-	if (enterTicket >= myTicket)
+	if (myTicket > mEnterTicket)
 	{
-		return enterTicket - myTicket;
+		return myTicket - mEnterTicket;
 	}
 
 	return 0;
-}
-
-void WaitQueueManager::ticketClear()
-{
-	TicketInfo expected{};
-	const std::atomic_ref<TicketInfo> ticketInfo(mWaitQueueTicket);
-	do
-	{
-		expected.waitTicket = mWaitQueueTicket.waitTicket;
-		expected.enterTicket = mWaitQueueTicket.enterTicket;
-
-	} while (!ticketInfo.compare_exchange_weak(expected, { 0,0 }));
 }

@@ -19,7 +19,7 @@ void GameSession::OnConnected()
 
 }
 
-void GameSession::OnEnterWaitQueue(const int32 waitTicket)
+void GameSession::OnEnterWaitQueue(const uint64 myTicket)
 {
 }
 

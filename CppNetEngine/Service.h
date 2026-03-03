@@ -34,7 +34,7 @@ public:
 	SessionRef CreateSession();
 	bool AddSession(const SessionRef& pSession) const;
 	void ReleaseSession(const SessionRef& pSession) const;
-	int32 EnterWaitQueue(const SessionRef& pSession) const;
+	bool EnterWaitQueue(const SessionRef& pSession, uint64& outTicket) const;
 	SessionRef DequeueWaitQueue() const;
 	void RegisterSessionReap(const SessionRef& pSession) const;
 
@@ -44,7 +44,7 @@ public:
 	JobSchedulerRef GetJobScheduler() const;
 	int32 GetCurrentSessionCount() const;
 	int32 GetMaxSessionCount() const;
-	int32 GetWaitCount(const int32 myWaitTicket) const;
+	bool GetWaitCount(const uint64 myTicket, uint64& outWaitCount) const;
 
 private:
 

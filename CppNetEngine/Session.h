@@ -57,7 +57,7 @@ public:
 	virtual void Dispatch(class IocpEvent& iocpEvent, const uint32 numOfBytes) override;
 
 	virtual void OnConnected() = 0;
-	virtual void OnEnterWaitQueue(const int32 waitTicket) = 0;
+	virtual void OnEnterWaitQueue(const uint64 myTicket) = 0;
 	virtual void OnDisconnecting(const eDisconnectReason reason) = 0;
 	virtual void OnDisconnected() = 0;
 	virtual void OnSend(const int32 len) = 0;

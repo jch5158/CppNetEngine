@@ -56,14 +56,14 @@ void Service::ReleaseSession(const SessionRef& pSession) const
 	processWaitQueue();
 }
 
-int32 Service::EnterWaitQueue(const SessionRef& pSession) const
+bool Service::EnterWaitQueue(const SessionRef& pSession, uint64& outTicket) const
 {
 	if (mpWaitQueueManager == nullptr)
 	{
-		return -1;
+		return false;
 	}
 
-	return mpWaitQueueManager->EnterWaitQueue(pSession);
+	return mpWaitQueueManager->EnterWaitQueue(pSession, outTicket);
 }
 
 SessionRef Service::DequeueWaitQueue() const
@@ -118,14 +118,15 @@ int32 Service::GetMaxSessionCount() const
 	return mMaxSessionCount;
 }
 
-int32 Service::GetWaitCount(const int32 myWaitTicket) const
+bool Service::GetWaitCount(const uint64 myTicket, uint64& outWaitCount) const
 {
 	if (mpWaitQueueManager == nullptr)
 	{
-		return -1;
+		return false;
 	}
 
-	return mpWaitQueueManager->GetWaitCount(myWaitTicket);
+	outWaitCount = mpWaitQueueManager->GetWaitCount(myTicket);
+	return true;
 }
 
 void Service::processWaitQueue() const

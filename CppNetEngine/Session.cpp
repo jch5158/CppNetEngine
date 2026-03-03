@@ -177,8 +177,8 @@ void Session::processConnect()
 	}
 	else
 	{
-		const int32 waitTicket = pService->EnterWaitQueue(pSession);
-		if (waitTicket == -1)
+		uint64 myTicket;
+		if (pService->EnterWaitQueue(pSession, myTicket) == false)
 		{
 			Disconnect(eDisconnectReason::ServerFull);
 			return;
@@ -187,7 +187,7 @@ void Session::processConnect()
 		bStateChanged = setSessionWaiting();
 		if (bStateChanged)
 		{
-			OnEnterWaitQueue(waitTicket);
+			OnEnterWaitQueue(myTicket);
 		}
 	}
 
