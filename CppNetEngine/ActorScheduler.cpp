@@ -62,7 +62,7 @@ void ActorScheduler::Dispatch()
 	ULONG_PTR pCompletionKey = 0;
 	ActorOverlapped* pActorOverlapped = nullptr;
 
-	const auto timeBudget = ActorTimeBudget(TIME_SLICE_MS);
+	const ActorTimeBudget timeBudget(TIME_SLICE_MS);
 	const int32 gqcsRet = GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, reinterpret_cast<LPOVERLAPPED*>(&pActorOverlapped), static_cast<DWORD>(timeBudget.RemainingTimeMs()));
 	if (gqcsRet != 0)
 	{
