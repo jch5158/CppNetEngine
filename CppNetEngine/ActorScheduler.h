@@ -35,7 +35,7 @@ private:
 	const std::chrono::steady_clock::time_point mStart;
 };
 
-class ActorScheduler : public std::enable_shared_from_this<ActorScheduler>
+class ActorScheduler final : public std::enable_shared_from_this<ActorScheduler>
 {
 public:
 
