@@ -60,6 +60,15 @@ void ActorScheduler::Dispatch()
 	ActorOverlapped* pActorOverlapped = nullptr;
 
 	const int32 gqcsRet = GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, reinterpret_cast<LPOVERLAPPED*>(&pActorOverlapped), mTimeSliceMs);
+	if (gqcsRet == 0)
+	{
+		const uint32 errorCode = GetLastError();
+		if (errorCode != WAIT_TIMEOUT)
+		{
+			mpOnHandleError(errorCode);
+		}
+	}
+
 	if (pActorOverlapped != nullptr)
 	{
 		const IActorRef pActor = pActorOverlapped->GetOwner();
@@ -78,15 +87,6 @@ void ActorScheduler::Dispatch()
 			pActor->Release();
 
 			pActor->Register(shared_from_this());
-		}
-	}
-	else if (gqcsRet == 0)
-	{
-		const uint32 errorCode = GetLastError();
-		if (errorCode != WAIT_TIMEOUT)
-		{
-			mpOnHandleError(errorCode);
-			return;
 		}
 	}
 

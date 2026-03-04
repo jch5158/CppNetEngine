@@ -66,6 +66,9 @@ void IocpCore::Dispatch(const uint32 timeout) const
 	if (pIocpEvent != nullptr)
 	{
 		const IocpObjectRef pIocpObj = pIocpEvent->GetOwner();
-		pIocpObj->Dispatch(*pIocpEvent, numOfBytes);
+		if (pIocpObj != nullptr)
+		{
+			pIocpObj->Dispatch(*pIocpEvent, numOfBytes);
+		}
 	}
 }
