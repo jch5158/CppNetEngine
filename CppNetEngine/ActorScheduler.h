@@ -35,31 +35,36 @@ private:
 	const std::chrono::steady_clock::time_point mStart;
 };
 
-// TODO : ActorScheduler로 변경
 class ActorScheduler : public std::enable_shared_from_this<ActorScheduler>
 {
 public:
 
-	static constexpr int64 TIME_SLICE_MS = 16;
-	static constexpr int64 TICK_INTERVAL_MS = 10;
-	static constexpr int32 WHEEL_SIZE = 60 * 60 * 100 * TICK_INTERVAL_MS;
+	static constexpr int32 DEFAULT_EXECUTE_JOB_COUNT = 50;
+	static constexpr int64 DEFAULT_TIME_SLICE_MS = 16;
+	static constexpr int64 DEFAULT_TICK_INTERVAL_MS = 10;
+	static constexpr int32 DEFAULT_WHEEL_SIZE = 60 * 60 * 100 * DEFAULT_TICK_INTERVAL_MS;
 
 	ActorScheduler(const ActorScheduler&) = delete;
 	ActorScheduler& operator=(const ActorScheduler&) = delete;
 	ActorScheduler(ActorScheduler&&) = delete;
 	ActorScheduler& operator=(ActorScheduler&&) = delete;
 
-	explicit ActorScheduler();
-	explicit ActorScheduler(std::function<void(const uint32)> pOnHandleError);
-	~ActorScheduler();
+	explicit ActorScheduler(std::function<void(const uint32)> pOnHandleError,
+		const uint32 timeSliceMs = DEFAULT_TIME_SLICE_MS,
+		const int32 executeJobCount = DEFAULT_EXECUTE_JOB_COUNT,
+		const int64 tickIntervalMs = DEFAULT_TICK_INTERVAL_MS,
+		const int32 wheelSize = DEFAULT_WHEEL_SIZE);
+	virtual ~ActorScheduler();
 
 	void Schedule(const IActorRef& pActor, const bool bBypassAcquire = false) const;
 	void ScheduleDelay(const JobRef& pJob, const IActorRef& pOwner, const int64 delayMs);
 	void Dispatch();
-	
+
 private:
 
 	HANDLE mJobIocpHandle;
+	const uint32 mTimeSliceMs;
+	const int32 mExecuteJobCount;
 	JobTimingWheel mTimingWheel;
 	std::function<void(const uint32)> mpOnHandleError;
 };

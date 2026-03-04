@@ -2,23 +2,22 @@
 #include "ActorScheduler.h"
 #include "Actor.h"
 
-ActorScheduler::ActorScheduler()
+ActorScheduler::ActorScheduler(std::function<void(const uint32)> pOnHandleError,
+	const uint32 timeSliceMs,
+	const int32 executeJobCount,
+	const int64 tickIntervalMs,
+	const int32 wheelSize)
 	: mJobIocpHandle(nullptr)
-	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
-	, mpOnHandleError([](const uint32)->void {})
+	, mTimeSliceMs(timeSliceMs)
+	, mExecuteJobCount(executeJobCount)
+	, mTimingWheel(JobTimingWheel(tickIntervalMs, wheelSize))
+	, mpOnHandleError(std::move(pOnHandleError))
 {
 	mJobIocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
 	if (mJobIocpHandle == nullptr)
 	{
 		CrashReporter::Crash();
 	}
-}
-
-ActorScheduler::ActorScheduler(std::function<void(const uint32)> pOnHandleError)
-	: mJobIocpHandle(nullptr)
-	, mTimingWheel(JobTimingWheel(TICK_INTERVAL_MS, WHEEL_SIZE))
-	, mpOnHandleError(std::move(pOnHandleError))
-{
 }
 
 ActorScheduler::~ActorScheduler()
@@ -60,15 +59,19 @@ void ActorScheduler::Dispatch()
 	ULONG_PTR pCompletionKey = 0;
 	ActorOverlapped* pActorOverlapped = nullptr;
 
-	const ActorTimeBudget timeBudget(TIME_SLICE_MS);
-	const int32 gqcsRet = GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, reinterpret_cast<LPOVERLAPPED*>(&pActorOverlapped), static_cast<DWORD>(timeBudget.RemainingTimeMs()));
-	if (gqcsRet != 0)
+	const int32 gqcsRet = GetQueuedCompletionStatus(mJobIocpHandle, &bytesTransferred, &pCompletionKey, reinterpret_cast<LPOVERLAPPED*>(&pActorOverlapped), mTimeSliceMs);
+	if (pActorOverlapped != nullptr)
 	{
 		const IActorRef pActor = pActorOverlapped->GetOwner();
-
-		if (pActor->TryAcquire())
+		if (pActor != nullptr && pActor->TryAcquire())
 		{
-			pActor->Execute(timeBudget);
+			const int32 currentJobCount = pActor->GetJobCount();
+			const int32 executeJobCount = mExecuteJobCount < currentJobCount ? mExecuteJobCount : currentJobCount;
+
+			for (int32 i = 0; i < executeJobCount; ++i)
+			{
+				pActor->Execute();
+			}
 
 			pActor->ClearActorOverlapped();
 
@@ -77,7 +80,7 @@ void ActorScheduler::Dispatch()
 			pActor->Register(shared_from_this());
 		}
 	}
-	else
+	else if (gqcsRet == 0)
 	{
 		const uint32 errorCode = GetLastError();
 		if (errorCode != WAIT_TIMEOUT)

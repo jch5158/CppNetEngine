@@ -14,7 +14,7 @@ public:
 	explicit IActor();
 	virtual ~IActor() = default;
 
-	virtual void Execute(const ActorTimeBudget& timeBudget) = 0;
+	virtual void Execute() = 0;
 	[[nodiscard]] virtual bool TryAcquire() = 0;
 	virtual void Release() = 0;
 	virtual void Register(const ActorSchedulerRef& pActorScheduler) = 0;
@@ -81,7 +81,7 @@ public:
 		JobDispatcher::PostDelay(pJob, pOwner, pScheduler, delayMs);
 	}
 
-	virtual void Execute(const ActorTimeBudget& timeBudget) override;
+	virtual void Execute() override;
 	[[nodiscard]] virtual bool TryAcquire() override;
 	virtual void Release() override;
 	virtual void Register(const ActorSchedulerRef& pActorScheduler) override;

@@ -29,7 +29,7 @@ public:
 
 	virtual ~ScopedActor() override = default;
 
-	virtual void Execute(const ActorTimeBudget& timeBudget) override;
+	virtual void Execute() override;
 	[[nodiscard]] virtual bool TryAcquire() override;
 	virtual void Release() override;
 	virtual void Register(const ActorSchedulerRef& pActorScheduler) override;

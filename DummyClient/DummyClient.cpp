@@ -17,7 +17,10 @@ int32 main()
 	ClientServiceRef pService = cpp_net_engine::MakeShared<ClientService>(
 		NetAddress(L"127.0.0.1", 7777),
 		cpp_net_engine::MakeShared<IocpCore>(),
-		cpp_net_engine::MakeShared<ActorScheduler>(),
+		cpp_net_engine::MakeShared<ActorScheduler>([](const uint32 errorCode)->void
+			{
+				NET_ENGINE_LOG_ERROR("ActorScheduler Error, errorCode : {}", errorCode);
+			}),
 		cpp_net_engine::MakeShared<GameSession>,
 		cpp_net_engine::MakeShared<SessionManager>(1)
 	);

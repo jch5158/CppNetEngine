@@ -1,24 +1,19 @@
 ﻿#include "pch.h"
 #include "ScopedActor.h"
 
-void ScopedActor::Execute(const ActorTimeBudget& timeBudget)
+void ScopedActor::Execute()
 {
-	int32 count = mJobQueue.Count();
-	do
+
+	JobRef pJob;
+	if (mJobQueue.TryDequeue(pJob) == false)
 	{
-		if (count-- <= 0)
-		{
-			break;
-		}
+		return;
+	}
 
-		JobRef pJob;
-		if (mJobQueue.TryDequeue(pJob) == false)
-		{
-			break;
-		}
-
+	if (pJob != nullptr)
+	{
 		pJob->Execute();
-	} while (!timeBudget.IsExpired());
+	}
 }
 
 bool ScopedActor::TryAcquire()
