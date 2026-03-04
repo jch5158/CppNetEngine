@@ -54,7 +54,7 @@ public:
 		const int32 executeJobCount = DEFAULT_EXECUTE_JOB_COUNT,
 		const int64 tickIntervalMs = DEFAULT_TICK_INTERVAL_MS,
 		const int32 wheelSize = DEFAULT_WHEEL_SIZE);
-	virtual ~ActorScheduler();
+	~ActorScheduler();
 
 	void Schedule(const IActorRef& pActor, const bool bBypassAcquire = false) const;
 	void ScheduleDelay(const JobRef& pJob, const IActorRef& pOwner, const int64 delayMs);
