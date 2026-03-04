@@ -9,15 +9,15 @@ private:
 
 	struct Node
 	{
-		T data;
-		uint64 checksum;
-		Node* pNextNode;
+		T data{};
+		uint64 checksum = 0;
+		Node* pNextNode = nullptr;
 	};
 
 	struct Node16
 	{
-		Node* pNode;
-		int64 count;
+		Node* pNode = nullptr;
+		int64 count = 0;
 	};
 
 public:
@@ -190,11 +190,9 @@ private:
 
 		struct ChunkData
 		{
-			ChunkData() = default;
-
-			T data;
-			uint64 checksum;
-			Chunk* pChunk;
+			T data{};
+			uint64 checksum = 0;
+			Chunk* pChunk = nullptr;
 		};
 
 		Chunk(const Chunk&) = delete;

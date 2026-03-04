@@ -5,8 +5,8 @@
 #pragma pack(push, 1)
 struct PacketHeader
 {
-	uint16 size;
-	uint32 id;
+	uint16 size = 0;
+	uint32 id = 0;
 };
 #pragma pack(pop)
 

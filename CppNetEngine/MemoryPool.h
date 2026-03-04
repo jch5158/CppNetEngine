@@ -16,9 +16,9 @@ private:
 
 		struct ChunkData
 		{
-			alignas(16) byte data[ALLOC_SIZE];
-			uint64 checksum;
-			Chunk* pChunk;
+			alignas(16) byte data[ALLOC_SIZE]{};
+			uint64 checksum = 0;
+			Chunk* pChunk = nullptr;
 		};
 
 		Chunk(const Chunk&) = delete;

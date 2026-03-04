@@ -12,16 +12,16 @@ public:
 
 	struct Node
 	{
-		T data;
-		Node* pNextNode;
+		T data{};
+		Node* pNextNode = nullptr;
 	};
 
 private:
 
 	struct Node16
 	{
-		Node* pNode;
-		int64 count;
+		Node* pNode = nullptr;
+		int64 count = 0;
 	};
 
 public:
