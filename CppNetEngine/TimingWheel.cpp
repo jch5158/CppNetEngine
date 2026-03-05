@@ -60,7 +60,7 @@ void TimingWheel::TimingNode::Execute() const
 
 TimingWheel::TimingWheel(const uint64 tickInterval)
 	: mbTicking(false)
-	, mTickIntervalMs(tickInterval)
+	, mTickIntervalMs(std::max(tickInterval, DEFAULT_TICK_INTERVAL))
 	, mLock()
 	, mCurrentTick(0)
 	, mLastTickTime(std::chrono::steady_clock::now())
