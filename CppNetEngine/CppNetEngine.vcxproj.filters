@@ -117,9 +117,6 @@
     <ClInclude Include="ActorScheduler.h">
       <Filter>Actor</Filter>
     </ClInclude>
-    <ClInclude Include="JobTimingWheel.h">
-      <Filter>Actor</Filter>
-    </ClInclude>
     <ClInclude Include="NetEngineLogger.h">
       <Filter>Main</Filter>
     </ClInclude>
@@ -180,6 +177,9 @@
     <ClInclude Include="IocpEvent.h">
       <Filter>Network\IOCP\Event</Filter>
     </ClInclude>
+    <ClInclude Include="TimingWheel.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -213,9 +213,6 @@
       <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="ActorScheduler.cpp">
-      <Filter>Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="JobTimingWheel.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="NetEngineLogger.cpp">
@@ -277,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="IocpEvent.cpp">
       <Filter>Network\IOCP\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="TimingWheel.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

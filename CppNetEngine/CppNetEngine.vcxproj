@@ -209,7 +209,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="JobDispatcher.h" />
     <ClInclude Include="ActorScheduler.h" />
-    <ClInclude Include="JobTimingWheel.h" />
+    <ClInclude Include="TimingWheel.h" />
     <ClInclude Include="Listener.h" />
     <ClInclude Include="LockFreeQueue.h" />
     <ClInclude Include="LockFreeStack.h" />
@@ -253,7 +253,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="JobDispatcher.cpp" />
     <ClCompile Include="ActorScheduler.cpp" />
-    <ClCompile Include="JobTimingWheel.cpp" />
+    <ClCompile Include="TimingWheel.cpp" />
     <ClCompile Include="Listener.cpp" />
     <ClCompile Include="MemoryAllocator.cpp" />
     <ClCompile Include="NetAddress.cpp" />

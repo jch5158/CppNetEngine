@@ -7,26 +7,29 @@ class StlAllocator
 public:
 	using value_type = T;
 	
-	explicit StlAllocator() = default;
-	explicit StlAllocator(const StlAllocator&) = default;
+	StlAllocator() = default;
+	StlAllocator(const StlAllocator&) = default;
 	StlAllocator& operator=(const StlAllocator&) = default;
-	explicit StlAllocator(StlAllocator&&) = default;
+	StlAllocator(StlAllocator&&) = default;
 	StlAllocator& operator=(StlAllocator&&) = default;
 	~StlAllocator() = default;
 
+	// ReSharper disable once CppNonExplicitConvertingConstructor
 	template <typename U>
-	explicit StlAllocator(const StlAllocator<U>&) {}
+	StlAllocator(const StlAllocator<U>&) {} 
 
+	// ReSharper disable once CppMemberFunctionMayBeStatic
 	// ReSharper disable once CppInconsistentNaming
-	static T* allocate(const uint64 size)
+	T* allocate(const uint64 size)
 	{
 		void * pData = MemoryAllocator::GetInstance().Alloc(size * sizeof(T));
 
 		return static_cast<T*>(pData);
 	}
 
+	// ReSharper disable once CppMemberFunctionMayBeStatic
 	// ReSharper disable once CppInconsistentNaming
-	static void deallocate(T* pData, const uint64 size)
+	void deallocate(T* pData, const uint64 size)
 	{
 		MemoryAllocator::GetInstance().Free(reinterpret_cast<void*>(pData), size * sizeof(T));
 	}
