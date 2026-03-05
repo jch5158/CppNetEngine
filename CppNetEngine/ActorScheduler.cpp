@@ -47,13 +47,15 @@ void ActorScheduler::Schedule(const IActorRef& pActor, const bool bBypassAcquire
 	}
 }
 
-void ActorScheduler::ScheduleDelay(JobRef pJob, IActorRef pOwner, const uint64 delayMs)
+TimerHandle ActorScheduler::ScheduleDelay(JobRef pJob, IActorRef pOwner, const uint64 delayMs)
 {
-	mTimingWheel.AddTiming([pCaptureJob = std::move(pJob), pCaptureOwner = std::move(pOwner), pScheduler = shared_from_this()]() mutable -> void
+	TimerHandle handle = mTimingWheel.AddTiming([pCaptureJob = std::move(pJob), pCaptureOwner = std::move(pOwner), pScheduler = shared_from_this()]() mutable -> void
 		{
 			JobDispatcher::Post(pCaptureJob, pCaptureOwner, pScheduler);
 		}
 	, delayMs);
+
+	return handle;
 }
 
 void ActorScheduler::Dispatch()

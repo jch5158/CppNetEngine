@@ -70,10 +70,11 @@ void ScopedActor::Post(const ActorSchedulerRef& pScheduler, CallbackType&& callb
 	JobDispatcher::Post(pJob, shared_from_this(), pScheduler);
 }
 
-void ScopedActor::PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback)
+TimerHandle ScopedActor::PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback)
 {
 	const auto pJob = cpp_net_engine::MakeShared<Job>(std::move(callback));
-	JobDispatcher::PostDelay(pJob, shared_from_this(), pScheduler, delayMs);
+	TimerHandle handle = JobDispatcher::PostDelay(pJob, shared_from_this(), pScheduler, delayMs);
+	return handle;
 }
 
 void ScopedActor::SetSpinCount(const int32 spinCount)

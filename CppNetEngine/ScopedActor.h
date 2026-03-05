@@ -38,7 +38,7 @@ public:
 	[[nodiscard]] virtual int32 GetJobCount() override;
 
 	void Post(const ActorSchedulerRef& pScheduler, CallbackType&& callback);
-	void PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback);
+	TimerHandle PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback);
 
 	void SetSpinCount(const int32 spinCount);
 	[[nodiscard]] int32 GetSpinCount() const;

@@ -12,7 +12,8 @@ void JobDispatcher::Post(const JobRef& pJob, const IActorRef& pActor, const Acto
 	pActor->Register(pScheduler);
 }
 
-void JobDispatcher::PostDelay(const JobRef& pJob, const IActorRef& pActor, const ActorSchedulerRef& pScheduler, const int64 delayMs)
+TimerHandle JobDispatcher::PostDelay(const JobRef& pJob, const IActorRef& pActor, const ActorSchedulerRef& pScheduler, const int64 delayMs)
 {
-	pScheduler->ScheduleDelay(pJob, pActor, delayMs);
+	TimerHandle handle = pScheduler->ScheduleDelay(pJob, pActor, delayMs);
+	return handle;
 }

@@ -3,6 +3,24 @@
 
 #include "SharedPtrUtils.h"
 
+class TimerHandle final
+{
+public:
+	TimerHandle(const TimerHandle&) noexcept = default;
+	TimerHandle& operator=(const TimerHandle&) noexcept = default;
+	TimerHandle(TimerHandle&&) noexcept = default;
+	TimerHandle& operator=(TimerHandle&&) noexcept = default;
+
+	explicit TimerHandle();
+	~TimerHandle() = default;
+
+	void Cancel() const;
+	[[nodiscard]] SharedPtr<std::atomic<bool>> GetCancelFlag() const;
+
+private:
+	SharedPtr<std::atomic<bool>> mpCancelFlag;
+};
+
 class TimingWheel final
 {
 private:
@@ -10,12 +28,12 @@ private:
 	class TimingNode final
 	{
 	public:
-		TimingNode(const TimingNode& rhs) noexcept;
-		TimingNode& operator=(const TimingNode& rhs) noexcept;
-		TimingNode(TimingNode&& rhs) noexcept;
-		TimingNode& operator=(TimingNode&& rhs) noexcept;
+		TimingNode(const TimingNode& rhs) noexcept = default;
+		TimingNode& operator=(const TimingNode& rhs) noexcept = default;
+		TimingNode(TimingNode&& rhs) noexcept = default;
+		TimingNode& operator=(TimingNode&& rhs) noexcept = default;
 
-		explicit TimingNode(const uint64 expireTick, std::function<void()> pCallback);
+		explicit TimingNode(const uint64 expireTick, SharedPtr<std::atomic<bool>> pCancelFlag, std::function<void()> pCallback);
 		~TimingNode() = default;
 
 		[[nodiscard]] uint64 GetExpiredTick() const;
@@ -24,6 +42,7 @@ private:
 	private:
 
 		uint64 mExpireTick;
+		SharedPtr<std::atomic<bool>> mpCancelFlag;
 		std::function<void()> mpCallback;
 	};
 
@@ -51,7 +70,7 @@ public:
 	explicit TimingWheel(const uint64 tickInterval = DEFAULT_TICK_INTERVAL);
 	~TimingWheel() = default;
 
-	void AddTiming(std::function<void()> pCallback, const uint64 delayMs);
+	TimerHandle AddTiming(std::function<void()> pCallback, const uint64 delayMs);
 	void Tick();
 	uint64 GetMaxDelayMs() const;
 

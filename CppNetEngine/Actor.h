@@ -59,26 +59,29 @@ public:
 		JobDispatcher::Post(pJob, pOwner, pScheduler);
 	}
 
-	void PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback)
+	TimerHandle PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, CallbackType&& callback)
 	{
 		const auto pJob = cpp_net_engine::MakeShared<Job>(std::move(callback));
-		JobDispatcher::PostDelay(pJob, shared_from_this(), pScheduler, delayMs);
+		TimerHandle handle = JobDispatcher::PostDelay(pJob, shared_from_this(), pScheduler, delayMs);
+		return handle;
 	}
 
 	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
-	void PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* pMemFunc)(FuncArgs...), CallArgs&&... args)
+	TimerHandle PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* pMemFunc)(FuncArgs...), CallArgs&&... args)
 	{
 		const auto pOwner = std::static_pointer_cast<T>(shared_from_this());
 		const auto pJob = cpp_net_engine::MakeShared<Job>(pOwner, pMemFunc, std::forward<CallArgs>(args)...);
-		JobDispatcher::PostDelay(pJob, pOwner, pScheduler, delayMs);
+		TimerHandle handle = JobDispatcher::PostDelay(pJob, pOwner, pScheduler, delayMs);
+		return handle;
 	}
 
 	template<typename T, typename Ret, typename... FuncArgs, typename... CallArgs>
-	void PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* pMemFunc)(FuncArgs...) const, CallArgs&&... args)
+	TimerHandle PostDelay(const ActorSchedulerRef& pScheduler, const int64 delayMs, Ret(T::* pMemFunc)(FuncArgs...) const, CallArgs&&... args)
 	{
 		const auto pOwner = std::static_pointer_cast<T>(shared_from_this());
 		const auto pJob = cpp_net_engine::MakeShared<Job>(pOwner, pMemFunc, std::forward<CallArgs>(args)...);
-		JobDispatcher::PostDelay(pJob, pOwner, pScheduler, delayMs);
+		TimerHandle handle = JobDispatcher::PostDelay(pJob, pOwner, pScheduler, delayMs);
+		return handle;
 	}
 
 	virtual void Execute() override;

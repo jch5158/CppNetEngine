@@ -25,7 +25,7 @@ public:
 	~ActorScheduler();
 
 	void Schedule(const IActorRef& pActor, const bool bBypassAcquire = false) const;
-	void ScheduleDelay(JobRef pJob, IActorRef pOwner, const uint64 delayMs);
+	TimerHandle ScheduleDelay(JobRef pJob, IActorRef pOwner, const uint64 delayMs);
 	void Dispatch();
 
 private:

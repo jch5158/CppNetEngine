@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include "TimingWheel.h"
+
 class JobDispatcher
 {
 public:
@@ -7,6 +9,6 @@ public:
 	~JobDispatcher() = delete;
 
 	static void Post(const JobRef& pJob, const IActorRef& pActor, const ActorSchedulerRef& pScheduler);
-	static void PostDelay(const JobRef& pJob, const IActorRef& pActor, const ActorSchedulerRef& pScheduler, const int64 delayMs);
+	static TimerHandle PostDelay(const JobRef& pJob, const IActorRef& pActor, const ActorSchedulerRef& pScheduler, const int64 delayMs);
 };
 

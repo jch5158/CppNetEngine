@@ -3,44 +3,27 @@
 
 #include <algorithm>
 
-TimingWheel::TimingNode::TimingNode(const TimingNode& rhs) noexcept
+TimerHandle::TimerHandle()
+	:mpCancelFlag(cpp_net_engine::MakeShared<std::atomic<bool>>(false))
 {
-	this->mExpireTick = rhs.mExpireTick;
-	this->mpCallback = rhs.mpCallback;
 }
 
-TimingWheel::TimingNode& TimingWheel::TimingNode::operator=(const TimingNode& rhs) noexcept
+void TimerHandle::Cancel() const
 {
-	if (this == &rhs)
+	if (mpCancelFlag != nullptr)
 	{
-		return *this;
+		mpCancelFlag->store(true);
 	}
-
-	this->mExpireTick = rhs.mExpireTick;
-	this->mpCallback = rhs.mpCallback;
-	return *this;
 }
 
-TimingWheel::TimingNode::TimingNode(TimingNode&& rhs) noexcept
+SharedPtr<std::atomic<bool>> TimerHandle::GetCancelFlag() const
 {
-	this->mExpireTick = rhs.mExpireTick;
-	this->mpCallback = std::move(rhs.mpCallback);
+	return mpCancelFlag;
 }
 
-TimingWheel::TimingNode& TimingWheel::TimingNode::operator=(TimingNode&& rhs) noexcept
-{
-	if (this == &rhs)
-	{
-		return *this;
-	}
-
-	this->mExpireTick = rhs.mExpireTick;
-	this->mpCallback = std::move(rhs.mpCallback);
-	return *this;
-}
-
-TimingWheel::TimingNode::TimingNode(const uint64 expireTick, std::function<void()> pCallback)
-	:mExpireTick(expireTick)
+TimingWheel::TimingNode::TimingNode(const uint64 expireTick, SharedPtr<std::atomic<bool>> pCancelFlag, std::function<void()> pCallback)
+	: mExpireTick(expireTick)
+	, mpCancelFlag(std::move(pCancelFlag))
 	, mpCallback(std::move(pCallback))
 {
 }
@@ -52,6 +35,11 @@ uint64 TimingWheel::TimingNode::GetExpiredTick() const
 
 void TimingWheel::TimingNode::Execute() const
 {
+	if (mpCancelFlag == nullptr || mpCancelFlag->load() == true)
+	{
+		return;
+	}
+
 	if (mpCallback != nullptr)
 	{
 		mpCallback();
@@ -70,20 +58,27 @@ TimingWheel::TimingWheel(const uint64 tickInterval)
 	mWheel2.resize(LEVEL2_SIZE);
 }
 
-void TimingWheel::AddTiming(std::function<void()> pCallback, const uint64 delayMs)
+TimerHandle TimingWheel::AddTiming(std::function<void()> pCallback, const uint64 delayMs)
 {
+	TimerHandle handle;
+
 	if (delayMs == 0)
 	{
 		pCallback();
-		return;
+		return handle;
 	}
 
-	const uint64 safeDelayMs = std::min(delayMs, GetMaxDelayMs());
-	const uint64 delayTicks = safeDelayMs / mTickIntervalMs;
 
-	UniqueLock lock(mLock);
-	TimingNode node(mCurrentTick + delayTicks, std::move(pCallback));
-	addNode(std::move(node));
+	{
+		const uint64 safeDelayMs = std::min(delayMs, GetMaxDelayMs());
+		const uint64 delayTicks = safeDelayMs / mTickIntervalMs;
+
+		UniqueLock lock(mLock);
+		TimingNode node(mCurrentTick + delayTicks, handle.GetCancelFlag(), std::move(pCallback));
+		addNode(std::move(node));
+	}
+
+	return handle;
 }
 
 void TimingWheel::Tick()
