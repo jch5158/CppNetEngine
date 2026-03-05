@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "TimingWheel.h"
 
+#include <algorithm>
+
 TimingWheel::TimingNode::TimingNode(const TimingNode& rhs) noexcept
 {
 	this->mExpireTick = rhs.mExpireTick;
@@ -76,7 +78,8 @@ void TimingWheel::AddTiming(std::function<void()> pCallback, const uint64 delayM
 		return;
 	}
 
-	const uint64 delayTicks = delayMs / mTickIntervalMs;
+	const uint64 safeDelayMs = std::min(delayMs, GetMaxDelayMs());
+	const uint64 delayTicks = safeDelayMs / mTickIntervalMs;
 
 	UniqueLock lock(mLock);
 	TimingNode node(mCurrentTick + delayTicks, std::move(pCallback));
@@ -116,6 +119,11 @@ void TimingWheel::Tick()
 	{
 		node.Execute();
 	}
+}
+
+uint64 TimingWheel::GetMaxDelayMs() const
+{
+	return mTickIntervalMs * LEVEL0_SIZE * LEVEL1_SIZE * LEVEL2_SIZE;
 }
 
 void TimingWheel::processTick(List<TimingNode>& outExecuteList)

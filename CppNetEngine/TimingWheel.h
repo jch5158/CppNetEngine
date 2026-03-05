@@ -29,7 +29,7 @@ private:
 
 	static constexpr uint32 LEVEL0_BITS = 8; // 256칸 (0xFF)
 	static constexpr uint32 LEVEL1_BITS = 8; // 256칸 (0xFF)
-	static constexpr uint32 LEVEL2_BITS = 6; // 64칸 (0x3F)
+	static constexpr uint32 LEVEL2_BITS = 7; // 128칸 (0x3F)
 
 	static constexpr uint32 LEVEL0_SIZE = 1 << LEVEL0_BITS;
 	static constexpr uint32 LEVEL1_SIZE = 1 << LEVEL1_BITS;
@@ -53,6 +53,7 @@ public:
 
 	void AddTiming(std::function<void()> pCallback, const uint64 delayMs);
 	void Tick();
+	uint64 GetMaxDelayMs() const;
 
 private:
 
